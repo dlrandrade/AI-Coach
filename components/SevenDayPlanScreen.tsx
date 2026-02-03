@@ -25,8 +25,8 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
         return (
             <div className="min-h-screen flex items-center justify-center p-6 optikka-grid">
                 <div className="text-center space-y-4 reveal">
-                    <p className="label-meta">Error: Plan_Not_Found</p>
-                    <button onClick={onReset} className="btn-optikka">RESTART_SYSTEM</button>
+                    <p className="label-meta tracking-widest text-accent-coral">System_Error: Missing_Data_Stream</p>
+                    <button onClick={onReset} className="btn-optikka">RESTART_PROCESS</button>
                 </div>
             </div>
         );
@@ -34,108 +34,133 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="container-optikka py-20 space-y-24">
+            <div className="container-optikka py-10 md:py-20 space-y-20">
+
+                {/* Meta Indicator */}
+                <div className="flex justify-between items-center border-b border-technical pb-4 no-print">
+                    <div className="flex gap-8">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            <span className="label-meta">MISSION_STRATEGY: ACTIVE</span>
+                        </div>
+                        <span className="label-meta opacity-30">// TARGET: @{handle}</span>
+                    </div>
+                    <p className="label-meta text-dim italic">Protocol_v2.0.4</p>
+                </div>
 
                 {/* Protocol Header */}
-                <header className="space-y-6 pb-12 border-b-2 border-soft-black reveal">
-                    <div className="flex items-center gap-3">
-                        <span className="label-meta text-accent-coral">LuzzIA_Action_Protocol</span>
-                        <span className="text-neutral-grey opacity-20">/</span>
-                        <span className="label-meta">Subject: @{handle}</span>
+                <header className="space-y-6 reveal">
+                    <div className="space-y-2">
+                        <p className="label-meta text-accent-coral tracking-[0.2em]">Deployment_Sequence</p>
+                        <h1 className="text-5xl md:text-7xl leading-tight">
+                            Protocolo de <span className="text-accent-coral">Intervenção</span>
+                        </h1>
                     </div>
-                    <h1 className="text-5xl md:text-6xl max-w-2xl">
-                        Protocolo de Intervenção <span className="text-accent-coral">Tática</span>
-                    </h1>
-                    <p className="text-dim text-lg max-w-xl font-light">
-                        Sequência estratégica de 7 dias para neutralizar falhas de autoridade e reconstruir sua presença digital.
+                    <p className="text-dim text-xl max-w-2xl font-light leading-relaxed">
+                        Execução coordenada de 7 dias desenhada para quebrar a inércia, neutralizar falhas de percepção e estabelecer um novo padrão de autoridade cirúrgica.
                     </p>
                 </header>
 
-                {/* Plan Content */}
-                <div className="border border-technical bg-white reveal">
+                {/* Plan Grid */}
+                <div className="border-t-2 border-soft-black reveal stagger">
                     {plan.map((item, idx) => (
                         <div
                             key={item.day}
-                            className={`grid md:grid-cols-[120px_1fr_380px] border-b border-technical last:border-0 ${idx % 2 === 0 ? 'bg-white' : 'bg-neutral-sand/10'}`}
+                            className="grid md:grid-cols-[160px_1fr_420px] border-b border-technical group last:border-b-0"
                         >
-                            {/* Day Index */}
-                            <div className="p-8 border-r border-technical flex flex-col items-center justify-center text-center">
-                                <p className="label-meta text-[10px] mb-2">Day</p>
-                                <p className="text-5xl font-semibold tracking-tighter">0{item.day}</p>
+                            {/* Day Identification */}
+                            <div className="p-10 border-r border-technical flex flex-col justify-center items-start md:items-center space-y-1">
+                                <p className="label-meta text-[10px] opacity-40">STRAT_DAY</p>
+                                <p className="text-6xl font-semibold tracking-tighter leading-none">0{item.day}</p>
                             </div>
 
-                            {/* Task Description */}
-                            <div className="p-10 space-y-8 flex flex-col justify-center">
-                                <div className="space-y-4">
-                                    <div className="flex gap-2">
-                                        <span className="badge-optikka !bg-soft-black !text-white !rounded-none !px-3 !py-1">
-                                            {item.format.toUpperCase()}
-                                        </span>
+                            {/* Tactical Instruction */}
+                            <div className="p-10 md:p-14 space-y-10">
+                                <div className="space-y-6">
+                                    <div className="inline-block bg-soft-black text-white px-4 py-1 font-mono text-[10px] tracking-widest">
+                                        ACTION::{item.format.toUpperCase()}
                                     </div>
-                                    <h3 className="text-2xl font-medium leading-tight text-soft-black">
+                                    <h3 className="text-2xl md:text-3xl font-medium leading-tight text-soft-black max-w-lg">
                                         {item.action}
                                     </h3>
                                 </div>
-                                <div className="space-y-2">
-                                    <p className="label-meta tracking-wider text-accent-coral">Psychology_Basis</p>
-                                    <p className="text-sm text-dim italic leading-relaxed">
+
+                                <div className="space-y-3 pt-6 border-t border-technical">
+                                    <p className="label-meta text-[10px] text-accent-coral">Strategic_Foundation</p>
+                                    <p className="text-base text-dim italic leading-relaxed font-light">
                                         "{item.why}"
                                     </p>
                                 </div>
                             </div>
 
-                            {/* Prompt Control */}
-                            <div className="p-8 bg-neutral-warm/20 border-l border-technical flex flex-col space-y-4">
+                            {/* ChatGPT Bridge */}
+                            <div className="p-10 md:p-14 bg-neutral-sand/10 md:border-l border-technical flex flex-col space-y-8">
                                 <div className="flex justify-between items-center">
-                                    <p className="label-meta">Instruction_set</p>
+                                    <p className="label-meta">Instruction_Set.xml</p>
                                     <button
                                         onClick={() => copyPrompt(item.prompt, item.day)}
-                                        className={`px-3 py-1 font-mono text-[10px] border transition-all duration-300 ${copiedDay === item.day
-                                                ? 'bg-accent-coral border-accent-coral text-white'
-                                                : 'border-heavy text-soft-black hover:bg-soft-black hover:text-white'
+                                        className={`px-4 py-2 font-mono text-[10px] transition-all duration-300 flex items-center gap-2 ${copiedDay === item.day
+                                                ? 'bg-green-600 text-white'
+                                                : 'border border-soft-black text-soft-black hover:bg-soft-black hover:text-white'
                                             }`}
                                     >
-                                        {copiedDay === item.day ? 'DATA_COPIED' : 'COPY_PROMPT'}
+                                        {copiedDay === item.day ? (
+                                            <>
+                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7" strokeWidth={3} /></svg>
+                                                PROMPT_LOADED
+                                            </>
+                                        ) : 'COPY_INSTRUCTIONS'}
                                     </button>
                                 </div>
-                                <div className="prompt-container h-full">
-                                    {item.prompt}
+
+                                <div className="relative flex-1 group">
+                                    <div className="prompt-container h-full max-h-40 min-h-[120px] bg-white border border-technical p-6 text-[11px] leading-relaxed scrollbar-thin">
+                                        {item.prompt}
+                                    </div>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-50 pointer-events-none group-hover:opacity-0 transition-opacity"></div>
+                                    <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-neutral-sand text-[8px] font-mono opacity-40">AUTO_CONTEXT_ENABLED</div>
                                 </div>
-                                <p className="label-meta text-[9px] opacity-40 text-center">
-                                    Paste_into_ChatGPT_to_Execute
-                                </p>
+
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-mono text-neutral-grey">LINK_WITH_GPT_v4_OR_CLAUDE_3</p>
+                                    <p className="text-[9px] text-dim opacity-50">O prompt inclui contexto injetado baseado no seu diagnóstico.</p>
+                                </div>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                {/* Final Footer */}
-                <footer className="py-20 flex flex-col items-center space-y-12 text-center reveal">
-                    <div className="space-y-3">
-                        <p className="label-meta text-accent-coral">Protocol_Closure</p>
-                        <h2 className="text-3xl font-medium max-w-lg mx-auto">
-                            A estratégia sem execução é o diagnóstico da estagnação.
+                {/* Closing Sequence */}
+                <footer className="py-24 space-y-16 text-center border-t border-technical reveal">
+                    <div className="max-w-2xl mx-auto space-y-6">
+                        <p className="label-meta text-accent-coral tracking-[0.2em]">End_of_Sequence</p>
+                        <h2 className="text-4xl md:text-5xl font-medium leading-tight">
+                            A diferença entre um plano e uma memória é a <span className="text-accent-coral">velocidade de execução.</span>
                         </h2>
                     </div>
 
-                    <div className="flex gap-6">
-                        <button onClick={onReset} className="btn-optikka bg-soft-black">
-                            INICIAR NOVA AUTÓPSIA
+                    <div className="flex flex-col md:flex-row gap-6 justify-center items-center no-print">
+                        <button onClick={onReset} className="btn-optikka bg-soft-black h-16 px-16">
+                            REINICIAR AUTO-SCAN
                         </button>
                     </div>
 
-                    <div className="pt-12 flex items-center justify-center gap-10 border-t border-technical w-full max-w-xl">
-                        <div className="text-left">
-                            <p className="label-meta text-[9px]">ENGINE</p>
-                            <p className="text-[10px] font-medium">LUZZIA_CORE_v1.0</p>
+                    <div className="pt-16 grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl mx-auto border-t border-technical opacity-40">
+                        <div className="text-left space-y-1">
+                            <p className="label-meta text-[9px]">MISSION_TAG</p>
+                            <p className="text-[10px] font-medium">LUZZIA_EXEC_01</p>
                         </div>
-                        <div className="text-left">
-                            <p className="label-meta text-[9px]">SECURITY</p>
-                            <p className="text-[10px] font-medium">ENCRYPTED_ADRIFT</p>
+                        <div className="text-left space-y-1">
+                            <p className="label-meta text-[9px]">ENCRYPTION</p>
+                            <p className="text-[10px] font-medium">RSA_4096_ACTIVE</p>
                         </div>
-                        <div className="text-left">
-                            <p className="label-meta text-[9px]">STATUS</p>
-                            <p className="text-[10px] font-medium text-green-600">MISSION_READY</p>
+                        <div className="text-left space-y-1">
+                            <p className="label-meta text-[9px]">LATENCY</p>
+                            <p className="text-[10px] font-medium">0.86ms</p>
+                        </div>
+                        <div className="text-left space-y-1">
+                            <p className="label-meta text-[9px]">LEGAL</p>
+                            <p className="text-[10px] font-medium">PROPRIETARY_SYSTEM</p>
                         </div>
                     </div>
                 </footer>

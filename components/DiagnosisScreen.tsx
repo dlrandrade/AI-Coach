@@ -11,95 +11,127 @@ interface DiagnosisScreenProps {
 export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result, onReset, onNext }) => {
     if (!result) return null;
 
+    const metadata = result.metadata;
+
     const getScoreBadge = (score: string) => {
-        const base = "badge-optikka";
+        const base = "badge-optikka !rounded-none !border-none !px-3 !py-1";
         switch (score) {
-            case 'fraco': return `${base} badge-status-red`;
-            case 'medio': return `${base} badge-status-gold`;
-            case 'forte': return `${base} badge-status-green`;
+            case 'fraco': return `${base} bg-red-500 text-white`;
+            case 'medio': return `${base} bg-orange-400 text-white`;
+            case 'forte': return `${base} bg-green-500 text-white`;
             default: return base;
         }
     };
 
+    const handlePrint = () => {
+        window.print();
+    };
+
     return (
-        <div className="min-h-screen bg-white">
-            <div className="container-optikka py-20 space-y-24">
+        <div className="min-h-screen bg-white print:p-0">
+            <div className="container-optikka py-10 md:py-20 space-y-16">
+
+                {/* Meta Bar */}
+                <div className="flex justify-between items-center border-b border-technical pb-4 no-print">
+                    <div className="flex gap-8">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-accent-coral"></div>
+                            <span className="label-meta">PROT_{metadata?.intensity || 'SURGICAL'}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="label-meta opacity-30">ID:</span>
+                            <span className="label-meta">{metadata?.session_id}</span>
+                        </div>
+                    </div>
+                    <button
+                        onClick={handlePrint}
+                        className="label-meta hover:text-accent-coral transition-colors flex items-center gap-2"
+                    >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        Export_Report_PDF
+                    </button>
+                </div>
 
                 {/* Technical Header */}
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 pb-12 border-b-2 border-soft-black reveal">
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-3">
-                            <span className="label-meta text-accent-coral">LuzzIA_Diagnostic_Report</span>
-                            <span className="text-neutral-grey opacity-20">/</span>
-                            <span className="label-meta tracking-tighter">ID: {Math.random().toString(36).substring(7).toUpperCase()}</span>
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 reveal">
+                    <div className="space-y-6 flex-1">
+                        <div className="space-y-1">
+                            <p className="label-meta text-accent-coral">Diagnosis_Subject_Identity</p>
+                            <h1 className="text-6xl md:text-8xl tracking-tight leading-[0.9]">@{handle}</h1>
                         </div>
-                        <h1 className="text-6xl md:text-7xl">@{handle}</h1>
-                        <p className="text-dim text-lg max-w-md font-light">
-                            Autópsia estrutural de posicionamento e falhas táticas detectadas.
+                        <p className="text-dim text-xl max-w-xl font-light leading-relaxed">
+                            Autópsia estrutural revelando falhas de percepção, inconsistências táticas e pontos cegos de autoridade.
                         </p>
                     </div>
 
-                    <div className="flex gap-16">
-                        <div className="space-y-2">
-                            <p className="label-meta">Assessment_Date</p>
-                            <p className="text-xl font-medium tracking-tight">{new Date().toLocaleDateString('pt-BR')}</p>
+                    <div className="grid grid-cols-2 md:block md:space-y-8 gap-8 border-l border-technical pl-8">
+                        <div className="space-y-1">
+                            <p className="label-meta text-dim">Core_Engine</p>
+                            <p className="text-sm font-medium">LuzzIA_Neural_v2.0</p>
                         </div>
-                        <div className="space-y-2">
-                            <p className="label-meta">Protocol_Version</p>
-                            <p className="text-xl font-medium tracking-tight">LUZZIA_4.0.2</p>
+                        <div className="space-y-1">
+                            <p className="label-meta text-dim">Timestamp</p>
+                            <p className="text-sm font-medium">
+                                {metadata?.timestamp ? new Date(metadata.timestamp).toLocaleString('pt-BR') : new Date().toLocaleDateString('pt-BR')}
+                            </p>
                         </div>
                     </div>
                 </header>
 
                 {/* Analysis Grid */}
-                <div className="modular-section reveal stagger">
-                    {/* Grid Header labels */}
-                    <div className="hidden md:grid grid-cols-[1fr_350px] border-b border-technical">
-                        <div className="p-4 label-meta">Diagnostic_Observation</div>
-                        <div className="p-4 label-meta border-l border-technical">Technical_Forensics</div>
-                    </div>
-
+                <div className="border-t-2 border-soft-black reveal stagger">
                     {result.blocks.map((block, index) => (
-                        <div key={index} className="analysis-cell">
+                        <div key={index} className="analysis-cell !grid-cols-1 md:!grid-cols-[1fr_320px] !p-0">
                             {/* Main Diagnosis */}
-                            <div className="space-y-8">
-                                <div className="flex items-start justify-between gap-4">
-                                    <h3 className="text-2xl font-medium leading-tight text-soft-black">
-                                        {block.title}
-                                    </h3>
+                            <div className="p-10 md:p-14 space-y-10 group">
+                                <div className="flex items-center gap-6">
+                                    <span className="font-mono text-xs opacity-20 group-hover:opacity-100 transition-opacity">0{index + 1}</span>
+                                    <div className="h-px flex-1 bg-technical"></div>
                                     <span className={getScoreBadge(block.score)}>
-                                        {block.score}
+                                        {block.score.toUpperCase()}
                                     </span>
                                 </div>
 
-                                <p className="text-xl text-dim leading-relaxed">
-                                    {block.acusacao}
-                                </p>
+                                <div className="space-y-4">
+                                    <h3 className="label-meta text-accent-coral">{block.title}</h3>
+                                    <h2 className="text-3xl md:text-4xl font-medium leading-tight text-soft-black">
+                                        {block.acusacao}
+                                    </h2>
+                                </div>
 
-                                <div className="grid grid-cols-2 gap-12 pt-4">
-                                    <div className="space-y-2">
-                                        <p className="label-meta tracking-wider text-accent-coral">Root_Fear</p>
-                                        <p className="text-sm text-dim leading-relaxed">{block.medo}</p>
+                                <div className="grid md:grid-cols-2 gap-12 bg-neutral-sand/5 p-8 border border-technical">
+                                    <div className="space-y-3">
+                                        <p className="label-meta text-[10px] tracking-widest opacity-40">Root_Psychology_Fear</p>
+                                        <p className="text-base text-dim leading-relaxed font-light">{block.medo}</p>
                                     </div>
-                                    <div className="space-y-2">
-                                        <p className="label-meta tracking-wider text-accent-coral">Estimated_Cost</p>
-                                        <p className="text-sm text-dim leading-relaxed font-medium">{block.custo}</p>
+                                    <div className="space-y-3">
+                                        <p className="label-meta text-[10px] tracking-widest text-red-500">Authority_Bleed_Cost</p>
+                                        <p className="text-base text-soft-black leading-relaxed font-medium">{block.custo}</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Forensic Proof */}
-                            <div className="p-8 bg-neutral-warm/30 border-t md:border-t-0 md:border-l border-technical space-y-6">
-                                <p className="label-meta">Analysed_Data_Proof</p>
+                            <div className="p-10 md:p-14 bg-neutral-warm/10 md:border-l border-technical space-y-10">
                                 <div className="space-y-4">
-                                    <p className="text-xs text-dim leading-relaxed italic border-l-2 border-heavy pl-4 py-1">
-                                        "{block.prova}"
-                                    </p>
-                                    <div className="space-y-2">
-                                        <p className="label-meta text-[9px] opacity-40">Forensic_Note</p>
-                                        <p className="text-[10px] text-neutral-grey leading-tight">
-                                            Evidência baseada em análise de padrões recorrentes detectados na Bio e nos últimos posts processados pela LuzzIA.
-                                        </p>
+                                    <p className="label-meta">Forensic_Analysis_Notes</p>
+                                    <div className="space-y-6">
+                                        <div className="space-y-2">
+                                            <p className="text-[11px] text-neutral-grey uppercase font-medium">Observable_Evidence:</p>
+                                            <p className="text-sm text-dim leading-relaxed italic border-l-2 border-accent-coral pl-6 py-2">
+                                                "{block.prova}"
+                                            </p>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[11px] text-neutral-grey uppercase font-medium">AI_Detections:</p>
+                                            <ul className="text-[10px] space-y-1 text-neutral-grey font-mono">
+                                                <li>• Pattern_Inconsistency: HIGH</li>
+                                                <li>• Authority_Signal: {block.score === 'fraco' ? 'FAILED' : 'DEGRADED'}</li>
+                                                <li>• Engagement_Lapse: DETECTED</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -108,26 +140,22 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                 </div>
 
                 {/* Sentence Section */}
-                <div className="reveal space-y-12 py-20 text-center" style={{ animationDelay: '0.4s' }}>
-                    <div className="max-w-2xl mx-auto space-y-6">
-                        <p className="label-meta text-accent-coral">Final_Verdict</p>
-                        <h2 className="text-4xl md:text-5xl font-medium leading-[1.1] text-soft-black">
+                <div className="reveal space-y-16 py-24 text-center border-t border-technical" style={{ animationDelay: '0.4s' }}>
+                    <div className="max-w-3xl mx-auto space-y-8">
+                        <p className="label-meta text-accent-coral tracking-[0.2em]">Final_Strategic_Verdict</p>
+                        <h2 className="text-4xl md:text-6xl font-medium leading-[1.05] text-soft-black">
                             "{result.verdict}"
                         </h2>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-                        <button onClick={onNext} className="btn-optikka bg-accent-coral">
+                    <div className="flex flex-col md:flex-row gap-6 justify-center items-center no-print">
+                        <button onClick={onNext} className="btn-optikka h-16 px-16 text-lg">
                             APLICAR PROTOCOLO 7 DIAS
                         </button>
-                        <button onClick={onReset} className="btn-optikka btn-optikka-ghost">
-                            ESCARTAR RELATÓRIO
+                        <button onClick={onReset} className="btn-optikka btn-optikka-ghost h-16 px-12">
+                            DESCARTAR E REINICIAR
                         </button>
                     </div>
-
-                    <p className="label-meta text-[10px] opacity-30 mt-8">
-                        LuzzIA // Confidential Analysis // Precision: HIGH
-                    </p>
                 </div>
             </div>
         </div>

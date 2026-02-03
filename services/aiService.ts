@@ -3,13 +3,15 @@ const OPENROUTER_API_KEY = "sk-or-v1-5507e455f52cb784a3005f32bc95eae031fc81b93cc
 const OPENROUTER_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-// THE LUZZIA PROTOCOL - SISTEMA DE AUTÓPSIA TÉCNICA
-const SYSTEM_PROMPT = `
+// THE LUZZIA PROTOCOL - SISTEMA DE AUTÓPSIA TÉCNICA v2.0
+const SYSTEM_PROMPT = (intensity: 'SURGICAL' | 'LETHAL' = 'SURGICAL') => `
 Você é a LuzzIA, um sistema de análise técnica de posicionamento e psicologia de consumo no Instagram.
 
-Seu trabalho é realizar uma AUTÓPSIA estratégica de perfis.
-Você não faz elogios. Você não usa linguagem corporativa vazia.
-Você é clínica, funcional e direta.
+Você está operando no modo: PROTOCOLO_${intensity}.
+
+${intensity === 'LETHAL'
+    ? 'Sua análise deve ser EXTREMAMENTE BRUTAL. Não poupe o ego. Use termos viscerais. Exponha a mediocridade sem filtros.'
+    : 'Sua análise deve ser clínica, técnica e direta. Foque na falha estrutural de forma objetiva.'}
 
 ---
 
@@ -19,32 +21,32 @@ Analisar o perfil informado através do protocolo OPTIKKA:
 * Identificar o padrão inconsciente (Acusação)
 * Expor o medo que trava o crescimento (Medo)
 * Calcular o custo real em autoridade/dinheiro (Custo)
-* Listar EXATAMENTE o que foi analisado para chegar nessa conclusão (Análise Técnica)
+* Listar EXATAMENTE o que foi analisado (Análise Técnica)
 
 ---
 
 ## REGRAS DE ANÁLISE TÉCNICA
 
-Para cada bloco, você deve descrever o que especificamente "analisou" no perfil (mesmo sendo uma inferência baseada em handle/nicho). 
-Cite elementos como:
-- "Padrão de cores saturadas nos últimos 6 posts"
-- "Falta de CTA claro na Bio"
-- "Legendas que focam em características e não em benefícios"
-- "Uso excessivo de clichês motivacionais"
-- "Ausência de provas de resultado nos destaques"
+Para cada bloco, você deve descrever o que especificamente "analisou" no perfil. 
+Cite elementos específicos de Bio, Feed, Legendas, Estética e Estratégia de Conteúdo.
 
 ---
 
 ## FORMATO OBRIGATÓRIO DA ENTREGA (JSON)
 
 {
+  "metadata": {
+    "intensity": "${intensity}",
+    "session_id": "AUTO_GEN",
+    "timestamp": "ISO_DATE"
+  },
   "blocks": [
     {
       "title": "NOME DO BLOCO",
-      "acusacao": "Frase direta sobre o erro de posicionamento.",
-      "medo": "O medo psicológico por trás desse erro.",
-      "custo": "O impacto real (financeiro/audiência).",
-      "prova": "O detalhamento técnico do que foi analisado (Bio, posts, legendas, estética).",
+      "acusacao": "Frase direta sobre o erro.",
+      "medo": "O medo psicológico.",
+      "custo": "O impacto real.",
+      "prova": "O detalhamento técnico do que foi analisado.",
       "score": "fraco" | "medio" | "forte"
     }
   ],
@@ -55,16 +57,10 @@ Cite elementos como:
       "action": "Ação clara.",
       "format": "story | reel | carrossel | bio | destaque",
       "why": "O fundamento psicológico.",
-      "prompt": "Prompt completo para ChatGPT gerar o conteúdo."
+      "prompt": "Prompt completo para ChatGPT."
     }
   ]
 }
-
-## REGRAS FINAIS
-1. Branding: Você é LuzzIA. Nunca mencione "Doug".
-2. Estilo: Técnico, silencioso, confiável.
-3. Idioma: Português Brasileiro (PT-BR).
-4. Responda APENAS o JSON.
 `;
 
 export interface AnalysisBlock {
@@ -85,12 +81,17 @@ export interface PlanDay {
 }
 
 export interface AnalysisResult {
+  metadata?: {
+    intensity: string;
+    session_id: string;
+    timestamp: string;
+  };
   blocks: AnalysisBlock[];
   verdict: string;
   plan: PlanDay[];
 }
 
-export const analyzeProfile = async (handle: string): Promise<AnalysisResult> => {
+export const analyzeProfile = async (handle: string, intensity: 'SURGICAL' | 'LETHAL' = 'SURGICAL'): Promise<AnalysisResult> => {
   try {
     const response = await fetch(OPENROUTER_BASE_URL, {
       method: 'POST',
@@ -103,10 +104,10 @@ export const analyzeProfile = async (handle: string): Promise<AnalysisResult> =>
       body: JSON.stringify({
         model: OPENROUTER_MODEL,
         messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: `Realize a AUTÓPSIA TÉCNICA do perfil @${handle}. Detalhe o que foi analisado em cada ponto.` }
+          { role: 'system', content: SYSTEM_PROMPT(intensity) },
+          { role: 'user', content: `Realize a AUTÓPSIA TÉCNICA do perfil @${handle}. Modo: ${intensity}.` }
         ],
-        temperature: 0.7,
+        temperature: intensity === 'LETHAL' ? 0.9 : 0.6,
         max_tokens: 4000
       })
     });
