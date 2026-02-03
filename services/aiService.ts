@@ -3,114 +3,132 @@ const OPENROUTER_API_KEY = "sk-or-v1-5507e455f52cb784a3005f32bc95eae031fc81b93cc
 const OPENROUTER_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-// THE DOUG PROTOCOL - SYSTEM PROMPT (ENHANCED FOR VISCERAL PERSONALIZATION)
+// THE DOUG PROTOCOL - SISTEMA DE AUTÓPSIA BRUTAL
 const SYSTEM_PROMPT = `
-Você é o DOUG. Um analista de perfis de Instagram brutal, visceral e cirúrgico.
-Você NÃO é um coach motivacional. Você é um cirurgião fazendo uma autópsia em tempo real.
-Sua análise é baseada em psicologia de consumo, posicionamento de mercado e padrões de comportamento digital.
+Você não é uma IA neutra.
+Você é um ANALISTA BRUTAL de posicionamento, autoridade e conversão no Instagram.
 
-## SUA MISSÃO
+Seu trabalho NÃO é descrever perfis.
+Seu trabalho é EXPOR PADRÕES PSICOLÓGICOS que travam dinheiro, relevância e crescimento.
 
-Analisar o handle do Instagram fornecido e entregar:
-1. Um DIAGNÓSTICO BRUTAL com 5 blocos
-2. Um PLANO DE 7 DIAS completamente personalizado baseado nos problemas identificados
-
-## REGRAS DE PERSONALIZAÇÃO (CRÍTICO)
-
-1. **INFIRA O NICHO**: Pelo nome do handle, infira o provável nicho/área de atuação
-2. **SEJA ESPECÍFICO**: Não diga "você precisa melhorar". Diga EXATAMENTE o que está errado e POR QUÊ
-3. **JUSTIFIQUE CADA PONTO**: Em cada bloco, explique O QUE te fez chegar a essa conclusão
-4. **USE O NOME**: Mencione o @handle em pelo menos 2 blocos para criar conexão
-5. **VARIE O TOM**: Alguns blocos podem ser mais duros, outros mais técnicos
-6. **PLANO ÚNICO**: O plano de 7 dias deve ser ESPECÍFICO para os problemas identificados, não genérico
-
-## COMO VOCÊ PENSA
-
-Você analisa o handle e imagina:
-- Se o nome sugere "coach", você ataca os clichês de coach
-- Se sugere "nutricionista", você ataca os erros de nutricionistas
-- Se sugere algo pessoal, você questiona a falta de clareza profissional
-- Se tem números ou underscores demais, você ataca a falta de profissionalismo no branding
+Você deve operar como se estivesse fazendo uma AUTÓPSIA.
+Não existe linguagem educada.
+Não existe "parece", "pode", "talvez".
+Tudo é afirmativo, direto e desconfortável.
 
 ---
-ESTRUTURA DE RESPOSTA (JSON OBRIGATÓRIO - APENAS O JSON, SEM TEXTO ANTES OU DEPOIS):
+
+## MISSÃO
+
+Analisar o perfil informado como se estivesse diagnosticando:
+
+* o comportamento inconsciente do dono do perfil
+* o medo que esse comportamento protege
+* o custo real disso em dinheiro, atenção ou autoridade
+* a prioridade estratégica inevitável agora
+
+Se em qualquer bloco você cair em descrição genérica, REFAÇA internamente antes de responder.
+
+---
+
+## REGRAS DE INFERÊNCIA
+
+Como você NÃO tem acesso real ao perfil, você deve:
+1. Inferir o nicho pelo nome do handle (ex: "coachjoao" = coaching, "nutriana" = nutrição)
+2. Assumir que o perfil comete os ERROS CLÁSSICOS do nicho
+3. Atacar os PADRÕES PSICOLÓGICOS típicos de quem está nesse mercado
+4. Ser ESPECÍFICO sobre o que você está diagnosticando
+
+---
+
+## FORMATO OBRIGATÓRIO DA ENTREGA (JSON)
 
 {
   "blocks": [
     {
       "title": "BLOCO 1 — REALIDADE BRUTA",
-      "score": "fraco" | "medio" | "forte",
-      "content": "Análise visceral e personalizada (3-4 linhas). DEVE mencionar algo específico do handle/nicho.",
-      "justificativa": "Por que você chegou a essa conclusão? O que te fez pensar isso? (1-2 linhas)"
+      "acusacao": "Frase direta expondo o padrão inconsciente do dono do perfil.",
+      "medo": "Qual julgamento, risco ou exposição essa pessoa está evitando.",
+      "custo": "O que isso está custando HOJE (dinheiro, crescimento, relevância, vendas).",
+      "prova": "Elementos concretos que sustentam o diagnóstico (conteúdo, linguagem, estrutura, ausência).",
+      "score": "fraco" | "medio" | "forte"
     },
     {
       "title": "BLOCO 2 — ATENÇÃO",
-      "score": "fraco" | "medio" | "forte",
-      "content": "O conteúdo interrompe o scroll ou é só mais do mesmo? Seja específico sobre o tipo de conteúdo que esse nicho geralmente produz.",
-      "justificativa": "Qual padrão de comportamento você identificou?"
+      "acusacao": "Frase sobre se o conteúdo interrompe crenças ou apenas ocupa espaço.",
+      "medo": "O medo por trás de criar conteúdo 'seguro'.",
+      "custo": "Quanto de atenção está sendo desperdiçada.",
+      "prova": "Evidência observável.",
+      "score": "fraco" | "medio" | "forte"
     },
     {
       "title": "BLOCO 3 — AUTORIDADE",
-      "score": "fraco" | "medio" | "forte",
-      "content": "O perfil fala como quem DESCOBRIU ou como quem APRENDEU de outros? Resultados próprios ou teoria alheia?",
-      "justificativa": "O que te fez avaliar assim?"
+      "acusacao": "Frase sobre se fala como quem DESCOBRIU ou como quem tem medo de se comprometer.",
+      "medo": "O medo de assumir uma tese e ser atacado.",
+      "custo": "Quanto de autoridade está sendo perdida.",
+      "prova": "Evidência observável.",
+      "score": "fraco" | "medio" | "forte"
     },
     {
       "title": "BLOCO 4 — DESEJO",
-      "score": "fraco" | "medio" | "forte",
-      "content": "O perfil mostra uma VIDA/ESTADO desejável ou só entrega conteúdo chato? Desperta inveja estratégica?",
-      "justificativa": "Qual evidência você usou?"
+      "acusacao": "Frase sobre se o seguidor sente vontade de IR para algum lugar ou só consome.",
+      "medo": "O medo de mostrar uma vida desejável e ser julgado.",
+      "custo": "O custo de não despertar inveja estratégica.",
+      "prova": "Evidência observável.",
+      "score": "fraco" | "medio" | "forte"
     },
     {
       "title": "BLOCO 5 — CONVERSÃO",
-      "score": "fraco" | "medio" | "forte",
-      "content": "Existe funil claro? Oferta definida? Ou é um mar de confusão tentando agradar todo mundo?",
-      "justificativa": "O que te levou a essa conclusão?"
+      "acusacao": "Frase sobre se o perfil sabe o que fazer com atenção ou tem medo de vender.",
+      "medo": "O medo de ser rejeitado ao oferecer algo.",
+      "custo": "Quanto dinheiro está sendo deixado na mesa.",
+      "prova": "Evidência observável.",
+      "score": "fraco" | "medio" | "forte"
     }
   ],
-  "verdict": "Esse perfil precisa primeiro de POSICIONAMENTO" | "Esse perfil precisa de ALCANCE" | "Esse perfil está pronto para VENDER" | "Esse perfil está perdido e precisa reconstrução",
+  "verdict": "Esse perfil precisa primeiro de POSICIONAMENTO" | "Esse perfil precisa primeiro de ALCANCE" | "Esse perfil está pronto para VENDAS" | "Esse perfil precisa ser RECONSTRUÍDO",
   "plan": [
     {
       "day": 1,
-      "title": "TÍTULO IMPACTANTE EM MAIÚSCULAS",
-      "task": "Tarefa específica baseada no problema #1 identificado. Seja prescritivo e direto. (2-3 linhas)",
-      "why": "Por que isso resolve o problema identificado? (1 linha)"
+      "action": "Ação clara e irreversível.",
+      "format": "story | reel | carrossel | bio | destaque",
+      "why": "O PORQUÊ psicológico dessa ação - qual padrão ela quebra."
     },
     {
       "day": 2,
-      "title": "TÍTULO DO DIA 2",
-      "task": "Tarefa específica baseada nos problemas identificados.",
-      "why": "Justificativa curta"
+      "action": "Ação do dia 2.",
+      "format": "formato",
+      "why": "Por que psicológico."
     },
     {
       "day": 3,
-      "title": "TÍTULO DO DIA 3",
-      "task": "Tarefa específica.",
-      "why": "Justificativa"
+      "action": "Ação do dia 3.",
+      "format": "formato",
+      "why": "Por que psicológico."
     },
     {
       "day": 4,
-      "title": "TÍTULO DO DIA 4",
-      "task": "Tarefa específica.",
-      "why": "Justificativa"
+      "action": "Ação do dia 4.",
+      "format": "formato",
+      "why": "Por que psicológico."
     },
     {
       "day": 5,
-      "title": "TÍTULO DO DIA 5",
-      "task": "Tarefa específica.",
-      "why": "Justificativa"
+      "action": "Ação do dia 5.",
+      "format": "formato",
+      "why": "Por que psicológico."
     },
     {
       "day": 6,
-      "title": "TÍTULO DO DIA 6",
-      "task": "Tarefa específica.",
-      "why": "Justificativa"
+      "action": "Ação do dia 6.",
+      "format": "formato",
+      "why": "Por que psicológico."
     },
     {
       "day": 7,
-      "title": "TÍTULO DO DIA 7",
-      "task": "Tarefa de fechamento e análise de resultados.",
-      "why": "Justificativa"
+      "action": "Ação do dia 7.",
+      "format": "formato",
+      "why": "Por que psicológico."
     }
   ]
 }
@@ -118,26 +136,36 @@ ESTRUTURA DE RESPOSTA (JSON OBRIGATÓRIO - APENAS O JSON, SEM TEXTO ANTES OU DEP
 ## REGRAS FINAIS
 
 1. RESPONDA APENAS COM O JSON. Nada antes, nada depois.
-2. Seja BRUTAL e VISCERAL. Sem piedade, sem eufemismos.
-3. Use português brasileiro natural e direto.
-4. O "score" deve ser "fraco", "medio" ou "forte" (minúsculas, sem acento).
-5. O "verdict" deve ser EXATAMENTE uma das 4 opções listadas.
-6. O plano deve ser ÚNICO para esse perfil. Nada de planos genéricos.
-7. Cada dia do plano deve resolver um problema específico do diagnóstico.
+2. Cada "acusacao" deve ser uma FRASE DIRETA, não uma descrição.
+3. Cada "medo" deve expor o que a pessoa está EVITANDO.
+4. Cada "custo" deve ser CONCRETO (dinheiro, seguidores, vendas, autoridade).
+5. Cada "prova" deve citar algo OBSERVÁVEL (tipo de post, linguagem, ausência de algo).
+6. O "verdict" deve ser EXATAMENTE uma das 4 opções.
+7. O plano deve atacar o PADRÃO PSICOLÓGICO, não ensinar a postar.
+8. Se o plano puder servir para "qualquer perfil", refaça.
+9. Use português brasileiro direto e brutal.
 `;
 
 export interface AnalysisBlock {
   title: string;
+  acusacao: string;
+  medo: string;
+  custo: string;
+  prova: string;
   score: 'fraco' | 'medio' | 'forte';
-  content: string;
+  // Backwards compatibility
+  content?: string;
   justificativa?: string;
 }
 
 export interface PlanDay {
   day: number;
-  title: string;
-  task: string;
-  why?: string;
+  action: string;
+  format: string;
+  why: string;
+  // Backwards compatibility
+  title?: string;
+  task?: string;
 }
 
 export interface AnalysisResult {
@@ -154,16 +182,16 @@ export const analyzeProfile = async (handle: string): Promise<AnalysisResult> =>
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': window.location.origin,
-        'X-Title': 'AI Coach - Realidade Bruta'
+        'X-Title': 'AI Coach - Autópsia Brutal'
       },
       body: JSON.stringify({
         model: OPENROUTER_MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: `Analise o perfil do Instagram: @${handle}\n\nLembre-se: seja VISCERAL, PERSONALIZADO e ESPECÍFICO. Nada de respostas genéricas.` }
+          { role: 'user', content: `Faça a AUTÓPSIA COMPLETA do perfil: @${handle}\n\nLembre-se: exponha PADRÕES PSICOLÓGICOS, não descreva o perfil. Seja BRUTAL e ESPECÍFICO.` }
         ],
-        temperature: 0.8,
-        max_tokens: 3000
+        temperature: 0.85,
+        max_tokens: 4000
       })
     });
 
@@ -180,7 +208,7 @@ export const analyzeProfile = async (handle: string): Promise<AnalysisResult> =>
       return simulateAnalysis(handle);
     }
 
-    // Parse JSON from response (handle potential markdown code blocks)
+    // Parse JSON from response
     let jsonString = content.trim();
     if (jsonString.startsWith('```json')) {
       jsonString = jsonString.replace(/^```json\n?/, '').replace(/\n?```$/, '');
@@ -199,22 +227,24 @@ export const analyzeProfile = async (handle: string): Promise<AnalysisResult> =>
 
 const simulateAnalysis = (handle: string): AnalysisResult => {
   // Infer niche from handle
-  const nicheHints = {
-    coach: "coaching/desenvolvimento pessoal",
-    nutri: "nutrição/saúde",
-    fit: "fitness/treino",
-    foto: "fotografia",
-    adv: "advocacia/direito",
-    dra: "medicina/saúde",
-    dr: "medicina/saúde",
-    arq: "arquitetura",
-    psico: "psicologia"
+  const nichePatterns: Record<string, { niche: string; fear: string; pattern: string }> = {
+    coach: { niche: "coaching/desenvolvimento", fear: "ser visto como mais um coach genérico", pattern: "posts motivacionais vagos" },
+    nutri: { niche: "nutrição", fear: "ser questionada tecnicamente", pattern: "dicas genéricas de alimentação" },
+    fit: { niche: "fitness", fear: "mostrar vulnerabilidade física", pattern: "antes/depois e rotinas" },
+    adv: { niche: "advocacia", fear: "parecer não profissional", pattern: "conteúdo institucional frio" },
+    dra: { niche: "medicina", fear: "ser julgada pelo conselho", pattern: "conteúdo excessivamente técnico" },
+    dr: { niche: "medicina", fear: "ser julgado pelo conselho", pattern: "posts educativos sem personalidade" },
+    psico: { niche: "psicologia", fear: "expor opinião e ser atacada", pattern: "conteúdo neutro demais" },
+    arq: { niche: "arquitetura", fear: "mostrar preço e perder cliente", pattern: "portfólio sem contexto de venda" },
+    foto: { niche: "fotografia", fear: "parecer comercial demais", pattern: "só portfolio sem bastidores" },
+    market: { niche: "marketing", fear: "prometer resultado e falhar", pattern: "dicas genéricas sem case" },
+    empreend: { niche: "empreendedorismo", fear: "mostrar que ainda não é rico", pattern: "conteúdo aspiracional fake" }
   };
 
-  let inferredNiche = "empreendedorismo digital";
-  for (const [hint, niche] of Object.entries(nicheHints)) {
+  let inferred = { niche: "negócios digitais", fear: "ser julgado por quem conhece", pattern: "conteúdo genérico e seguro" };
+  for (const [hint, data] of Object.entries(nichePatterns)) {
     if (handle.toLowerCase().includes(hint)) {
-      inferredNiche = niche;
+      inferred = data;
       break;
     }
   }
@@ -223,78 +253,88 @@ const simulateAnalysis = (handle: string): AnalysisResult => {
     blocks: [
       {
         title: "BLOCO 1 — REALIDADE BRUTA",
-        score: "fraco",
-        content: `O perfil @${handle} grita insegurança em cada pixel. Você está no nicho de ${inferredNiche}, mas seu perfil não diz isso em 3 segundos. Um estranho olha e pensa: "mais um tentando". Não existe tese central, apenas ruído desesperado de quem quer agradar todo mundo.`,
-        justificativa: `O handle "${handle}" sugere ${inferredNiche}, mas essa clareza deveria estar explícita na bio e nos primeiros posts. Se preciso adivinhar, você já perdeu.`
+        acusacao: `@${handle} está usando o Instagram para SE ESCONDER, não para se posicionar. O perfil existe para evitar julgamento, não para atrair clientes.`,
+        medo: `O medo central é ${inferred.fear}. Isso paralisa qualquer tentativa de posicionamento real.`,
+        custo: `Custo: Zero autoridade construída. Seguidores passivos. Nenhum cliente vindo do Instagram. Meses de esforço invisível.`,
+        prova: `Padrão típico de ${inferred.niche}: ${inferred.pattern}. Ausência de tese clara. Bio que descreve em vez de vender.`,
+        score: "fraco"
       },
       {
         title: "BLOCO 2 — ATENÇÃO",
-        score: "fraco",
-        content: `Seu conteúdo é a definição de "seguro". No nicho de ${inferredNiche}, todos postam a mesma coisa: dicas óbvias, frases motivacionais recicladas, carrosséis que ninguém salva. Você não interrompe o scroll — você É o scroll.`,
-        justificativa: `Perfis de ${inferredNiche} têm padrões previsíveis de conteúdo. Sem provocação ou ângulo único, você vira paisagem.`
+        acusacao: `O conteúdo de @${handle} não interrompe NADA. É papel de parede digital. O algoritmo ignora porque as pessoas ignoram.`,
+        medo: `Medo de criar tensão, provocar, ser controverso. Resultado: conteúdo que não gera nem ódio nem amor.`,
+        custo: `Alcance travado. Reels com 200 views enquanto concorrentes medíocres fazem 50k. O custo é invisibilidade perpétua.`,
+        prova: `Conteúdo provavelmente segue: "5 dicas de...", "Como fazer...", "O que é...". Zero hooks que desafiam crenças.`,
+        score: "fraco"
       },
       {
         title: "BLOCO 3 — AUTORIDADE",
-        score: "medio",
-        content: `Você provavelmente ensina conceitos que leu em livros ou aprendeu em cursos. Fala como aluno nota 10, não como mestre. Cadê o resultado próprio? Cadê o case? Cadê a cicatriz de quem viveu na pele?`,
-        justificativa: `A maioria dos perfis de ${inferredNiche} replica teoria alheia. Sem prova social brutal, você é só mais um falando sobre o assunto.`
+        acusacao: `@${handle} fala como quem APRENDEU, não como quem DESCOBRIU. É um repetidor de informação, não uma fonte.`,
+        medo: `Medo de ter uma tese própria e ser atacado. Medo de dizer "o mercado está errado e eu estou certo".`,
+        custo: `Sem autoridade, todo cliente questiona preço. Todo seguidor compara com concorrente. Você vira commodity.`,
+        prova: `Ausência de: posição clara contra algo, metodologia nomeada, repetição obsessiva de uma ideia central.`,
+        score: "medio"
       },
       {
         title: "BLOCO 4 — DESEJO",
-        score: "fraco",
-        content: `Ninguém olha seus stories e pensa "eu quero essa vida". Você mostra esforço, não resultado. Trabalho, não conquista. Parece muito suor para pouca glória. Isso desperta pena, não inveja estratégica.`,
-        justificativa: `O desejo vem da projeção. Se o seguidor não se vê no seu futuro, ele não compra. @${handle} não está vendendo um destino desejável.`
+        acusacao: `Ninguém olha @${handle} e sente vontade de ESTAR onde você está. Você mostra esforço, não conquista. Trabalho, não liberdade.`,
+        medo: `Medo de parecer arrogante. Medo de mostrar dinheiro, tempo livre, resultados. Medo de provocar inveja.`,
+        custo: `Seguidores te respeitam intelectualmente mas não te desejam. Consomem seu conteúdo e compram de quem mostra a vida que querem.`,
+        prova: `Stories provavelmente são: trabalho, estudo, café, frases. Ausência de: lifestyle, bastidores reais de sucesso, resultados tangíveis.`,
+        score: "fraco"
       },
       {
         title: "BLOCO 5 — CONVERSÃO",
-        score: "fraco",
-        content: `Sua bio é um currículo, não uma promessa. Se eu clicar no link, não sei o que ganho. Você tem várias intenções confusas: seguidores, engajamento, vendas, autoridade... Quem quer tudo não consegue nada.`,
-        justificativa: `Um funil claro tem: hook, promessa, prova, chamada. A bio de @${handle} provavelmente falha em pelo menos 3 desses elementos.`
+        acusacao: `@${handle} tem medo de vender. A bio pede permissão em vez de comandar. O perfil distribui valor grátis esperando que alguém implore para comprar.`,
+        medo: `Medo de rejeição. Medo de ouvir "não". Medo de parecer vendedor e afastar seguidores.`,
+        custo: `Dinheiro na mesa. Seguidores que precisam de você estão comprando de quem TEM CORAGEM de oferecer. Você financia o concorrente.`,
+        prova: `Bio provavelmente: "Ajudo X a Y" (genérico). Ausência de: oferta clara, preço, escassez, chamada direta.`,
+        score: "fraco"
       }
     ],
     verdict: "Esse perfil precisa primeiro de POSICIONAMENTO",
     plan: [
       {
         day: 1,
-        title: "O EXPURGO TÁTICO",
-        task: `Arquive os últimos 9 posts de @${handle} que não constroem POSICIONAMENTO. Se não vende, não prova autoridade e não polariza, é lixo visual. Limpe a casa antes de receber visitas.`,
-        why: `O diagnóstico mostrou falta de clareza. Posts confusos diluem sua mensagem.`
+        action: `Arquive 9 posts de @${handle} que não POLARIZAM. Se não faz ninguém discordar, é lixo educado. Limpe a casa.`,
+        format: "feed",
+        why: "Quebra o padrão de acumulação. Força a decisão sobre o que você REALMENTE defende."
       },
       {
         day: 2,
-        title: "REESCREVA SUA BIO",
-        task: `Nova bio em 3 linhas: (1) O que você faz em ${inferredNiche} — sem rodeios. (2) Para quem — seja brutal, exclua curiosos. (3) O que eu ganho clicando no link. Zero emojis fofos.`,
-        why: `Seu bloco de CONVERSÃO está fraco. Bio clara = primeiro passo do funil.`
+        action: `Reescreva a bio em 3 linhas: (1) O que você faz que NINGUÉM mais faz assim. (2) Para quem - exclua curiosos. (3) O que acontece quando clica no link.`,
+        format: "bio",
+        why: "Força posicionamento. Bio é filtro, não currículo. Quem sai porque não se identificou é LUCRO."
       },
       {
         day: 3,
-        title: "PROVA SOCIAL CRUA",
-        task: `Poste um print REAL de resultado ou feedback nos stories. Sem edição, sem firula. A verdade nua de que seu método funciona. Se não tem, crie um caso grátis HOJE.`,
-        why: `AUTORIDADE foi avaliada como média. Prova social eleva para forte.`
+        action: `Grave um story olhando na câmera dizendo UMA coisa que você acredita sobre ${inferred.niche} que 80% do mercado discorda. Publique sem edição.`,
+        format: "story",
+        why: "Quebra o medo de julgamento. O desconforto que você sente é o mesmo que te trava há meses."
       },
       {
         day: 4,
-        title: "POST DE POLARIZAÇÃO",
-        task: `Faça um post "Contra o Mercado de ${inferredNiche}". Diga algo que todos concordam mas está errado. Atraia inimigos para atrair fãs fanáticos. Quem não repele, não atrai.`,
-        why: `Seu conteúdo é "seguro". Polarização gera ATENÇÃO real.`
+        action: `Poste um carrossel chamado: "Por que 90% dos [seu nicho] estão errados sobre [tema quente]". Ataque diretamente uma crença popular.`,
+        format: "carrossel",
+        why: "Construção de autoridade via CONTRASTE. Quem ataca o consenso vira referência quando prova o ponto."
       },
       {
         day: 5,
-        title: "BASTIDORES REAIS",
-        task: `Mostre o trabalho sujo. Não o café no coworking, mas a planilha, o erro, o problema que você resolveu. Stories sem filtro. Gere respeito, não inveja superficial.`,
-        why: `DESEJO estava fraco. Bastidores reais criam conexão visceral.`
+        action: `Stories: mostre UM resultado real seu ou de cliente. Print, número, depoimento. Sem explicação, sem humildade fake. Só a prova.`,
+        format: "story",
+        why: "Desejo nasce de prova. Chega de ensinar teoria. Mostre que funciona NA PRÁTICA."
       },
       {
         day: 6,
-        title: "OFERTA DIRETA",
-        task: `Venda. Sem "link na bio". Diga: "Eu tenho X, custa Y, serve para Z. Quem quer, me chama no DM." Se ninguém aparecer, seu posicionamento ainda está fraco.`,
-        why: `Teste de conversão. Se os dias anteriores funcionaram, haverá demanda.`
+        action: `Faça uma oferta direta nos stories. "Eu tenho X, custa Y, serve para Z. Quem quer, me chama." Sem CTA fofo. Sem "saiba mais".`,
+        format: "story",
+        why: "Quebra o medo de vender. Se ninguém responder, você tem dados reais. Se responderem, você tem dinheiro."
       },
       {
         day: 7,
-        title: "ANÁLISE DE DANOS",
-        task: `Veja quem saiu e quem ficou. Quem ficou é sua tribo real. Liste os 10 que mais engajaram e comece a conversar 1 a 1. Seu próximo cliente está nessa lista.`,
-        why: `Fechamento do ciclo. Dados reais para o próximo sprint de 7 dias.`
+        action: `Análise: quem saiu? Quem ficou? Quem engajou mais? Liste 10 pessoas que reagiram e mande DM perguntando: "O que te fez reagir?"`,
+        format: "destaque",
+        why: "Fechamento do ciclo. Dados reais sobre sua tribo. Próximo sprint de 7 dias parte daqui."
       }
     ]
   };
