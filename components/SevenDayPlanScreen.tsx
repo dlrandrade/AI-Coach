@@ -24,8 +24,8 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
     if (!plan || plan.length === 0) {
         return (
             <div className="min-h-screen flex items-center justify-center p-6 optikka-grid">
-                <div className="text-center space-y-4 reveal">
-                    <p className="label-meta tracking-widest text-accent-coral">System_Error: Missing_Data_Stream</p>
+                <div className="text-center space-y-6 reveal">
+                    <span className="label-meta text-accent-coral">System_Error: Missing_Data_Stream</span>
                     <button onClick={onReset} className="btn-optikka">RESTART_PROCESS</button>
                 </div>
             </div>
@@ -34,136 +34,125 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="container-optikka py-10 md:py-20 space-y-20">
+            <div className="container-optikka py-16 space-y-20">
 
-                {/* Meta Indicator */}
-                <div className="flex justify-between items-center border-b border-technical pb-4 no-print">
-                    <div className="flex gap-8">
+                {/* 1. Technical Info Bar */}
+                <div className="flex justify-between items-center border-y border-technical py-4 no-print">
+                    <div className="flex gap-10">
                         <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                            <span className="label-meta">MISSION_STRATEGY: ACTIVE</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                            <span className="label-meta">Strategy_Deployment: ACTIVE</span>
                         </div>
-                        <span className="label-meta opacity-30">// TARGET: @{handle}</span>
+                        <span className="label-meta opacity-30">// SUBJECT: @{handle}</span>
                     </div>
-                    <p className="label-meta text-dim italic">Protocol_v2.0.4</p>
+                    <span className="label-meta opacity-50 font-mono">LuzzIA_v2.1_Stable</span>
                 </div>
 
-                {/* Protocol Header */}
-                <header className="space-y-6 reveal">
+                {/* 2. Header Section */}
+                <header className="space-y-8 reveal">
                     <div className="space-y-2">
-                        <p className="label-meta text-accent-coral tracking-[0.2em]">Deployment_Sequence</p>
-                        <h1 className="text-5xl md:text-7xl leading-tight">
-                            Protocolo de <span className="text-accent-coral">Intervenção</span>
-                        </h1>
+                        <span className="label-meta text-accent-coral tracking-[0.2em]">Action_Protocol</span>
+                        <h1 className="text-soft-black max-w-3xl">Protocolo de Intervenção <span className="opacity-40 italic">Tática</span></h1>
                     </div>
-                    <p className="text-dim text-xl max-w-2xl font-light leading-relaxed">
-                        Execução coordenada de 7 dias desenhada para quebrar a inércia, neutralizar falhas de percepção e estabelecer um novo padrão de autoridade cirúrgica.
+                    <p className="text-dim text-2xl max-w-2xl font-light leading-relaxed">
+                        Sequência estratégica de 7 dias desenhada para quebrar a inércia e estabelecer autoridade clínica no seu nicho.
                     </p>
                 </header>
 
-                {/* Plan Grid */}
-                <div className="border-t-2 border-soft-black reveal stagger">
+                {/* 3. The Central Strategy Grid */}
+                <div className="border border-technical bg-white reveal">
                     {plan.map((item, idx) => (
                         <div
                             key={item.day}
-                            className="grid md:grid-cols-[160px_1fr_420px] border-b border-technical group last:border-b-0"
+                            className="grid md:grid-cols-[160px_1fr_420px] border-b border-technical last:border-b-0 group"
                         >
-                            {/* Day Identification */}
-                            <div className="p-10 border-r border-technical flex flex-col justify-center items-start md:items-center space-y-1">
-                                <p className="label-meta text-[10px] opacity-40">STRAT_DAY</p>
-                                <p className="text-6xl font-semibold tracking-tighter leading-none">0{item.day}</p>
+                            {/* Col 1: Chronology */}
+                            <div className="p-10 border-r border-technical flex flex-col justify-center items-center bg-neutral-sand/10">
+                                <span className="label-meta opacity-40 mb-2">Strat_Day</span>
+                                <span className="text-7xl font-semibold tracking-tighter text-soft-black">0{item.day}</span>
                             </div>
 
-                            {/* Tactical Instruction */}
-                            <div className="p-10 md:p-14 space-y-10">
+                            {/* Col 2: Tactical Instruction */}
+                            <div className="p-10 md:p-14 space-y-12">
                                 <div className="space-y-6">
-                                    <div className="inline-block bg-soft-black text-white px-4 py-1 font-mono text-[10px] tracking-widest">
-                                        ACTION::{item.format.toUpperCase()}
+                                    <div className="inline-block px-3 py-1 bg-soft-black text-white label-meta text-[9px]">
+                                        FORMAT::{item.format.toUpperCase()}
                                     </div>
-                                    <h3 className="text-2xl md:text-3xl font-medium leading-tight text-soft-black max-w-lg">
+                                    <h3 className="text-3xl font-medium text-soft-black leading-snug">
                                         {item.action}
                                     </h3>
                                 </div>
-
                                 <div className="space-y-3 pt-6 border-t border-technical">
-                                    <p className="label-meta text-[10px] text-accent-coral">Strategic_Foundation</p>
+                                    <span className="label-meta text-accent-coral">Psychology_Anchor</span>
                                     <p className="text-base text-dim italic leading-relaxed font-light">
                                         "{item.why}"
                                     </p>
                                 </div>
                             </div>
 
-                            {/* ChatGPT Bridge */}
-                            <div className="p-10 md:p-14 bg-neutral-sand/10 md:border-l border-technical flex flex-col space-y-8">
-                                <div className="flex justify-between items-center">
-                                    <p className="label-meta">Instruction_Set.xml</p>
-                                    <button
-                                        onClick={() => copyPrompt(item.prompt, item.day)}
-                                        className={`px-4 py-2 font-mono text-[10px] transition-all duration-300 flex items-center gap-2 ${copiedDay === item.day
-                                                ? 'bg-green-600 text-white'
-                                                : 'border border-soft-black text-soft-black hover:bg-soft-black hover:text-white'
-                                            }`}
-                                    >
-                                        {copiedDay === item.day ? (
-                                            <>
-                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7" strokeWidth={3} /></svg>
-                                                PROMPT_LOADED
-                                            </>
-                                        ) : 'COPY_INSTRUCTIONS'}
-                                    </button>
-                                </div>
-
-                                <div className="relative flex-1 group">
-                                    <div className="prompt-container h-full max-h-40 min-h-[120px] bg-white border border-technical p-6 text-[11px] leading-relaxed scrollbar-thin">
+                            {/* Col 3: ChatGPT Bridge */}
+                            <div className="p-10 md:p-14 bg-neutral-sand/20 md:border-l border-technical flex flex-col justify-between space-y-8">
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center">
+                                        <span className="label-meta">Instruction_Set</span>
+                                        <button
+                                            onClick={() => copyPrompt(item.prompt, item.day)}
+                                            className={`px-4 py-2 font-mono text-[10px] border transition-all duration-300 flex items-center gap-2 ${copiedDay === item.day
+                                                    ? 'bg-green-600 border-green-600 text-white'
+                                                    : 'border-soft-black text-soft-black hover:bg-soft-black hover:text-white'
+                                                }`}
+                                        >
+                                            {copiedDay === item.day ? 'DATA_COPIED' : 'COPY_INSTRUCTIONS'}
+                                        </button>
+                                    </div>
+                                    <div className="h-40 bg-white border border-technical p-5 text-[11px] font-mono leading-relaxed overflow-y-auto no-scrollbar opacity-60 group-hover:opacity-100 transition-opacity">
                                         {item.prompt}
                                     </div>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-50 pointer-events-none group-hover:opacity-0 transition-opacity"></div>
-                                    <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-neutral-sand text-[8px] font-mono opacity-40">AUTO_CONTEXT_ENABLED</div>
                                 </div>
-
                                 <div className="space-y-1">
-                                    <p className="text-[10px] font-mono text-neutral-grey">LINK_WITH_GPT_v4_OR_CLAUDE_3</p>
-                                    <p className="text-[9px] text-dim opacity-50">O prompt inclui contexto injetado baseado no seu diagnóstico.</p>
+                                    <span className="label-meta text-[9px] opacity-40">GPT_Context_Engine</span>
+                                    <p className="text-[10px] text-dim opacity-50 font-mono">:: Injecting Forensic Metadata into AI Prompt...</p>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                {/* Closing Sequence */}
-                <footer className="py-24 space-y-16 text-center border-t border-technical reveal">
-                    <div className="max-w-2xl mx-auto space-y-6">
-                        <p className="label-meta text-accent-coral tracking-[0.2em]">End_of_Sequence</p>
-                        <h2 className="text-4xl md:text-5xl font-medium leading-tight">
-                            A diferença entre um plano e uma memória é a <span className="text-accent-coral">velocidade de execução.</span>
+                {/* 4. Sequence Closure */}
+                <footer className="py-24 space-y-16 text-center reveal" style={{ animationDelay: '0.4s' }}>
+                    <div className="space-y-6 max-w-2xl mx-auto">
+                        <span className="label-meta text-accent-coral tracking-[0.2em]">Protocol_Closure</span>
+                        <h2 className="text-4xl italic font-medium leading-tight">
+                            "A diferença entre estratégia e ilusão é a velocidade de execução."
                         </h2>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-6 justify-center items-center no-print">
-                        <button onClick={onReset} className="btn-optikka bg-soft-black h-16 px-16">
+                    <div className="flex justify-center no-print">
+                        <button onClick={onReset} className="btn-optikka bg-soft-black px-16 h-16 text-lg">
                             REINICIAR AUTO-SCAN
                         </button>
                     </div>
 
-                    <div className="pt-16 grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl mx-auto border-t border-technical opacity-40">
-                        <div className="text-left space-y-1">
-                            <p className="label-meta text-[9px]">MISSION_TAG</p>
-                            <p className="text-[10px] font-medium">LUZZIA_EXEC_01</p>
+                    <div className="pt-16 border-t border-technical grid grid-cols-2 md:grid-cols-4 gap-12 opacity-30 text-left">
+                        <div className="space-y-1">
+                            <span className="label-meta">Security</span>
+                            <span className="text-[10px] font-medium">AES_256_ACTIVE</span>
                         </div>
-                        <div className="text-left space-y-1">
-                            <p className="label-meta text-[9px]">ENCRYPTION</p>
-                            <p className="text-[10px] font-medium">RSA_4096_ACTIVE</p>
+                        <div className="space-y-1">
+                            <span className="label-meta">Validation</span>
+                            <span className="text-[10px] font-medium">LUZZIA_INTERNAL</span>
                         </div>
-                        <div className="text-left space-y-1">
-                            <p className="label-meta text-[9px]">LATENCY</p>
-                            <p className="text-[10px] font-medium">0.86ms</p>
+                        <div className="space-y-1">
+                            <span className="label-meta">System</span>
+                            <span className="text-[10px] font-medium">DEPLOY_TAG_04</span>
                         </div>
-                        <div className="text-left space-y-1">
-                            <p className="label-meta text-[9px]">LEGAL</p>
-                            <p className="text-[10px] font-medium">PROPRIETARY_SYSTEM</p>
+                        <div className="space-y-1">
+                            <span className="label-meta">Stability</span>
+                            <span className="text-[10px] font-medium">99.98%_UP</span>
                         </div>
                     </div>
                 </footer>
+
             </div>
         </div>
     );

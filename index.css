@@ -2,36 +2,30 @@
 @import "tailwindcss";
 
 /* ============================================
-   OPTIKKA - DESIGN SYSTEM v1.0
-   Design as Code • Interface as System
+   OPTIKKA - DESIGN SYSTEM v2.1
+   Obsessive Alignment • Technical Clarity
    ============================================ */
 
 :root {
-  /* OPTIKKA Core Palette */
   --neutral-sand: #F2ECE4;
   --neutral-warm: #EFE7DD;
   --neutral-grey: #6E6D6B;
   --soft-black: #111111;
   --accent-coral: #E67E5F;
-  /* Burnt orange / technical coral */
 
-  /* System Colors */
   --bg-main: var(--neutral-sand);
-  --bg-elevated: #ffffff;
+  --bg-white: #ffffff;
   --text-main: var(--soft-black);
   --text-dim: #555555;
-  --border-technical: rgba(17, 17, 17, 0.08);
-  --border-heavy: rgba(17, 17, 17, 0.2);
+  --border-technical: rgba(17, 17, 17, 0.12);
+  --border-heavy: #111111;
 
-  /* Grid & Units */
   --unit: 8px;
-
-  /* Animations */
   --ease-op: cubic-bezier(0.2, 1, 0.3, 1);
-  --duration: 0.25s;
+  --duration: 0.2s;
 }
 
-/* --- Base & Reset --- */
+/* --- Base --- */
 * {
   margin: 0;
   padding: 0;
@@ -43,189 +37,134 @@ body {
   color: var(--text-main);
   font-family: 'Inter', -apple-system, sans-serif;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Explicit Grid Aesthetic */
+/* Grid Aesthetic */
 .optikka-grid {
-  background-image: linear-gradient(var(--border-technical) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border-technical) 1px, transparent 1px);
+  background-image: radial-gradient(var(--border-technical) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-/* --- Layout --- */
+/* --- Rigid Layout --- */
 .container-optikka {
-  max-width: 1152px;
-  /* 12 cols x 96px or similar 8pt alignment */
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 40px;
 }
 
-.modular-section {
-  border: 1px solid var(--border-technical);
-  background: white;
+@media (max-width: 768px) {
+  .container-optikka {
+    padding: 0 20px;
+  }
 }
 
-/* --- Typography --- */
+/* --- Typography (Clinical) --- */
 h1 {
-  font-size: 40px;
+  font-size: clamp(48px, 8vw, 72px);
   font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
+  letter-spacing: -0.05em;
+  line-height: 0.95;
 }
 
 h2 {
-  font-size: 28px;
+  font-size: clamp(32px, 5vw, 48px);
   font-weight: 500;
-  letter-spacing: -0.02em;
-}
-
-h3 {
-  font-size: 18px;
-  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
 .label-meta {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   color: var(--neutral-grey);
+  display: block;
 }
 
 /* --- Components --- */
 
-/* Input OPTIKKA */
-.optikka-input {
-  width: 100%;
-  height: 56px;
-  background: transparent;
-  border-bottom: 2px solid var(--border-heavy);
-  font-size: 24px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  transition: all var(--duration) var(--ease-op);
-}
-
-.optikka-input:focus {
-  outline: none;
-  border-bottom-color: var(--accent-coral);
-}
-
-.optikka-input::placeholder {
-  color: var(--neutral-grey);
-  opacity: 0.3;
-}
-
-/* Button OPTIKKA */
 .btn-optikka {
-  height: 48px;
-  padding: 0 32px;
+  height: 56px;
+  padding: 0 40px;
   background: var(--soft-black);
   color: white;
-  font-weight: 500;
-  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration) var(--ease-op);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all var(--duration) var(--ease-op);
 }
 
 .btn-optikka:hover {
   background: var(--accent-coral);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .btn-optikka-ghost {
   background: transparent;
   color: var(--soft-black);
-  border: 1px solid var(--border-heavy);
+  border: 1px solid var(--soft-black);
 }
 
-.btn-optikka-ghost:hover {
-  background: rgba(17, 17, 17, 0.05);
-  border-color: var(--soft-black);
-}
-
-/* Progress / Steps */
-.step-bar {
-  height: 2px;
-  background: var(--border-technical);
+/* Precise Input */
+.optikka-input {
   width: 100%;
-  position: relative;
-  overflow: hidden;
+  height: 64px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--border-technical);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  padding: 0;
+  transition: border-color var(--duration);
 }
 
-.step-inner {
-  height: 100%;
-  background: var(--accent-coral);
-  width: 0;
-  transition: width 1s var(--ease-op);
+.optikka-input:focus {
+  outline: none;
+  border-bottom-color: var(--soft-black);
 }
 
-/* Analysis Block */
-.analysis-cell {
-  padding: 32px;
-  border-bottom: 1px solid var(--border-technical);
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 48px;
-}
-
-@media (max-width: 768px) {
-  .analysis-cell {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 24px 16px;
-  }
-}
-
-/* Prompt Box */
-.prompt-container {
-  background: #F8F6F4;
+/* Data Cells */
+.data-cell {
   border: 1px solid var(--border-technical);
-  padding: 16px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  line-height: 1.6;
-  color: var(--text-dim);
-  overflow-y: auto;
-  max-height: 150px;
+  background: var(--bg-white);
+  padding: 40px;
 }
 
-/* Badge Technical */
+.data-row {
+  display: grid;
+  border-bottom: 1px solid var(--border-technical);
+}
+
+.data-row:last-child {
+  border-bottom: none;
+}
+
+/* Badge */
 .badge-optikka {
-  padding: 2px 10px;
-  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
   font-weight: 600;
+  padding: 4px 12px;
   text-transform: uppercase;
-  background: var(--border-technical);
-  color: var(--neutral-grey);
+  letter-spacing: 0.1em;
 }
 
-.badge-status-red {
-  background: rgba(225, 29, 72, 0.1);
-  color: #E11D48;
-}
-
-.badge-status-gold {
-  background: rgba(217, 119, 6, 0.1);
-  color: #D97706;
-}
-
-.badge-status-green {
-  background: rgba(16, 185, 129, 0.1);
-  color: #10B981;
-}
-
-/* Animations */
+/* --- Animations --- */
 .reveal {
   opacity: 0;
-  transform: translateY(10px);
-  animation: revealUp 0.6s var(--ease-op) forwards;
+  transform: translateY(15px);
+  animation: revealUp 0.8s var(--ease-op) forwards;
 }
 
 @keyframes revealUp {
@@ -235,17 +174,43 @@ h3 {
   }
 }
 
-.will-change-transform {
-  will-change: transform, opacity;
+/* --- Utils --- */
+.border-b-tech {
+  border-bottom: 1px solid var(--border-technical);
 }
 
-/* --- Utils --- */
-.border-x {
+.border-t-tech {
+  border-top: 1px solid var(--border-technical);
+}
+
+.border-l-tech {
   border-left: 1px solid var(--border-technical);
+}
+
+.border-r-tech {
   border-right: 1px solid var(--border-technical);
 }
 
-.border-y {
-  border-top: 1px solid var(--border-technical);
-  border-bottom: 1px solid var(--border-technical);
+.bg-warm {
+  background-color: var(--neutral-sand);
+}
+
+.bg-warm-soft {
+  background-color: var(--neutral-warm);
+}
+
+/* Print Overrides */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .container-optikka {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
 }
