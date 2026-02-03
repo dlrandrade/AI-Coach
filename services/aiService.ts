@@ -1,6 +1,6 @@
 // OpenRouter Configuration
 const OPENROUTER_API_KEY = "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";
-const OPENROUTER_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
+const OPENROUTER_MODEL = "openai/gpt-oss-120b:free"; // Updated to GPT-OSS-120B
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 // LUZZIA NEURAL PROTOCOL v5.0 (Enhanced Persona & Rich Content)

@@ -189,17 +189,17 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
                         <a href="https://github.com/dlrandrade/AI-Coach" target="_blank" rel="noreferrer" className="hidden md:block text-[var(--gray-muted)] font-mono text-xs">
                             SESSION_ID: {Math.random().toString(36).substring(7).toUpperCase()}
-                    </div>
+                        </a>
 
-                    <div className="flex gap-4 w-full md:w-auto">
-                        <button onClick={onReset} className="btn-outline h-12 px-8 rounded-full text-xs font-bold uppercase w-full md:w-auto">
-                            REINICIAR MISSÃO
-                        </button>
+                        <div className="flex gap-4 w-full md:w-auto">
+                            <button onClick={onReset} className="btn-outline h-12 px-8 rounded-full text-xs font-bold uppercase w-full md:w-auto">
+                                REINICIAR MISSÃO
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
         </div >
     );
 };
