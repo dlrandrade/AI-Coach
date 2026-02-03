@@ -29,10 +29,14 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
             <header className="mb-12 border-b-2 border-white pb-6">
                 <h2 className="text-xs font-mono text-gray-400">PLANO TÁTICO</h2>
                 <h1 className="text-3xl md:text-5xl font-bold tracking-tighter uppercase">
-                    PROTOCOL: 7 DIAS
+                    PROTOCOLO: 7 DIAS
                 </h1>
                 <p className={`mt-2 font-mono text-sm ${verdictColor}`}>
                     FOCO: {result?.verdict || "RECONSTRUÇÃO TOTAL"}
+                </p>
+                <p className="mt-4 text-xs font-mono text-gray-600 flex items-center gap-2">
+                    <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    Análise gerada por IA • Llama 3.3 70B
                 </p>
             </header>
 
@@ -64,7 +68,7 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
                     onClick={onReset}
                     className="brutal-btn w-full md:w-auto bg-white text-black hover:bg-red-600 hover:text-white border-none"
                 >
-                    ENERRAR SESSÃO
+                    ENCERRAR SESSÃO
                 </button>
             </div>
         </div>

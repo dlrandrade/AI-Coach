@@ -20,6 +20,10 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                     <h1 className="text-3xl md:text-5xl font-bold tracking-tighter">
                         @{handle}
                     </h1>
+                    <p className="mt-2 text-xs font-mono text-gray-600 flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        Diagnóstico gerado por IA
+                    </p>
                 </div>
                 <div className="text-right">
                     <p className="text-xs font-mono text-red-500 animate-pulse">
