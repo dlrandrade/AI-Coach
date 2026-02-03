@@ -37,7 +37,7 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                         </div>
 
                         <div className={`border-l-4 pl-6 py-2 transition-all duration-300 ${block.score === 'fraco' ? 'border-red-600' :
-                                block.score === 'medio' ? 'border-yellow-500' : 'border-blue-600'
+                            block.score === 'medio' ? 'border-yellow-500' : 'border-blue-600'
                             }`}>
                             <h3 className="text-lg font-bold uppercase tracking-wide mb-2">
                                 {block.title}
@@ -48,7 +48,7 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
 
                             <div className="mt-2 text-xs font-mono uppercase">
                                 STATUS: <span className={`${block.score === 'fraco' ? 'text-red-500' :
-                                        block.score === 'medio' ? 'text-yellow-500' : 'text-blue-500'
+                                    block.score === 'medio' ? 'text-yellow-500' : 'text-blue-500'
                                     } font-bold`}>{block.score}</span>
                             </div>
                         </div>
@@ -73,7 +73,7 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                     onClick={onNext}
                     className="relative z-10 brutal-btn w-full md:w-auto text-xl bg-white text-black hover:bg-red-600 hover:text-white border-none"
                 >
-          VER PLANO DE 7 DIAS ->
+                    VER PLANO DE 7 DIAS →
                 </button>
             </div>
 
