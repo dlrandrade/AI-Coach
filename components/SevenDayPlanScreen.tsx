@@ -7,32 +7,9 @@ interface SevenDayPlanScreenProps {
     onReset: () => void;
 }
 
-const formatLabels: Record<string, string> = {
-    story: 'story',
-    stories: 'story',
-    reel: 'reel',
-    reels: 'reel',
-    carrossel: 'carrossel',
-    carousel: 'carrossel',
-    bio: 'bio',
-    destaque: 'destaque',
-    feed: 'feed',
-};
-
 export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, result, onReset }) => {
     const plan = result?.plan;
-    const [expandedPrompts, setExpandedPrompts] = useState<Set<number>>(new Set());
     const [copiedDay, setCopiedDay] = useState<number | null>(null);
-
-    const togglePrompt = (day: number) => {
-        const newExpanded = new Set(expandedPrompts);
-        if (newExpanded.has(day)) {
-            newExpanded.delete(day);
-        } else {
-            newExpanded.add(day);
-        }
-        setExpandedPrompts(newExpanded);
-    };
 
     const copyPrompt = async (prompt: string, day: number) => {
         try {
@@ -46,138 +23,110 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
     if (!plan || plan.length === 0) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <p className="text-muted mb-4">Plano não disponível</p>
-                    <button onClick={onReset} className="btn btn-primary">Voltar</button>
+            <div className="min-h-screen flex items-center justify-center p-6">
+                <div className="text-center space-y-4">
+                    <p className="font-mono text-xs text-subtle">NULL_PLAN_ERROR</p>
+                    <button onClick={onReset} className="btn-premium">VOLTAR</button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen py-12 md:py-16">
-            <div className="container">
+        <div className="min-h-screen py-16 md:py-24">
+            <div className="container max-w-4xl space-y-16">
                 {/* Header */}
-                <header className="mb-10 animate-fade-in-up">
-                    <div className="flex items-center gap-2 mb-4">
-                        <div className="pulse-dot"></div>
-                        <span className="mono text-xs text-muted">Plano personalizado</span>
+                <header className="space-y-4 pb-12 border-b border-light reveal">
+                    <div className="inline-flex items-center gap-2">
+                        <span className="font-mono text-[10px] text-accent bg-accent-soft px-2 py-0.5 rounded tracking-widest uppercase">
+                            Target: @{handle}
+                        </span>
+                        <span className="font-mono text-[10px] text-subtle">//</span>
+                        <span className="font-mono text-[10px] text-subtle uppercase tracking-widest">
+                            Strategic_Reconstruction_v1.0
+                        </span>
                     </div>
-
-                    <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-2">
-                        Protocolo de 7 dias
+                    <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
+                        Protocolo <span className="text-dim">de 7 Dias</span>
                     </h1>
-
-                    <p className="text-secondary text-sm">
-                        Plano estratégico para <span className="font-medium text-primary">@{handle}</span>
-                    </p>
-
-                    <p className="mono text-xs text-muted mt-3">
-                        Cada dia inclui um prompt completo para o ChatGPT gerar seu conteúdo
+                    <p className="text-dim max-w-lg">
+                        Plano de intervenção tática para quebrar padrões psicológicos e reconstruir autoridade.
                     </p>
                 </header>
 
-                {/* Days */}
-                <div className="space-y-4 stagger-children">
-                    {plan.map((item) => {
-                        const formatKey = (item.format || '').toLowerCase();
-                        const formatClass = formatLabels[formatKey] || formatKey;
-                        const isExpanded = expandedPrompts.has(item.day);
-                        const isCopied = copiedDay === item.day;
+                {/* Plan Days */}
+                <div className="space-y-4 stagger">
+                    {plan.map((item) => (
+                        <div key={item.day} className="autopsy-card reveal flex flex-col md:flex-row gap-8">
+                            {/* Day Number Column */}
+                            <div className="md:w-32 flex-shrink-0">
+                                <p className="font-mono text-[10px] text-subtle mb-1">STRAT_DAY</p>
+                                <p className="text-4xl font-semibold text-accent">0{item.day}</p>
+                            </div>
 
-                        return (
-                            <div key={item.day} className="card">
-                                {/* Day Header */}
-                                <div className="flex items-start gap-4 mb-4">
-                                    <span className="mono text-2xl font-semibold text-muted">
-                                        {item.day < 10 ? `0${item.day}` : item.day}
-                                    </span>
-
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            {item.format && (
-                                                <span className={`badge badge-format ${formatClass}`}>
-                                                    {formatClass}
-                                                </span>
-                                            )}
-                                        </div>
+                            {/* Content Column */}
+                            <div className="flex-1 space-y-8">
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <span className={`status-badge !rounded-none !bg-accent !text-white !border-none !px-3`}>
+                                            {item.format.toUpperCase()}
+                                        </span>
                                     </div>
+                                    <h3 className="text-xl md:text-2xl font-medium leading-tight">
+                                        {item.action || item.task}
+                                    </h3>
                                 </div>
 
-                                {/* Action */}
-                                <p className="text-sm text-primary leading-relaxed mb-4">
-                                    {item.action || item.task}
-                                </p>
-
-                                {/* Why */}
-                                {item.why && (
-                                    <div className="p-3 rounded-lg bg-subtle mb-4">
-                                        <p className="mono text-xs text-success mb-1">Por que isso funciona</p>
-                                        <p className="text-xs text-secondary">{item.why}</p>
-                                    </div>
-                                )}
+                                <div className="space-y-3 p-6 bg-accent-soft border-l-2 border-accent">
+                                    <p className="font-mono text-[10px] text-subtle">PSYCH_OBJECTIVE</p>
+                                    <p className="text-sm text-dim leading-relaxed italic">
+                                        "{item.why}"
+                                    </p>
+                                </div>
 
                                 {/* Prompt Section */}
                                 {item.prompt && (
-                                    <div className="prompt-box">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <p className="mono text-xs text-muted">
-                                                Prompt para o ChatGPT
-                                            </p>
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => togglePrompt(item.day)}
-                                                    className="copy-btn"
-                                                >
-                                                    {isExpanded ? 'Recolher' : 'Expandir'}
-                                                </button>
-                                                <button
-                                                    onClick={() => copyPrompt(item.prompt, item.day)}
-                                                    className={`copy-btn ${isCopied ? 'copied' : ''}`}
-                                                >
-                                                    {isCopied ? '✓ Copiado!' : 'Copiar'}
-                                                </button>
-                                            </div>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between border-b border-ultra-light pb-2">
+                                            <p className="font-mono text-[10px] text-subtle">CHAT_GPT_PROMPT</p>
+                                            <button
+                                                onClick={() => copyPrompt(item.prompt, item.day)}
+                                                className={`font-mono text-[10px] px-3 py-1 border transition-all duration-300 ${copiedDay === item.day
+                                                        ? 'bg-green-500 border-green-500 text-white'
+                                                        : 'border-light text-subtle hover:text-accent hover:border-accent'
+                                                    }`}
+                                            >
+                                                {copiedDay === item.day ? 'PROMPT_COPIED' : 'COPY_PROMPT'}
+                                            </button>
                                         </div>
-                                        <pre className={isExpanded ? 'max-h-none' : ''}>
-                                            {item.prompt}
-                                        </pre>
+                                        <div className="relative group">
+                                            <pre className="text-xs text-subtle bg-white p-4 border border-ultra-light max-h-32 overflow-y-auto font-mono scrollbar-thin">
+                                                {item.prompt}
+                                            </pre>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent pointer-events-none group-hover:opacity-0 transition-opacity"></div>
+                                        </div>
                                     </div>
                                 )}
                             </div>
-                        );
-                    })}
+                        </div>
+                    ))}
                 </div>
 
-                {/* Info Box */}
-                <div className="mt-10 p-6 rounded-xl bg-subtle border border-light animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-                    <h3 className="text-sm font-semibold mb-2">Como usar os prompts</h3>
-                    <ol className="text-xs text-secondary space-y-2">
-                        <li>1. Clique em "Copiar" no prompt do dia</li>
-                        <li>2. Cole no ChatGPT (ou Claude)</li>
-                        <li>3. O conteúdo será gerado baseado no seu diagnóstico específico</li>
-                        <li>4. Adapte conforme necessário e publique</li>
-                    </ol>
-                </div>
+                {/* Final Footer */}
+                <div className="pt-20 border-t border-light flex flex-col items-center gap-8 reveal">
+                    <div className="text-center space-y-2">
+                        <p className="font-mono text-[10px] text-subtle uppercase tracking-widest">End_of_Protocol</p>
+                        <h3 className="text-lg font-medium">A execução é o único diagnóstico real.</h3>
+                    </div>
 
-                {/* Footer Actions */}
-                <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                    <button onClick={onReset} className="btn btn-primary">
-                        Nova Análise
+                    <button onClick={onReset} className="btn-premium">
+                        FINALIZAR SESSÃO E LIMPAR DADOS
                     </button>
-                    <button onClick={onReset} className="btn btn-secondary">
-                        Voltar ao início
-                    </button>
-                </div>
 
-                {/* Disclaimer */}
-                <footer className="mt-12 text-center">
-                    <p className="mono text-xs text-subtle">
-                        Este plano foi gerado por IA com base nos padrões identificados.
-                        A execução consistente é essencial para resultados.
+                    <p className="font-mono text-[9px] text-subtle max-w-xs text-center">
+                        AI_MODELS: LLAMA_3.3_70B // DOUG_ENGINE v4.0.2 // (c) 2026_NEURAL_AUTOPSY
                     </p>
-                </footer>
+                </div>
             </div>
         </div>
     );

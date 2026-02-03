@@ -11,116 +11,99 @@ interface DiagnosisScreenProps {
 export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result, onReset, onNext }) => {
     if (!result) return null;
 
-    const getBlockClass = (score: string) => {
-        switch (score) {
-            case 'fraco': return 'status-fraco';
-            case 'medio': return 'status-medio';
-            case 'forte': return 'status-forte';
-            default: return '';
-        }
-    };
-
-    const getBadgeClass = (score: string) => {
-        switch (score) {
-            case 'fraco': return 'badge badge-fraco';
-            case 'medio': return 'badge badge-medio';
-            case 'forte': return 'badge badge-forte';
-            default: return 'badge';
-        }
-    };
-
     return (
-        <div className="min-h-screen py-12 md:py-16">
-            <div className="container">
+        <div className="min-h-screen py-16 md:py-24">
+            <div className="container max-w-4xl space-y-16">
                 {/* Header */}
-                <header className="mb-10 animate-fade-in-up">
-                    <div className="flex items-center gap-2 mb-4">
-                        <div className="pulse-dot"></div>
-                        <span className="mono text-xs text-muted">Diagnóstico completo</span>
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pb-12 border-b border-light reveal">
+                    <div className="space-y-4">
+                        <div className="inline-flex items-center gap-2">
+                            <span className="font-mono text-[10px] text-red-500 bg-red-50 px-2 py-0.5 rounded tracking-widest uppercase">
+                                Report: Autopsy_Complete
+                            </span>
+                        </div>
+                        <h1 className="text-5xl font-semibold tracking-tight">
+                            @{handle}
+                        </h1>
+                        <p className="text-dim max-w-sm">
+                            Identificação de vulnerabilidades estruturais no posicionamento estratégico.
+                        </p>
                     </div>
 
-                    <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-2">
-                        @{handle}
-                    </h1>
-
-                    <p className="text-secondary text-sm">
-                        Análise de padrões psicológicos que afetam seu posicionamento
-                    </p>
+                    <div className="flex gap-10">
+                        <div className="text-right">
+                            <p className="font-mono text-[9px] text-subtle">DATE</p>
+                            <p className="text-xs font-medium">{new Date().toLocaleDateString('pt-BR')}</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="font-mono text-[9px] text-subtle">SENSITIVITY</p>
+                            <p className="text-xs font-medium text-red-500">LEVEL_HIGH</p>
+                        </div>
+                    </div>
                 </header>
 
-                {/* Blocks */}
-                <div className="space-y-4 stagger-children">
+                {/* Analysis Blocks */}
+                <div className="space-y-6 stagger">
                     {result.blocks.map((block, index) => (
-                        <div key={index} className={`analysis-block ${getBlockClass(block.score)}`}>
-                            {/* Block Header */}
-                            <div className="flex items-start justify-between gap-4 mb-4">
-                                <h3 className="text-base font-semibold">
-                                    {block.title}
+                        <div key={index} className="autopsy-card reveal">
+                            <div className="flex justify-between items-start mb-6">
+                                <h3 className="text-xs font-mono text-subtle tracking-widest uppercase">
+                                    Section_{index + 1}: {block.title}
                                 </h3>
-                                <span className={getBadgeClass(block.score)}>
-                                    {block.score}
+                                <span className={`status-badge status-${block.score}`}>
+                                    {block.score.toUpperCase()}
                                 </span>
                             </div>
 
-                            {/* Acusação */}
-                            {block.acusacao && (
-                                <p className="text-sm text-primary leading-relaxed mb-4">
+                            <div className="space-y-8">
+                                <p className="text-xl md:text-2xl text-accent font-medium leading-tight">
                                     {block.acusacao}
                                 </p>
-                            )}
 
-                            {/* Details */}
-                            <div className="grid gap-3 md:grid-cols-2">
-                                {block.medo && (
-                                    <div className="p-3 rounded-md bg-subtle">
-                                        <p className="mono text-xs text-muted mb-1">O medo por trás</p>
-                                        <p className="text-xs text-secondary">{block.medo}</p>
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div className="space-y-2">
+                                        <p className="font-mono text-[10px] text-subtle">ROOT_FEAR</p>
+                                        <p className="text-sm text-dim leading-relaxed">{block.medo}</p>
                                     </div>
-                                )}
-
-                                {block.custo && (
-                                    <div className="p-3 rounded-md bg-subtle border-l-2 border-danger/30">
-                                        <p className="mono text-xs text-danger mb-1">Custo real</p>
-                                        <p className="text-xs text-secondary">{block.custo}</p>
+                                    <div className="space-y-2">
+                                        <p className="font-mono text-[10px] text-red-500">ESTIMATED_COST</p>
+                                        <p className="text-sm text-dim leading-relaxed">{block.custo}</p>
                                     </div>
-                                )}
-                            </div>
-
-                            {/* Prova */}
-                            {block.prova && (
-                                <div className="mt-3 pt-3 border-t border-light">
-                                    <p className="mono text-xs text-muted mb-1">Prova observável</p>
-                                    <p className="text-xs text-muted">{block.prova}</p>
                                 </div>
-                            )}
 
-                            {/* Fallback */}
-                            {!block.acusacao && block.content && (
-                                <p className="text-sm text-secondary">{block.content}</p>
-                            )}
+                                <div className="pt-6 border-t border-ultra-light">
+                                    <p className="font-mono text-[10px] text-subtle">OBSERVABLE_EVIDENCE</p>
+                                    <p className="text-xs text-subtle italic mt-1">"{block.prova}"</p>
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>
 
-                {/* Verdict */}
-                <div className="mt-10 p-8 rounded-xl bg-card border border-light text-center animate-scale-in" style={{ animationDelay: '300ms' }}>
-                    <p className="mono text-xs text-muted uppercase tracking-wider mb-3">
-                        Conclusão
-                    </p>
-                    <h2 className="text-xl md:text-2xl font-semibold mb-8">
-                        {result.verdict}
-                    </h2>
+                {/* Final Verdict */}
+                <div className="reveal space-y-8 py-12 text-center" style={{ animationDelay: '0.4s' }}>
+                    <div className="inline-block p-12 bg-white border border-accent shadow-premium relative">
+                        {/* Decorative Corners */}
+                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent"></div>
+                        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-accent"></div>
+                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-accent"></div>
+                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent"></div>
 
-                    <button onClick={onNext} className="btn btn-primary">
-                        Ver plano de 7 dias →
-                    </button>
-                </div>
+                        <p className="font-mono text-[10px] text-subtle tracking-widest uppercase mb-6">Final_Verdict</p>
+                        <h2 className="text-2xl md:text-3xl font-semibold uppercase mb-10 leading-tight">
+                            "{result.verdict}"
+                        </h2>
 
-                {/* Secondary Action */}
-                <div className="text-center mt-6">
-                    <button onClick={onReset} className="btn btn-ghost">
-                        Analisar outro perfil
-                    </button>
+                        <button onClick={onNext} className="btn-premium">
+                            PROCESSAR PROTOCOLO DE 7 DIAS
+                        </button>
+                    </div>
+
+                    <div>
+                        <button onClick={onReset} className="font-mono text-[10px] text-subtle hover:text-accent transition-colors underline cursor-pointer">
+                            [ DESTROY_SESSION_AND_RESTART ]
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
