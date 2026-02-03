@@ -22,7 +22,7 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                     </h1>
                     <p className="mt-2 text-xs font-mono text-gray-600 flex items-center gap-2">
                         <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                        Diagnóstico gerado por IA
+                        Diagnóstico gerado por IA • Análise personalizada
                     </p>
                 </div>
                 <div className="text-right">
@@ -40,20 +40,35 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                             0{index + 1}
                         </div>
 
-                        <div className={`border-l-4 pl-6 py-2 transition-all duration-300 ${block.score === 'fraco' ? 'border-red-600' :
+                        <div className={`border-l-4 pl-6 py-4 transition-all duration-300 ${block.score === 'fraco' ? 'border-red-600' :
                             block.score === 'medio' ? 'border-yellow-500' : 'border-blue-600'
                             }`}>
-                            <h3 className="text-lg font-bold uppercase tracking-wide mb-2">
+                            <h3 className="text-lg font-bold uppercase tracking-wide mb-3">
                                 {block.title}
                             </h3>
-                            <p className="font-mono text-sm md:text-base leading-relaxed text-gray-300">
+                            <p className="font-mono text-sm md:text-base leading-relaxed text-gray-200">
                                 {block.content}
                             </p>
 
-                            <div className="mt-2 text-xs font-mono uppercase">
-                                STATUS: <span className={`${block.score === 'fraco' ? 'text-red-500' :
-                                    block.score === 'medio' ? 'text-yellow-500' : 'text-blue-500'
-                                    } font-bold`}>{block.score}</span>
+                            {/* Justificativa - Nova seção */}
+                            {block.justificativa && (
+                                <div className="mt-4 pt-3 border-t border-gray-800">
+                                    <p className="text-xs font-mono text-gray-500 uppercase mb-1">
+                                        → Por que cheguei a essa conclusão:
+                                    </p>
+                                    <p className="text-sm font-mono text-gray-400 italic">
+                                        "{block.justificativa}"
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="mt-4 text-xs font-mono uppercase flex items-center gap-3">
+                                <span>STATUS:</span>
+                                <span className={`${block.score === 'fraco' ? 'text-red-500 bg-red-500/10' :
+                                    block.score === 'medio' ? 'text-yellow-500 bg-yellow-500/10' : 'text-blue-500 bg-blue-500/10'
+                                    } font-bold px-2 py-1`}>
+                                    {block.score.toUpperCase()}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -62,9 +77,8 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
 
             {/* The Verdict */}
             <div className="mt-16 border-2 border-white p-6 md:p-12 text-center relative overflow-hidden">
-                {/* Background diag stripes */}
-                <div className="absolute inset-0 opacity-10"
-                    style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%0)' }} />
+                <div className="absolute inset-0 opacity-5"
+                    style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 10px)' }} />
 
                 <p className="relative z-10 text-sm font-mono text-gray-400 mb-4">
                     SENTENÇA FINAL
