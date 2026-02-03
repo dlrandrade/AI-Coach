@@ -2,43 +2,50 @@
 @import "tailwindcss";
 
 /* ============================================
-   NEURELIC-008 — DESIGN SYSTEM
-   Codinome: NEURELIC.DS
-   Essência: Dark-tech, precisão, inteligência mensurável.
+   NEURELIC-008 — DESIGN SYSTEM v2.0
+   Bordas uniformes, espaçamentos padronizados
    ============================================ */
 
 :root {
-  /* 02 · CORES (TOKENS) */
-  /* Core Palette */
+  /* CORES */
   --black-absolute: #050505;
   --black-deep: #0B0F0E;
   --black-panel: #111615;
   --black-soft: #161B1A;
 
-  /* Primary Accent (Neon Green) */
   --green-core: #0FB355;
   --green-soft: #50DC95;
   --green-muted: #3B5A4A;
 
-  /* Support / Neutral */
   --gray-light: #D4D7D6;
   --gray-muted: #9DB9AC;
   --gray-dark: #1F2A27;
 
-  /* Alert / Highlight */
   --orange-action: #F42B0D;
 
-  /* 03 · TIPOGRAFIA */
+  /* TIPOGRAFIA */
   --font-primary: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* === DESIGN TOKENS UNIFORMES === */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 999px;
+
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 80px;
 }
 
-/* 01 · FUNDAMENTOS */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* BASE */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   background-color: var(--black-absolute);
@@ -50,28 +57,23 @@ body {
   overflow-x: hidden;
 }
 
-/* 04 · GRID & LAYOUT */
+/* LAYOUT */
 .container-neurelic {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--space-lg);
 }
 
-/* 03 · TIPOGRAFIA */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--white);
+/* TIPOGRAFIA */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--gray-light);
   letter-spacing: -0.04em;
 }
 
 .hero-title {
   font-family: var(--font-primary);
   font-weight: 800;
-  font-size: clamp(48px, 8vw, 120px);
+  font-size: clamp(48px, 8vw, 100px);
   text-transform: uppercase;
   color: var(--green-core);
   line-height: 0.9;
@@ -79,7 +81,7 @@ h6 {
 
 .section-title {
   font-weight: 700;
-  font-size: clamp(32px, 4vw, 40px);
+  font-size: clamp(24px, 4vw, 36px);
   color: var(--gray-light);
   letter-spacing: -0.02em;
 }
@@ -93,66 +95,75 @@ h6 {
   color: var(--gray-muted);
 }
 
-/* 05 · COMPONENTES */
+/* === COMPONENTES COM BORDAS UNIFORMES === */
 
-/* BOTÃO (CTA) */
+/* BOTÃO PRINCIPAL */
 .btn-neurelic {
   height: 48px;
-  padding: 0 32px;
+  padding: 0 var(--space-xl);
   background-color: var(--green-core);
   color: var(--black-absolute);
   font-weight: 600;
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .btn-neurelic:hover {
   background-color: var(--green-soft);
-  transform: scale(1.02);
-  box-shadow: 0 0 20px rgba(15, 179, 85, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 179, 85, 0.3);
 }
 
 .btn-neurelic:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
+.btn-neurelic:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* BOTÃO OUTLINE */
 .btn-outline {
   background: transparent;
   color: var(--green-core);
   border: 1px solid var(--green-core);
+  border-radius: var(--radius-md);
 }
 
 .btn-outline:hover {
   background: rgba(15, 179, 85, 0.1);
+  transform: translateY(-2px);
 }
 
 /* INPUT */
 .input-neurelic {
   width: 100%;
-  height: 64px;
+  height: 56px;
   background: var(--black-panel);
   border: 1px solid var(--gray-dark);
   color: var(--green-core);
   font-family: var(--font-mono);
-  font-size: 24px;
-  padding: 0 24px;
-  border-radius: 12px;
+  font-size: 20px;
+  padding: 0 var(--space-lg);
+  border-radius: var(--radius-md);
   transition: all 0.3s ease;
 }
 
 .input-neurelic:focus {
   outline: none;
   border-color: var(--green-core);
-  box-shadow: 0 0 0 1px var(--green-core);
+  box-shadow: 0 0 0 2px rgba(15, 179, 85, 0.2);
 }
 
 .input-neurelic::placeholder {
@@ -160,19 +171,18 @@ h6 {
   font-family: var(--font-primary);
 }
 
-/* CARD (GLASS TECH) */
+/* CARD */
 .card-tech {
   background: linear-gradient(180deg, var(--black-panel), var(--black-absolute));
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-  padding: 32px;
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  padding: var(--space-xl);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .card-tech:hover {
-  border-color: rgba(15, 179, 85, 0.2);
-  transform: translateY(-4px);
+  border-color: rgba(15, 179, 85, 0.15);
 }
 
 /* SCORE BAR */
@@ -180,15 +190,15 @@ h6 {
   width: 100%;
   height: 6px;
   background-color: var(--black-panel);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  position: relative;
 }
 
 .score-fill {
   height: 100%;
   background-color: var(--green-core);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
+  transition: width 1s ease-out;
 }
 
 /* LABEL TÉCNICA */
@@ -197,72 +207,46 @@ h6 {
   border: 1px solid var(--gray-dark);
   color: var(--green-muted);
   font-family: var(--font-mono);
-  font-size: 11px;
-  border-radius: 6px;
-  padding: 6px 10px;
+  font-size: 10px;
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
   display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 /* UTILS */
-.text-accent {
-  color: var(--green-core);
-}
-
-.text-dim {
-  color: var(--gray-muted);
-}
-
-.border-tech {
-  border: 1px solid var(--gray-dark);
-}
-
-.bg-tech {
-  background-color: var(--black-panel);
-}
+.text-accent { color: var(--green-core); }
+.text-dim { color: var(--gray-muted); }
+.border-tech { border: 1px solid var(--gray-dark); border-radius: var(--radius-md); }
+.bg-tech { background-color: var(--black-panel); }
 
 /* ANIMATION */
-@keyframes scanline {
-  0% {
-    transform: translateY(-100%);
-  }
-
-  100% {
-    transform: translateY(100%);
-  }
-}
-
 .reveal {
   animation: reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(16px);
 }
 
 @keyframes reveal {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* PRINT OVERRIDES */
+/* SCROLLBAR */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--black-absolute);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--gray-dark);
+  border-radius: var(--radius-sm);
+}
+
+/* PRINT */
 @media print {
-  body {
-    background-color: white !important;
-    color: black !important;
-  }
-
-  .card-tech {
-    border: 1px solid #ccc !important;
-    box-shadow: none !important;
-    color: black !important;
-  }
-
-  .text-accent {
-    color: black !important;
-    font-weight: bold;
-  }
-
-  .btn-neurelic {
-    display: none !important;
-  }
+  body { background-color: white !important; color: black !important; }
+  .card-tech { border: 1px solid #ccc !important; box-shadow: none !important; }
+  .btn-neurelic { display: none !important; }
 }
