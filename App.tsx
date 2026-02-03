@@ -11,14 +11,15 @@ function App() {
   const [handle, setHandle] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
 
-  const handleAnalyze = async (inputHandle: string) => {
+  const handleAnalyze = async (inputHandle: string, planDays: 7 | 30) => {
     setHandle(inputHandle);
     setScreen('LOADING');
 
     try {
+      const minDelay = new Promise(resolve => setTimeout(resolve, 4000));
       const [analysisResult] = await Promise.all([
-        analyzeProfile(inputHandle),
-        new Promise(resolve => setTimeout(resolve, 3000))
+        analyzeProfile(inputHandle, planDays),
+        minDelay
       ]);
       setResult(analysisResult);
       setScreen('DIAGNOSIS');
