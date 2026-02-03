@@ -5,31 +5,26 @@ interface InputScreenProps {
   isLoading: boolean;
 }
 
-const LOADING_MESSAGES = [
-  "Verificando @handle...",
-  "Indexando últimas postagens...",
-  "Lendo legendas em busca de padrões de linguagem...",
-  "Analisando estética visual das imagens...",
-  "Escaneando métricas de engajamento...",
-  "Correlacionando bio com promessa de mercado...",
-  "Mapeando pontos cegos psicológicos...",
-  "Sintonizando modelo neural de autópsia...",
-  "Finalizando diagnóstico..."
+const LOADING_STEPS = [
+  { label: "INDEXING", desc: "Varrendo banco de dados @handle", progress: 15 },
+  { label: "VISUAL_SCAN", desc: "Analisando consistência visual dos últimos posts", progress: 35 },
+  { label: "LINGUISTIC_AUDIT", desc: "Lendo legendas e padrões de linguagem na Bio", progress: 55 },
+  { label: "NEURAL_MAPPING", desc: "Correlacionando nicho com gatilhos de autoridade", progress: 80 },
+  { label: "REPORT_GEN", desc: "Finalizando diagnóstico técnico LuzzIA", progress: 95 }
 ];
 
 export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }) => {
   const [handle, setHandle] = useState('');
-  const [messageIndex, setMessageIndex] = useState(0);
+  const [stepIndex, setStepIndex] = useState(0);
 
-  // Rotate loading messages
   useEffect(() => {
     if (isLoading) {
       const interval = setInterval(() => {
-        setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
-      }, 2500);
+        setStepIndex((prev) => (prev < LOADING_STEPS.length - 1 ? prev + 1 : prev));
+      }, 3000);
       return () => clearInterval(interval);
     } else {
-      setMessageIndex(0);
+      setStepIndex(0);
     }
   }, [isLoading]);
 
@@ -43,25 +38,31 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-white">
-        <div className="w-full max-w-sm text-center space-y-12 reveal">
-          {/* Scanner Visual */}
-          <div className="relative h-48 w-full border border-light bg-subtle overflow-hidden">
-            <div className="scanner-line"></div>
-            <div className="absolute inset-0 flex items-center justify-center opacity-10">
-              <span className="font-mono text-4xl">ANALYSIS_MODE</span>
-            </div>
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 optikka-grid">
+        <div className="w-full max-w-md space-y-12 reveal text-center">
+          <div className="space-y-2">
+            <p className="label-meta">Status: Analysis_In_Progress</p>
+            <h2 className="text-3xl font-medium">LuzzIA Escaneando @{handle}...</h2>
           </div>
 
-          <div className="space-y-4">
-            <p className="font-mono text-[10px] text-subtle tracking-[0.2em]">PROCESSING_NEURAL_SCAN</p>
-            <h2 className="text-xl font-medium tracking-tight">
-              @{handle.replace('@', '')}
-            </h2>
-            <div className="h-6 overflow-hidden">
-              <p className="text-sm text-dim transition-all duration-500 animate-slide-in" key={messageIndex}>
-                {LOADING_MESSAGES[messageIndex]}
-              </p>
+          <div className="space-y-6">
+            <div className="step-bar">
+              <div
+                className="step-inner"
+                style={{ width: `${LOADING_STEPS[stepIndex].progress}%` }}
+              ></div>
+            </div>
+
+            <div className="grid grid-cols-2 text-left gap-4">
+              <div className="space-y-1">
+                <p className="label-meta">{LOADING_STEPS[stepIndex].label}</p>
+                <p className="text-sm text-dim">{LOADING_STEPS[stepIndex].desc}</p>
+              </div>
+              <div className="text-right flex items-end justify-end">
+                <p className="text-2xl font-mono font-light tracking-tighter">
+                  {LOADING_STEPS[stepIndex].progress}%
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -70,74 +71,60 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-xl space-y-16 reveal">
-        {/* Brand Section */}
-        <header className="text-center space-y-6">
-          <div className="inline-flex items-center gap-3 px-4 py-2 bg-accent-soft rounded-full">
-            <div className="pulse-dot"></div>
-            <span className="font-mono text-[10px] tracking-wider text-accent uppercase">
-              Doug 2.0 Protocol Active
-            </span>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 optikka-grid">
+      <div className="container-optikka w-full flex flex-col items-center space-y-20 reveal">
+
+        {/* Header Section */}
+        <header className="text-center space-y-10">
+          <div className="space-y-2">
+            <p className="label-meta">LuzzIA // Technical Positioning System</p>
+            <h1 className="max-w-xl mx-auto">
+              Autópsia de Posicionamento Estratégico
+            </h1>
           </div>
 
-          <div className="space-y-2">
-            <h1 className="text-5xl md:text-6xl font-semibold tracking-tight leading-none">
-              Autópsia <br /> <span className="text-dim">do Instagram</span>
-            </h1>
-            <p className="text-dim text-lg max-w-md mx-auto">
-              Expondo os padrões invisíveis que travam seu crescimento e autoridade.
-            </p>
-          </div>
+          <p className="text-dim text-lg max-w-sm mx-auto">
+            Identifique os pontos cegos que impedem seu perfil de converter autoridade em negócio.
+          </p>
         </header>
 
-        {/* Form Section */}
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="technical-input-wrapper mx-auto">
-            <span className="tech-label top-2 left-3">TARGET_HANDLE</span>
-            <input
-              type="text"
-              value={handle}
-              onChange={(e) => setHandle(e.target.value)}
-              placeholder="seu_perfil"
-              className="technical-input text-center"
-              autoComplete="off"
-              spellCheck="false"
-            />
-            <span className="tech-label bottom-2 right-3">REQUIRED_FIELD</span>
-          </div>
-
-          <div className="text-center">
-            <button
-              type="submit"
-              className="btn-premium group"
-              disabled={!handle.trim()}
-            >
-              <span>INICIAR ESCANEAMENTO</span>
-              <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </button>
-          </div>
-        </form>
-
-        {/* Bottom Metadata */}
-        <footer className="pt-12 border-t border-light flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex gap-8">
-            <div className="space-y-1">
-              <p className="font-mono text-[9px] text-subtle">ACCURACY</p>
-              <p className="text-xs font-medium">HIGH_PRECISION</p>
+        {/* Main Action Area */}
+        <div className="w-full max-w-xl space-y-8 bg-white p-12 border border-heavy">
+          <form onSubmit={handleSubmit} className="space-y-12">
+            <div className="space-y-4">
+              <label className="label-meta pb-2 block border-b border-technical">Target Profile Handle</label>
+              <div className="relative">
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 text-2xl font-light text-neutral-grey opacity-30">@</span>
+                <input
+                  type="text"
+                  value={handle}
+                  onChange={(e) => setHandle(e.target.value)}
+                  placeholder="seu_usuario"
+                  className="optikka-input pl-8"
+                  autoComplete="off"
+                />
+              </div>
             </div>
-            <div className="space-y-1">
-              <p className="font-mono text-[9px] text-subtle">MODEL</p>
-              <p className="text-xs font-medium">NEURAL_DOUG_v4</p>
+
+            <div className="flex justify-between items-center">
+              <p className="label-meta text-[9px] max-w-[200px] leading-relaxed">
+                A análise processa padrões neurais e comportamentais do perfil alvo.
+              </p>
+              <button
+                type="submit"
+                className="btn-optikka"
+                disabled={!handle.trim()}
+              >
+                INICIAR AUTÓPSIA
+              </button>
             </div>
-          </div>
-          <div>
-            <p className="text-[10px] text-subtle max-w-[200px] text-center md:text-right italic">
-              Esta análise expõe vulnerabilidades psicológicas e falhas de posicionamento estratégico.
-            </p>
-          </div>
+          </form>
+        </div>
+
+        {/* Footer Meta */}
+        <footer className="w-full max-w-xl flex justify-between border-t border-technical pt-8 italic">
+          <p className="label-meta text-[9px]">Build 1.0.4 // OPTIKKA SYSTEM</p>
+          <p className="label-meta text-[9px]">LuzzIA Engine Active</p>
         </footer>
       </div>
     </div>

@@ -11,99 +11,123 @@ interface DiagnosisScreenProps {
 export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result, onReset, onNext }) => {
     if (!result) return null;
 
+    const getScoreBadge = (score: string) => {
+        const base = "badge-optikka";
+        switch (score) {
+            case 'fraco': return `${base} badge-status-red`;
+            case 'medio': return `${base} badge-status-gold`;
+            case 'forte': return `${base} badge-status-green`;
+            default: return base;
+        }
+    };
+
     return (
-        <div className="min-h-screen py-16 md:py-24">
-            <div className="container max-w-4xl space-y-16">
-                {/* Header */}
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 pb-12 border-b border-light reveal">
+        <div className="min-h-screen bg-white">
+            <div className="container-optikka py-20 space-y-24">
+
+                {/* Technical Header */}
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 pb-12 border-b-2 border-soft-black reveal">
                     <div className="space-y-4">
-                        <div className="inline-flex items-center gap-2">
-                            <span className="font-mono text-[10px] text-red-500 bg-red-50 px-2 py-0.5 rounded tracking-widest uppercase">
-                                Report: Autopsy_Complete
-                            </span>
+                        <div className="flex items-center gap-3">
+                            <span className="label-meta text-accent-coral">LuzzIA_Diagnostic_Report</span>
+                            <span className="text-neutral-grey opacity-20">/</span>
+                            <span className="label-meta tracking-tighter">ID: {Math.random().toString(36).substring(7).toUpperCase()}</span>
                         </div>
-                        <h1 className="text-5xl font-semibold tracking-tight">
-                            @{handle}
-                        </h1>
-                        <p className="text-dim max-w-sm">
-                            Identificação de vulnerabilidades estruturais no posicionamento estratégico.
+                        <h1 className="text-6xl md:text-7xl">@{handle}</h1>
+                        <p className="text-dim text-lg max-w-md font-light">
+                            Autópsia estrutural de posicionamento e falhas táticas detectadas.
                         </p>
                     </div>
 
-                    <div className="flex gap-10">
-                        <div className="text-right">
-                            <p className="font-mono text-[9px] text-subtle">DATE</p>
-                            <p className="text-xs font-medium">{new Date().toLocaleDateString('pt-BR')}</p>
+                    <div className="flex gap-16">
+                        <div className="space-y-2">
+                            <p className="label-meta">Assessment_Date</p>
+                            <p className="text-xl font-medium tracking-tight">{new Date().toLocaleDateString('pt-BR')}</p>
                         </div>
-                        <div className="text-right">
-                            <p className="font-mono text-[9px] text-subtle">SENSITIVITY</p>
-                            <p className="text-xs font-medium text-red-500">LEVEL_HIGH</p>
+                        <div className="space-y-2">
+                            <p className="label-meta">Protocol_Version</p>
+                            <p className="text-xl font-medium tracking-tight">LUZZIA_4.0.2</p>
                         </div>
                     </div>
                 </header>
 
-                {/* Analysis Blocks */}
-                <div className="space-y-6 stagger">
-                    {result.blocks.map((block, index) => (
-                        <div key={index} className="autopsy-card reveal">
-                            <div className="flex justify-between items-start mb-6">
-                                <h3 className="text-xs font-mono text-subtle tracking-widest uppercase">
-                                    Section_{index + 1}: {block.title}
-                                </h3>
-                                <span className={`status-badge status-${block.score}`}>
-                                    {block.score.toUpperCase()}
-                                </span>
-                            </div>
+                {/* Analysis Grid */}
+                <div className="modular-section reveal stagger">
+                    {/* Grid Header labels */}
+                    <div className="hidden md:grid grid-cols-[1fr_350px] border-b border-technical">
+                        <div className="p-4 label-meta">Diagnostic_Observation</div>
+                        <div className="p-4 label-meta border-l border-technical">Technical_Forensics</div>
+                    </div>
 
+                    {result.blocks.map((block, index) => (
+                        <div key={index} className="analysis-cell">
+                            {/* Main Diagnosis */}
                             <div className="space-y-8">
-                                <p className="text-xl md:text-2xl text-accent font-medium leading-tight">
+                                <div className="flex items-start justify-between gap-4">
+                                    <h3 className="text-2xl font-medium leading-tight text-soft-black">
+                                        {block.title}
+                                    </h3>
+                                    <span className={getScoreBadge(block.score)}>
+                                        {block.score}
+                                    </span>
+                                </div>
+
+                                <p className="text-xl text-dim leading-relaxed">
                                     {block.acusacao}
                                 </p>
 
-                                <div className="grid md:grid-cols-2 gap-8">
+                                <div className="grid grid-cols-2 gap-12 pt-4">
                                     <div className="space-y-2">
-                                        <p className="font-mono text-[10px] text-subtle">ROOT_FEAR</p>
+                                        <p className="label-meta tracking-wider text-accent-coral">Root_Fear</p>
                                         <p className="text-sm text-dim leading-relaxed">{block.medo}</p>
                                     </div>
                                     <div className="space-y-2">
-                                        <p className="font-mono text-[10px] text-red-500">ESTIMATED_COST</p>
-                                        <p className="text-sm text-dim leading-relaxed">{block.custo}</p>
+                                        <p className="label-meta tracking-wider text-accent-coral">Estimated_Cost</p>
+                                        <p className="text-sm text-dim leading-relaxed font-medium">{block.custo}</p>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div className="pt-6 border-t border-ultra-light">
-                                    <p className="font-mono text-[10px] text-subtle">OBSERVABLE_EVIDENCE</p>
-                                    <p className="text-xs text-subtle italic mt-1">"{block.prova}"</p>
+                            {/* Forensic Proof */}
+                            <div className="p-8 bg-neutral-warm/30 border-t md:border-t-0 md:border-l border-technical space-y-6">
+                                <p className="label-meta">Analysed_Data_Proof</p>
+                                <div className="space-y-4">
+                                    <p className="text-xs text-dim leading-relaxed italic border-l-2 border-heavy pl-4 py-1">
+                                        "{block.prova}"
+                                    </p>
+                                    <div className="space-y-2">
+                                        <p className="label-meta text-[9px] opacity-40">Forensic_Note</p>
+                                        <p className="text-[10px] text-neutral-grey leading-tight">
+                                            Evidência baseada em análise de padrões recorrentes detectados na Bio e nos últimos posts processados pela LuzzIA.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                {/* Final Verdict */}
-                <div className="reveal space-y-8 py-12 text-center" style={{ animationDelay: '0.4s' }}>
-                    <div className="inline-block p-12 bg-white border border-accent shadow-premium relative">
-                        {/* Decorative Corners */}
-                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent"></div>
-                        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-accent"></div>
-                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-accent"></div>
-                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent"></div>
-
-                        <p className="font-mono text-[10px] text-subtle tracking-widest uppercase mb-6">Final_Verdict</p>
-                        <h2 className="text-2xl md:text-3xl font-semibold uppercase mb-10 leading-tight">
+                {/* Sentence Section */}
+                <div className="reveal space-y-12 py-20 text-center" style={{ animationDelay: '0.4s' }}>
+                    <div className="max-w-2xl mx-auto space-y-6">
+                        <p className="label-meta text-accent-coral">Final_Verdict</p>
+                        <h2 className="text-4xl md:text-5xl font-medium leading-[1.1] text-soft-black">
                             "{result.verdict}"
                         </h2>
+                    </div>
 
-                        <button onClick={onNext} className="btn-premium">
-                            PROCESSAR PROTOCOLO DE 7 DIAS
+                    <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
+                        <button onClick={onNext} className="btn-optikka bg-accent-coral">
+                            APLICAR PROTOCOLO 7 DIAS
+                        </button>
+                        <button onClick={onReset} className="btn-optikka btn-optikka-ghost">
+                            ESCARTAR RELATÓRIO
                         </button>
                     </div>
 
-                    <div>
-                        <button onClick={onReset} className="font-mono text-[10px] text-subtle hover:text-accent transition-colors underline cursor-pointer">
-                            [ DESTROY_SESSION_AND_RESTART ]
-                        </button>
-                    </div>
+                    <p className="label-meta text-[10px] opacity-30 mt-8">
+                        LuzzIA // Confidential Analysis // Precision: HIGH
+                    </p>
                 </div>
             </div>
         </div>

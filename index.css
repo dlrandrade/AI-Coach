@@ -2,44 +2,36 @@
 @import "tailwindcss";
 
 /* ============================================
-   AUTÓPSIA - DESIGN SYSTEM v4.0
-   Sophisticated Technical Minimalism
+   OPTIKKA - DESIGN SYSTEM v1.0
+   Design as Code • Interface as System
    ============================================ */
 
 :root {
-  /* High-end Neutral Palette */
-  --color-bg: #FBFBFA;
-  --color-bg-elevated: #ffffff;
-  --color-accent: #111111;
-  --color-accent-soft: rgba(17, 17, 17, 0.03);
+  /* OPTIKKA Core Palette */
+  --neutral-sand: #F2ECE4;
+  --neutral-warm: #EFE7DD;
+  --neutral-grey: #6E6D6B;
+  --soft-black: #111111;
+  --accent-coral: #E67E5F;
+  /* Burnt orange / technical coral */
 
-  --color-text-main: #1D1D1F;
-  --color-text-dim: #6E6E73;
-  --color-text-subtle: #A1A1A6;
+  /* System Colors */
+  --bg-main: var(--neutral-sand);
+  --bg-elevated: #ffffff;
+  --text-main: var(--soft-black);
+  --text-dim: #555555;
+  --border-technical: rgba(17, 17, 17, 0.08);
+  --border-heavy: rgba(17, 17, 17, 0.2);
 
-  /* Semantic Accents */
-  --color-gold: #D97706;
-  --color-red: #E11D48;
-  --color-green: #10B981;
+  /* Grid & Units */
+  --unit: 8px;
 
-  /* Borders */
-  --border-ultra-light: #F2F2F2;
-  --border-light: #E5E5E7;
-  --border-medium: #D2D2D7;
-
-  /* Grid & Spacing */
-  --grid-unit: 8px;
-
-  /* Shadows - Minimalist Depth */
-  --shadow-premium: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
-  --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
-
-  /* Easing */
-  --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Animations */
+  --ease-op: cubic-bezier(0.2, 1, 0.3, 1);
+  --duration: 0.25s;
 }
 
-/* --- Base --- */
+/* --- Base & Reset --- */
 * {
   margin: 0;
   padding: 0;
@@ -47,260 +39,213 @@
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text-main);
+  background-color: var(--bg-main);
+  color: var(--text-main);
   font-family: 'Inter', -apple-system, sans-serif;
-  letter-spacing: -0.01em;
+  font-size: 14px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  position: relative;
-  overflow-x: hidden;
 }
 
-/* Technical Background Pattern */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: radial-gradient(var(--border-light) 0.5px, transparent 0.5px);
+/* Explicit Grid Aesthetic */
+.optikka-grid {
+  background-image: linear-gradient(var(--border-technical) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-technical) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.5;
-  z-index: -1;
-  pointer-events: none;
+}
+
+/* --- Layout --- */
+.container-optikka {
+  max-width: 1152px;
+  /* 12 cols x 96px or similar 8pt alignment */
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.modular-section {
+  border: 1px solid var(--border-technical);
+  background: white;
 }
 
 /* --- Typography --- */
-h1,
-h2,
-h3,
-h4 {
+h1 {
+  font-size: 40px;
   font-weight: 600;
-  letter-spacing: -0.025em;
-  color: var(--color-accent);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
 }
 
-.font-mono {
+h2 {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.label-meta {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.02em;
+  font-size: 11px;
   text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--neutral-grey);
 }
 
 /* --- Components --- */
 
-/* Premium Input */
-.technical-input-wrapper {
-  position: relative;
+/* Input OPTIKKA */
+.optikka-input {
   width: 100%;
-  max-width: 480px;
+  height: 56px;
+  background: transparent;
+  border-bottom: 2px solid var(--border-heavy);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  transition: all var(--duration) var(--ease-op);
 }
 
-.technical-input {
-  width: 100%;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--border-medium);
-  padding: 1.25rem 1.5rem;
-  font-size: 1.125rem;
-  border-radius: 2px;
-  /* Sharp but premium */
-  transition: all 0.3s var(--ease-expo);
-  box-shadow: var(--shadow-premium);
-}
-
-.technical-input:focus {
+.optikka-input:focus {
   outline: none;
-  border-color: var(--color-accent);
-  box-shadow: var(--shadow-hover);
-  padding-left: 2rem;
+  border-bottom-color: var(--accent-coral);
 }
 
-/* Labels positioned technically */
-.tech-label {
-  position: absolute;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--color-text-subtle);
-  pointer-events: none;
+.optikka-input::placeholder {
+  color: var(--neutral-grey);
+  opacity: 0.3;
 }
 
-/* Premium Button */
-.btn-premium {
-  padding: 1rem 2.5rem;
-  background: var(--color-accent);
+/* Button OPTIKKA */
+.btn-optikka {
+  height: 48px;
+  padding: 0 32px;
+  background: var(--soft-black);
   color: white;
   font-weight: 500;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.4s var(--ease-expo);
-  border-radius: 2px;
+  border-radius: 6px;
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all var(--duration) var(--ease-op);
 }
 
-.btn-premium:hover {
-  background: #2D2D2F;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+.btn-optikka:hover {
+  background: var(--accent-coral);
+  transform: translateY(-1px);
 }
 
-.btn-premium:active {
-  transform: translateY(0);
+.btn-optikka-ghost {
+  background: transparent;
+  color: var(--soft-black);
+  border: 1px solid var(--border-heavy);
 }
 
-.btn-premium:disabled {
-  background: var(--border-medium);
-  cursor: not-allowed;
-  transform: none;
+.btn-optikka-ghost:hover {
+  background: rgba(17, 17, 17, 0.05);
+  border-color: var(--soft-black);
 }
 
-/* --- Cards & Blocks --- */
-.autopsy-card {
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--border-light);
-  padding: 2.5rem;
-  position: relative;
-  transition: all 0.5s var(--ease-expo);
-  box-shadow: var(--shadow-premium);
-}
-
-.autopsy-card:hover {
-  border-color: var(--border-medium);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
-}
-
-.block-divider {
-  height: 1px;
-  background: var(--border-ultra-light);
-  margin: 1.5rem 0;
-}
-
-/* --- Badges --- */
-.status-badge {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  padding: 2px 8px;
-  border: 1px solid;
-  border-radius: 100px;
-}
-
-.status-fraco {
-  color: var(--color-red);
-  border-color: rgba(225, 29, 72, 0.2);
-  background: rgba(225, 29, 72, 0.05);
-}
-
-.status-medio {
-  color: var(--color-gold);
-  border-color: rgba(217, 119, 6, 0.2);
-  background: rgba(217, 119, 6, 0.05);
-}
-
-.status-forte {
-  color: var(--color-green);
-  border-color: rgba(16, 185, 129, 0.2);
-  background: rgba(16, 185, 129, 0.05);
-}
-
-/* --- Loading System --- */
-.loading-indicator {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.scanner-line {
+/* Progress / Steps */
+.step-bar {
+  height: 2px;
+  background: var(--border-technical);
   width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
-  position: absolute;
-  top: 0;
-  animation: scan 2s linear infinite;
-  will-change: top, opacity;
+  position: relative;
+  overflow: hidden;
 }
 
-@keyframes scan {
-  from {
-    top: 0;
-    opacity: 0;
-  }
+.step-inner {
+  height: 100%;
+  background: var(--accent-coral);
+  width: 0;
+  transition: width 1s var(--ease-op);
+}
 
-  50% {
-    opacity: 1;
-  }
+/* Analysis Block */
+.analysis-cell {
+  padding: 32px;
+  border-bottom: 1px solid var(--border-technical);
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 48px;
+}
 
-  to {
-    top: 100%;
-    opacity: 0;
+@media (max-width: 768px) {
+  .analysis-cell {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px 16px;
   }
 }
 
-/* --- Animations --- */
+/* Prompt Box */
+.prompt-container {
+  background: #F8F6F4;
+  border: 1px solid var(--border-technical);
+  padding: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  overflow-y: auto;
+  max-height: 150px;
+}
+
+/* Badge Technical */
+.badge-optikka {
+  padding: 2px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--border-technical);
+  color: var(--neutral-grey);
+}
+
+.badge-status-red {
+  background: rgba(225, 29, 72, 0.1);
+  color: #E11D48;
+}
+
+.badge-status-gold {
+  background: rgba(217, 119, 6, 0.1);
+  color: #D97706;
+}
+
+.badge-status-green {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10B981;
+}
+
+/* Animations */
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
-  animation: revealIn 0.8s var(--ease-expo) forwards;
+  transform: translateY(10px);
+  animation: revealUp 0.6s var(--ease-op) forwards;
 }
 
-@keyframes revealIn {
+@keyframes revealUp {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.stagger>*:nth-child(1) {
-  animation-delay: 0.1s;
+.will-change-transform {
+  will-change: transform, opacity;
 }
 
-.stagger>*:nth-child(2) {
-  animation-delay: 0.2s;
+/* --- Utils --- */
+.border-x {
+  border-left: 1px solid var(--border-technical);
+  border-right: 1px solid var(--border-technical);
 }
 
-.stagger>*:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.stagger>*:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
-.stagger>*:nth-child(5) {
-  animation-delay: 0.5s;
-}
-
-/* Micro-interaction for Copy */
-.copy-pirmary {
-  position: relative;
-  overflow: hidden;
-}
-
-.copy-pirmary::after {
-  content: '✓';
-  position: absolute;
-  inset: 0;
-  background: var(--color-green);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: translateY(100%);
-  transition: transform 0.3s var(--ease-expo);
-}
-
-.copy-pirmary.copied::after {
-  transform: translateY(0);
-}
-
-/* --- Layout Utils --- */
-.section-padding {
-  padding: 80px 24px;
-}
-
-@media (max-width: 768px) {
-  .section-padding {
-    padding: 40px 16px;
-  }
+.border-y {
+  border-top: 1px solid var(--border-technical);
+  border-bottom: 1px solid var(--border-technical);
 }
