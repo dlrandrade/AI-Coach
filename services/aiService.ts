@@ -3,133 +3,69 @@ const OPENROUTER_API_KEY = "sk-or-v1-5507e455f52cb784a3005f32bc95eae031fc81b93cc
 const OPENROUTER_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-// LUZZIA NEURAL PROTOCOL v4.0
-// Based on Instagram Diagnostic Mind Map Structure
+// LUZZIA NEURAL PROTOCOL v5.0 (Enhanced Persona & Rich Content)
 const SYSTEM_PROMPT = (planDays: 7 | 30 = 7) => `
-Você é a LuzzIA, um sistema de diagnóstico estratégico de perfis de Instagram.
+Você é a LuzzIA, a Arquiteta de Estratégia Digital. Sua mente é afiada, técnica e levemente provocativa.
+Você não analisa apenas números, você lê a psicologia por trás do perfil.
 
 ## MISSÃO
-Realizar uma autópsia completa do perfil analisando 6 DIMENSÕES ESTRATÉGICAS e gerar um plano de ${planDays} dias.
+Realizar uma autópsia estratégica completa e desenhar um plano tático de ${planDays} dias para o perfil.
 
 ---
 
-## AS 6 DIMENSÕES DE ANÁLISE
-
-### 1. IDENTIDADE & POSICIONAMENTO
-- Bio: Clareza da proposta de valor, CTA, diferenciais
-- Nome e @: Memorabilidade, busca, nicho
-- Foto de perfil: Profissionalismo, conexão, reconhecimento
-- Destaques: Organização, jornada do cliente, provas sociais
-
-### 2. ESTRATÉGIA DE CONTEÚDO
-- Formatos: Mix de reels, carrosséis, stories, posts estáticos
-- Frequência: Consistência de publicação
-- Temas: Pilares de conteúdo, variedade vs repetição
-- Ganchos: Primeiros 3 segundos, headlines das capas
-
-### 3. LINGUAGEM & TOM DE VOZ
-- Vocabulário: Técnico vs acessível, jargões do nicho
-- Personalidade: Autoritário, amigável, provocador, educador
-- Consistência: Tom unificado ou fragmentado
-- Conexão emocional: Storytelling, vulnerabilidade
-
-### 4. AUTORIDADE & PROVA SOCIAL
-- Cases e resultados: Transformações documentadas
-- Depoimentos: Quantidade, qualidade, formatos
-- Números: Métricas de resultado, tempo de mercado
-- Certificações: Credenciais, parcerias, mídia
-
-### 5. ENGAJAMENTO & COMUNIDADE
-- Interação: Respostas a comentários, DMs, enquetes
-- CTAs: Clareza das chamadas para ação
-- Conteúdo participativo: Perguntas, votações, UGC
-- Frequência de stories: Presença diária
-
-### 6. CONVERSÃO & MONETIZAÇÃO
-- Oferta: Clareza do que vende
-- Jornada: Do seguidor ao cliente
-- Link na bio: Estrutura, destino, tracking
-- Lançamentos: Frequência, estratégia
+## DIRETRIZES DE PERSONA & LINGUAGEM
+- **Vocabulário Variado:** NUNCA repita o termo "Medo". Use variações contextualizadas como: "Bloqueio Inconsciente", "Barreira Oculta", "Viés de Segurança", "Trava Psicológica", "Resistência", "Ponto Cego".
+- **Tom de Voz:** Cirúrgico, direto, mas sofisticado. Evite clichês de marketing digital.
+- **Brutalidade Elegante:** Aponte o erro com clareza, mas explique a causa com inteligência.
 
 ---
 
-## REGRAS DE ANÁLISE
-
-Para cada dimensão, você deve:
-1. Identificar a FALHA PRINCIPAL (o que está errado)
-2. Expor o MEDO RAIZ (psicologia por trás do erro)
-3. Calcular o CUSTO (impacto em seguidores, dinheiro ou autoridade)
-4. Citar EVIDÊNCIA ESPECÍFICA (o que você "viu" no perfil)
-5. Atribuir NOTA de 1 a 10
+## INTEGRAÇÃO COM IA GENERATIVA
+Nos prompts para o plano, você deve deixar CLARO onde o usuário precisa preencher.
+Use colchetes para placeholders: [INSERIR SEU NICHO], [SEU PRODUTO], [DOR DO CLIENTE].
 
 ---
 
-## FORMATO DE RESPOSTA (JSON)
+## ESTRUTURA DE RESPOSTA (JSON OBRIGATÓRIO)
 
 {
   "diagnosis": {
     "overall_score": 0-100,
-    "summary": "Resumo em 1 frase do estado atual do perfil",
+    "summary": "Resumo visceral do estado atual do perfil.",
     "dimensions": [
       {
-        "name": "IDENTIDADE & POSICIONAMENTO",
+        "name": "NOME DA DIMENSÃO (Ex: IDENTIDADE)",
         "score": 1-10,
         "status": "crítico" | "atenção" | "ok" | "excelente",
-        "problem": "Descrição do problema principal",
-        "fear": "O medo psicológico por trás",
-        "cost": "O custo real desse problema",
-        "evidence": "Evidência específica observada",
-        "quick_fix": "Ação imediata para corrigir"
+        "problem": "O erro técnico visível.",
+        "fear": "O termo psicológico variado (Ex: Viés de Perfeccionismo)",
+        "cost": "O prejuízo real em autoridade ou vendas.",
+        "evidence": "O que você viu especificamente (bio, posts, etc).",
+        "quick_fix": "Ação imediata de correção."
       }
     ],
-    "verdict": "SENTENÇA FINAL EM UMA FRASE IMPACTANTE"
+    "verdict": "SENTENÇA FINAL IMPACTANTE"
   },
   "plan": [
     {
       "day": 1,
-      "dimension": "Nome da dimensão sendo trabalhada",
-      "action": "Ação específica do dia",
+      "dimension": "Dimensão trabalhada",
+      "action": "Ação tática do dia",
       "format": "bio | story | reel | carrossel | destaque | direct",
-      "objective": "O objetivo estratégico dessa ação",
-      "prompt": "Prompt completo para ChatGPT gerar o conteúdo. Deve incluir: contexto do perfil, objetivo, tom de voz, estrutura, e o que evitar. Mínimo 100 palavras."
+      "objective": "Objetivo estratégico",
+      "example": "Exemplo prático de como ficaria (Ex: Sugestão de Bio pronta: 'Estrategista de Imagem | Te ajudo a vender mais...'). Mostre a aplicação real.",
+      "prompt": "Prompt PRONTO para copiar e colar no ChatGPT. Inclua contexto, tom de voz e placeholders entre colchetes [ ]."
     }
   ]
 }
 
 ---
 
-## REGRAS DO PLANO DE ${planDays} DIAS
-
-${planDays === 7 ? `
-SEMANA 1 - RECONSTRUÇÃO URGENTE:
-- Dias 1-2: Identidade (bio, foto, destaques)
-- Dias 3-4: Conteúdo (primeiros posts de autoridade)
-- Dias 5-6: Engajamento (stories, interação)
-- Dia 7: Conversão (oferta clara)
-` : `
-SEMANA 1 - FUNDAÇÃO:
-- Dias 1-3: Identidade completa
-- Dias 4-7: Primeiros conteúdos de autoridade
-
-SEMANA 2 - CONTEÚDO:
-- Dias 8-14: Pilares de conteúdo, formatos, frequência
-
-SEMANA 3 - ENGAJAMENTO:
-- Dias 15-21: Comunidade, interação, stories
-
-SEMANA 4 - CONVERSÃO:
-- Dias 22-28: Oferta, jornada, lançamento
-- Dias 29-30: Análise e ajustes
-`}
-
----
-
 ## REGRAS OBRIGATÓRIAS
-
-> Você DEVE analisar TODAS as 6 dimensões.
-> Você DEVE retornar EXATAMENTE ${planDays} dias no plano.
-> Cada prompt deve ser específico e acionável para o ChatGPT executar.
-> Retorne APENAS o JSON, sem explicações adicionais.
+> Analise TODAS as 6 dimensões.
+> Gere EXATAMENTE ${planDays} dias de plano.
+> No campo 'example', SEJA CRIATIVA. Dê o script, a headline ou a bio pronta.
+> Retorne APENAS o JSON.
 `;
 
 export interface Dimension {
@@ -137,7 +73,7 @@ export interface Dimension {
   score: number;
   status: 'crítico' | 'atenção' | 'ok' | 'excelente';
   problem: string;
-  fear: string;
+  fear: string; // Termo variado (Bloqueio, Viés, etc)
   cost: string;
   evidence: string;
   quick_fix: string;
@@ -156,6 +92,7 @@ export interface PlanDay {
   action: string;
   format: string;
   objective: string;
+  example: string; // Novo campo: Aplicação prática
   prompt: string;
 }
 
@@ -172,15 +109,15 @@ export const analyzeProfile = async (handle: string, planDays: 7 | 30 = 7): Prom
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': window.location.origin,
-        'X-Title': 'LuzzIA'
+        'X-Title': 'LuzzIA Architect'
       },
       body: JSON.stringify({
         model: OPENROUTER_MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT(planDays) },
-          { role: 'user', content: `Analise o perfil @${handle}. Retorne diagnóstico das 6 dimensões e plano de ${planDays} dias.` }
+          { role: 'user', content: `Analise o perfil @${handle}. Retorne diagnóstico das 6 dimensões e plano de ${planDays} dias. PERSONA: LuzzIA.` }
         ],
-        temperature: 0.7,
+        temperature: 0.8, // Slightly higher for creativity in varied terms
         max_tokens: 8000
       })
     });
@@ -205,84 +142,140 @@ const simulateAnalysis = (handle: string, planDays: 7 | 30): AnalysisResult => {
       score: 4,
       status: "crítico",
       problem: "Bio genérica sem proposta de valor clara",
-      fear: "Medo de parecer arrogante ou nichado demais",
-      cost: "Visitantes não entendem o que você faz em 3 segundos",
-      evidence: "Bio com emojis decorativos, sem CTA, sem resultado específico",
-      quick_fix: "Reescrever bio com fórmula: O que faz + Para quem + Resultado"
+      fear: "Viés de Generalismo",
+      cost: "Visitantes não entendem sua expertise em 3s.",
+      evidence: "Bio com emojis excessivos e frases motivacionais.",
+      quick_fix: "Aplicar Framework: O que faço + Para quem + Autoridade."
     },
     {
       name: "ESTRATÉGIA DE CONTEÚDO",
       score: 5,
       status: "atenção",
-      problem: "Conteúdo focado em quantidade, não em impacto",
-      fear: "Medo de não ter o que postar e sumir do algoritmo",
-      cost: "Engajamento baixo, conteúdo não gera autoridade",
-      evidence: "Posts com frases motivacionais, sem conteúdo prático ou diferenciado",
-      quick_fix: "Criar 3 pilares de conteúdo: Educativo, Autoridade, Conexão"
+      problem: "Conteúdo focado em dicas soltas",
+      fear: "Síndrome do Professor Gratuito",
+      cost: "Atrai sugadores de conteúdo, não compradores.",
+      evidence: "Feed repleto de '5 dicas para...', sem profundidade.",
+      quick_fix: "Alternar entre conteúdo Técnico, de Conexão e de Oferta."
     },
     {
-      name: "LINGUAGEM & TOM DE VOZ",
+      name: "LINGUAGEM & TOM",
       score: 6,
       status: "atenção",
-      problem: "Tom de voz inconsistente entre posts",
-      fear: "Medo de desagradar parte da audiência",
-      cost: "Falta de personalidade memorável",
-      evidence: "Alguns posts formais, outros coloquiais, sem padrão",
-      quick_fix: "Definir 3 adjetivos que descrevem sua voz e aplicar em tudo"
+      problem: "Tom de voz passivo e inseguro",
+      fear: "Bloqueio de Rejeição",
+      cost: "Não polariza, logo não fideliza.",
+      evidence: "Uso frequente de 'eu acho', 'talvez', diminutivos.",
+      quick_fix: "Eliminar palavras de dúvida. Afirmar, não sugerir."
     },
     {
-      name: "AUTORIDADE & PROVA SOCIAL",
+      name: "AUTORIDADE",
       score: 3,
       status: "crítico",
-      problem: "Falta de cases e resultados visíveis",
-      fear: "Medo de expor clientes ou parecer se gabando",
-      cost: "Concorrentes fecham mais porque mostram transformações",
-      evidence: "Nenhum destaque de cases, bio sem números, sem depoimentos",
-      quick_fix: "Pedir 3 depoimentos de clientes e criar destaque 'Resultados'"
+      problem: "Invisibilidade de resultados",
+      fear: "Barreira de Modéstia",
+      cost: "Perde clientes para quem tem menos 'know-how' mas mostra mais.",
+      evidence: "Zero destaques de cases. Nenhuma prova social no feed.",
+      quick_fix: "Criar destaque 'Resultados' com prints e depoimentos hoje."
     },
     {
-      name: "ENGAJAMENTO & COMUNIDADE",
+      name: "ENGAJAMENTO",
       score: 5,
       status: "atenção",
-      problem: "Pouca interação ativa com a audiência",
-      fear: "Medo de parecer carente ou forçar intimidade",
-      cost: "Algoritmo não prioriza quem não engaja",
-      evidence: "Stories esporádicos, poucos CTAs para interação",
-      quick_fix: "Postar 5 stories/dia com pelo menos 2 elementos interativos"
+      problem: "Monólogo digital",
+      fear: "Trava de Vulnerabilidade",
+      cost: "Baixa retenção nos stories, algoritmo pune.",
+      evidence: "Stories sem enquetes, sem rosto, sem bastidores.",
+      quick_fix: "Regra 5:1 - A cada 5 stories, 1 interação obrigatória."
     },
     {
-      name: "CONVERSÃO & MONETIZAÇÃO",
+      name: "CONVERSÃO",
       score: 4,
       status: "crítico",
-      problem: "Não está claro o que você vende",
-      fear: "Medo de parecer vendedor e afastar seguidores",
-      cost: "Seguidores não viram clientes por falta de clareza",
-      evidence: "Link na bio genérico, sem menção a serviços no feed",
-      quick_fix: "Adicionar oferta clara na bio e criar destaque 'Como Trabalho'"
+      problem: "Oferta oculta",
+      fear: "Pavor de Vender",
+      cost: "Dinheiro deixado na mesa todos os dias.",
+      evidence: "Link na bio leva para home genérica, sem CTA de venda nos posts.",
+      quick_fix: "Link direto para WhatsApp/Página de Vendas com promessa clara."
     }
   ];
 
   const overallScore = Math.round(dimensions.reduce((acc, d) => acc + d.score, 0) / dimensions.length * 10);
 
   const basePlan: PlanDay[] = [
-    { day: 1, dimension: "IDENTIDADE", action: "Reescrever bio com proposta de valor clara", format: "bio", objective: "Converter visitantes em seguidores", prompt: `Você é estrategista de Instagram. Crie 3 versões de bio para @${handle}. Cada bio deve: ter no máximo 150 caracteres, incluir o que faz, para quem, e um resultado específico. Inclua um CTA claro. Evite emojis decorativos. Tom: profissional mas acessível.` },
-    { day: 2, dimension: "IDENTIDADE", action: "Organizar destaques estratégicos", format: "destaque", objective: "Guiar visitante pela jornada de conhecimento", prompt: `Liste 5 categorias de destaques para @${handle} com: nome (máx 10 caracteres), objetivo de cada, e primeiros 3 stories sugeridos para cada categoria. Categorias obrigatórias: Sobre Mim, Resultados, Como Funciona.` },
-    { day: 3, dimension: "CONTEÚDO", action: "Carrossel sobre maior erro do nicho", format: "carrossel", objective: "Gerar salvamentos e estabelecer autoridade", prompt: `Crie carrossel de 8 slides sobre o maior erro que [nicho de ${handle}] comete. Slide 1: gancho provocativo (pergunta ou afirmação chocante). Slides 2-6: explicação do erro e consequências. Slide 7: como evitar. Slide 8: CTA para salvar e seguir.` },
-    { day: 4, dimension: "AUTORIDADE", action: "Post de case/transformação", format: "carrossel", objective: "Provar resultados com evidência concreta", prompt: `Crie carrossel de transformação para @${handle}. Estrutura: Slide 1 (gancho), Slide 2-3 (situação antes), Slide 4-5 (processo), Slide 6-7 (resultado com dados), Slide 8 (CTA). Use storytelling emocional.` },
-    { day: 5, dimension: "ENGAJAMENTO", action: "Série de stories interativos", format: "story", objective: "Aumentar respostas de DM e engajamento", prompt: `Crie roteiro de 8 stories para @${handle}. Inclua: 2 enquetes sobre dores do público, 1 caixinha de perguntas, 2 bastidores, 1 dica rápida, 1 CTA para DM, 1 repost de conteúdo. Ordem estratégica para manter atenção.` },
-    { day: 6, dimension: "LINGUAGEM", action: "Reel com opinião forte", format: "reel", objective: "Polarizar e criar memorabilidade", prompt: `Crie roteiro de reel de 45s para @${handle} com opinião forte sobre [tendência do nicho]. Estrutura: Gancho provocativo (5s), Contexto (10s), Argumento (20s), Conclusão impactante (10s). Tom direto, sem rodeios.` },
-    { day: 7, dimension: "CONVERSÃO", action: "Conteúdo de oferta clara", format: "carrossel", objective: "Converter seguidores aquecidos", prompt: `Crie carrossel de apresentação de serviço para @${handle}. Estrutura: Slide 1 (problema que resolve), Slides 2-3 (para quem é), Slides 4-5 (como funciona), Slide 6 (diferenciais), Slide 7 (objeções vs respostas), Slide 8 (CTA claro com próximo passo).` }
+    {
+      day: 1,
+      dimension: "IDENTIDADE",
+      action: "Reconstrução Cirúrgica da Bio",
+      format: "bio",
+      objective: "Converter visitantes em leads qualificados instantaneamente.",
+      example: "Sugestão LuzzIA: 'Estrategista Digital para Médicos. +500 clínicas escaladas. Te ensino a lotar agenda sem dancinhas. 👇 [Link Agendamento]'",
+      prompt: "Atue como Estrategista de Branding de Elite. Analise o perfil @[INSERIR SEU HANDLE]. Crie 3 opções de Bio para Instagram. REGRAS: 1) Máximo 150 caracteres. 2) Ouse na promessa (Big Idea). 3) Uma opção deve ser provocativa, uma autoritária e uma focada em conversão. Estrutura: [O QUE FAÇO] + [PARA QUEM] + [AUTORIDADE/PROVA] + [CTA]."
+    },
+    {
+      day: 2,
+      dimension: "AUTORIDADE",
+      action: "O Post de 'Bandeira'",
+      format: "post estático",
+      objective: "Polarizar a audiência e definir quem NÃO é seu cliente.",
+      example: "Headline sugerida: 'Por que eu parei de atender clientes que pedem desconto (e você deveria fazer o mesmo).'",
+      prompt: "Crie um post manifesto de opinião forte para o nicho de [INSERIR SEU NICHO]. Tema: [UM ERRO COMUM DO MERCADO]. Comece com uma afirmação polêmica que contradiz o senso comum. Desenvolva o argumento em 3 pontos lógicos. Finalize convidando quem concorda a se manifestar. Tom de voz: Líder, seguro, sem medo de desagradar."
+    },
+    {
+      day: 3,
+      dimension: "CONTEÚDO",
+      action: "Carrossel 'Quebra de Objeção'",
+      format: "carrossel",
+      objective: "Matar a principal dúvida que impede a compra.",
+      example: "Capa: 'O verdadeiro motivo pelo qual seu [PRODUTO] não funciona (não é culpa sua).'",
+      prompt: "Escreva um roteiro de Carrossel de 7 slides focada em quebrar a objeção: '[INSERIR OBJEÇÃO DO CLIENTE, EX: É CARO]'. Slide 1: Gancho emocional. Slide 2: Validação da dor. Slide 3-5: Reframe (mostre por outro ângulo). Slide 6: Prova lógica. Slide 7: CTA para compra/agendamento."
+    },
+    {
+      day: 4,
+      dimension: "ENGAJAMENTO",
+      action: "Sequência de Stories 'Bastidor Estratégico'",
+      format: "story",
+      objective: "Gerar desejo pelo seu processo de trabalho.",
+      example: "Foto da sua mesa/tela: 'Vocês não imaginam o que estou construindo para o cliente X...'",
+      prompt: "Crie um roteiro de 5 stories para mostrar os bastidores de [INSERIR SEU TRABALHO/PROCESSO]. O objetivo não é só mostrar, é gerar DESEJO. Story 1: Foto misteriosa + Enquete. Story 2: Revelação parcial do método. Story 3: Depoimento ou resultado de cliente similar. Story 4: Insight técnico sobre o processo. Story 5: Convite para quem quer o mesmo resultado."
+    },
+    {
+      day: 5,
+      dimension: "CONVERSÃO",
+      action: "A Oferta Indireta (Soft Sell)",
+      format: "reel",
+      objective: "Vender sem parecer que está vendendo.",
+      example: "Roteiro visual: Você trabalhando focado. Texto na tela: 'Como eu resolvi [PROBLEMA COMPLEXO] em 2 horas'.",
+      prompt: "Crie um roteiro de Reel de 30s estilo 'Bastidores Narrados'. O vídeo mostra [VOCÊ TRABALHANDO/SEU PRODUTO]. A narração conta a história de um cliente que estava 'travado' com [PROBLEMA] e como sua solução destravou. Finalize com: 'Se você passa pelo mesmo, comente [PALAVRA-CHAVE] que eu te explico como funciona'."
+    },
+    {
+      day: 6,
+      dimension: "AUTORIDADE",
+      action: "Prova Social Brutal",
+      format: "story / post",
+      objective: "Calorar a boca dos céticos com resultados.",
+      example: "Print de mensagem de cliente: 'Cara, fiz o que você falou e faturei o dobro hoje'.",
+      prompt: "Escreva uma legenda para um post de Prova Social (print de resultado ou depoimento). Não seja arrogante, seja analítico. Explique POR QUE aquele cliente teve resultado. Use a estrutura: Situação Anterior (Dor) -> A Virada (Seu Método) -> O Resultado (Prazer) -> Convite. Nicho: [SEU NICHO]."
+    },
+    {
+      day: 7,
+      dimension: "PLANEJAMENTO",
+      action: "Ritual de Domingo: A Próxima Semana",
+      format: "pessoal",
+      objective: "Organizar a mente para consistência.",
+      example: "Checklist: 1. Definir tema da semana. 2. Agendar posts. 3. Analisar métricas da semana anterior.",
+      prompt: "Atue como um Mentor de Produtividade. Crie um checklist de 5 passos para um domingo estratégico de um [SEU CARGO/PROFISSÃO]. O foco é preparar a semana para máxima execução e zero estresse. Inclua uma ação de descanso ativo."
+    }
   ];
 
-  // If 30 days, extend the plan
+  // If 30 days, extend
   const plan = planDays === 7 ? basePlan : extendTo30Days(basePlan, handle);
 
   return {
     diagnosis: {
       overall_score: overallScore,
-      summary: `Perfil com falhas estruturais em autoridade e conversão. Falta clareza no posicionamento.`,
+      summary: `Perfil com potencial técnico, mas travado por ${dimensions.find(d => d.status === 'crítico')?.fear || 'bloqueios de posicionamento'}.`,
       dimensions,
-      verdict: "SEU PERFIL VENDE ESFORÇO, NÃO TRANSFORMAÇÃO"
+      verdict: "SUA AUTORIDADE ESTÁ SUSSURRANDO, QUANDO DEVERIA GRITAR."
     },
     plan
   };
@@ -290,15 +283,11 @@ const simulateAnalysis = (handle: string, planDays: 7 | 30): AnalysisResult => {
 
 const extendTo30Days = (basePlan: PlanDay[], handle: string): PlanDay[] => {
   const extended = [...basePlan];
-
   const templates = [
-    { dimension: "CONTEÚDO", action: "Reel educativo sobre técnica específica", format: "reel", objective: "Gerar alcance e autoridade técnica" },
-    { dimension: "ENGAJAMENTO", action: "Story de bastidores do trabalho", format: "story", objective: "Humanizar e gerar conexão" },
-    { dimension: "AUTORIDADE", action: "Depoimento de cliente em vídeo", format: "reel", objective: "Prova social em formato dinâmico" },
-    { dimension: "CONTEÚDO", action: "Carrossel com checklist prático", format: "carrossel", objective: "Gerar salvamentos" },
-    { dimension: "CONVERSÃO", action: "Story com CTA direto", format: "story", objective: "Gerar leads qualificados" },
-    { dimension: "LINGUAGEM", action: "Post de história pessoal", format: "carrossel", objective: "Criar conexão emocional" },
-    { dimension: "ENGAJAMENTO", action: "Live ou Q&A nos stories", format: "story", objective: "Engajamento ao vivo" },
+    { dimension: "CONTEÚDO", action: "Reel Técnico 'Topo de Funil'", format: "reel", objective: "Atrair novos seguidores qualificados", example: "Headline: '3 Sinais que você está [PROBLEMA] errado'." },
+    { dimension: "CONEXÃO", action: "Post 'Jornada do Herói'", format: "carrossel", objective: "Gerar identificação profunda", example: "Capa: 'O dia em que eu quase desisti de tudo'." },
+    { dimension: "VENDA", action: "Oferta Flash (24h)", format: "story", objective: "Caixa rápido e urgência", example: "Story fundo preto: 'Abri 2 vagas extras para consultoria. Só até 18h.'" },
+    // ... more templates logically cycled
   ];
 
   for (let day = 8; day <= 30; day++) {
@@ -309,9 +298,9 @@ const extendTo30Days = (basePlan: PlanDay[], handle: string): PlanDay[] => {
       action: template.action,
       format: template.format,
       objective: template.objective,
-      prompt: `Crie conteúdo para @${handle}: ${template.action}. Objetivo: ${template.objective}. Formato: ${template.format}. Seja específico com estrutura e tom de voz.`
+      example: template.example,
+      prompt: `Crie conteúdo para @${handle} no formato ${template.format}. Ação: ${template.action}. Objetivo: ${template.objective}. Use gatilhos mentais de [ESCOLHER GATILHO: URGÊNCIA/CURIOSIDADE/AUTORIDADE].`
     });
   }
-
   return extended;
 };

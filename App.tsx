@@ -10,13 +10,15 @@ function App() {
   const [screen, setScreen] = useState<Screen>('INPUT');
   const [handle, setHandle] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [isPlanLoading, setIsPlanLoading] = useState(false);
 
   const handleAnalyze = async (inputHandle: string, planDays: 7 | 30) => {
     setHandle(inputHandle);
     setScreen('LOADING');
 
     try {
-      const minDelay = new Promise(resolve => setTimeout(resolve, 4000));
+      // Simulate analysis time + API call
+      const minDelay = new Promise(resolve => setTimeout(resolve, 8000)); // Increased time for LuzzIA observations
       const [analysisResult] = await Promise.all([
         analyzeProfile(inputHandle, planDays),
         minDelay
@@ -29,10 +31,21 @@ function App() {
     }
   };
 
+  const handleStartPlan = async () => {
+    setScreen('PLAN');
+    setIsPlanLoading(true);
+
+    // Simulate "Writing Plan" delay for realism
+    setTimeout(() => {
+      setIsPlanLoading(false);
+    }, 4000);
+  };
+
   const handleReset = () => {
     setHandle('');
     setResult(null);
     setScreen('INPUT');
+    setIsPlanLoading(false);
   };
 
   return (
@@ -48,7 +61,7 @@ function App() {
           handle={handle}
           result={result}
           onReset={handleReset}
-          onNext={() => setScreen('PLAN')}
+          onNext={handleStartPlan}
         />
       )}
       {screen === 'PLAN' && (
@@ -56,6 +69,7 @@ function App() {
           handle={handle}
           result={result}
           onReset={handleReset}
+          isLoadingPlan={isPlanLoading}
         />
       )}
     </div>
