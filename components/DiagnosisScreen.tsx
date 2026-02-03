@@ -9,9 +9,9 @@ interface DiagnosisScreenProps {
 }
 
 const getScoreColor = (score: number) => {
-    if (score <= 4) return 'var(--orange-action)';
-    if (score <= 7) return '#FCD34D'; // Yellow-ish
-    return 'var(--green-core)';
+    if (score <= 4) return '#EA580C'; // Orange
+    if (score <= 7) return '#CA8A04'; // Yellow
+    return '#059669'; // Green
 };
 
 export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result, onReset, onNext }) => {
@@ -19,92 +19,92 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
     const { diagnosis, plan } = result;
 
     return (
-        <div className="min-h-screen bg-[var(--black-absolute)] py-20">
-            <div className="container-neurelic space-y-24 reveal">
+        <div className="min-h-screen bg-white py-[var(--space-4xl)]">
+            <div className="container-neurelic space-y-[var(--space-3xl)] reveal">
 
-                {/* HEAD (HUD) */}
-                <header className="grid md:grid-cols-[1fr_auto] gap-12 items-end border-b border-[var(--gray-dark)] pb-12">
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-4">
-                            <span className="tech-label text-[var(--orange-action)] border-[var(--orange-action)]">ANÁLISE CRÍTICA</span>
-                            <span className="micro-label">ID: {handle.toUpperCase()}</span>
+                {/* HEADER */}
+                <header className="grid md:grid-cols-[1fr_auto] gap-[var(--space-2xl)] items-end border-b border-[var(--gray-200)] pb-[var(--space-2xl)]">
+                    <div className="space-y-[var(--space-lg)]">
+                        <div className="flex items-center gap-[var(--space-md)]">
+                            <span className="tech-label" style={{ borderColor: '#EA580C', color: '#EA580C' }}>ANÁLISE CRÍTICA</span>
+                            <span className="micro-label">ALVO: @{handle.toUpperCase()}</span>
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tighter leading-[0.9]">
-                            RELATÓRIO <br /> <span className="text-[var(--green-core)]">DIAGNÓSTICO</span>
+                        <h1 className="hero-title">
+                            RELATÓRIO <br /> DIAGNÓSTICO
                         </h1>
-                        <p className="text-[var(--gray-muted)] text-xl max-w-2xl font-light pl-6 border-l-2 border-[var(--gray-dark)]">
+                        <p className="text-[var(--gray-600)] text-lg max-w-2xl font-light pl-[var(--space-lg)] border-l-4 border-[var(--gray-200)]">
                             "{diagnosis.verdict}"
                         </p>
                     </div>
 
-                    <div className="card-tech min-w-[300px] text-center space-y-2">
+                    <div className="card-tech min-w-[280px] text-center space-y-[var(--space-sm)]">
                         <span className="micro-label">ÍNDICE DE SAÚDE</span>
-                        <div className="text-8xl font-bold text-[var(--white)] tracking-tighter" style={{ color: getScoreColor(diagnosis.overall_score / 10) }}>
+                        <div className="text-7xl font-extrabold tracking-tighter" style={{ color: getScoreColor(diagnosis.overall_score / 10) }}>
                             {diagnosis.overall_score}
                         </div>
-                        <div className="w-full h-1 bg-[var(--black-absolute)] mt-4">
-                            <div className="h-full transition-all duration-1000 ease-out" style={{ width: `${diagnosis.overall_score}%`, backgroundColor: getScoreColor(diagnosis.overall_score / 10) }}></div>
+                        <div className="score-track mt-[var(--space-md)]">
+                            <div className="score-fill" style={{ width: `${diagnosis.overall_score}%`, backgroundColor: getScoreColor(diagnosis.overall_score / 10) }}></div>
                         </div>
                     </div>
                 </header>
 
-                {/* MATRIX GRID */}
-                <div className="space-y-8">
+                {/* MATRIX */}
+                <section className="space-y-[var(--space-xl)]">
                     <div className="flex justify-between items-end">
                         <h2 className="section-title">MATRIZ DIMENSIONAL</h2>
-                        <span className="micro-label">6 SETORES ANALISADOS</span>
+                        <span className="micro-label">6 SETORES</span>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[var(--space-lg)]">
                         {diagnosis.dimensions.map((dim, i) => (
-                            <div key={i} className="card-tech space-y-6 group hover:border-[var(--green-muted)] transition-colors">
+                            <div key={i} className="card-tech space-y-[var(--space-lg)] group">
                                 <div className="flex justify-between items-start">
-                                    <span className="micro-label opacity-50">0{i + 1}</span>
+                                    <span className="micro-label opacity-60">0{i + 1}</span>
                                     <span className="font-mono text-xl font-bold" style={{ color: getScoreColor(dim.score) }}>{dim.score}/10</span>
                                 </div>
 
-                                <div className="space-y-2 min-h-[80px]">
-                                    <h3 className="text-xl font-bold text-white uppercase leading-tight">{dim.name}</h3>
-                                    <div className="w-8 h-[2px]" style={{ backgroundColor: getScoreColor(dim.score) }}></div>
+                                <div className="space-y-[var(--space-xs)]">
+                                    <h3 className="text-lg font-bold text-[var(--gray-900)] uppercase leading-tight">{dim.name}</h3>
+                                    <div className="w-10 h-1 rounded-full" style={{ backgroundColor: getScoreColor(dim.score) }}></div>
                                 </div>
 
-                                <div className="space-y-4 pt-4 border-t border-[rgba(255,255,255,0.05)]">
+                                <div className="space-y-[var(--space-md)] pt-[var(--space-md)] border-t border-[var(--gray-100)]">
                                     <div>
-                                        <span className="micro-label text-[var(--orange-action)]">FALHA DETECTADA</span>
-                                        <p className="text-[var(--gray-light)] font-medium leading-snug mt-1">{dim.problem}</p>
+                                        <span className="micro-label" style={{ color: '#EA580C' }}>FALHA</span>
+                                        <p className="text-[var(--gray-700)] font-medium leading-snug mt-1">{dim.problem}</p>
                                     </div>
 
-                                    <div className="grid grid-cols-[auto_1fr] gap-3 text-sm">
-                                        <span className="text-[var(--gray-muted)] font-mono">TRAVA:</span>
-                                        <span className="text-[var(--gray-light)]">{dim.fear}</span>
+                                    <div className="grid grid-cols-[auto_1fr] gap-x-[var(--space-sm)] gap-y-[var(--space-xs)] text-sm">
+                                        <span className="text-[var(--gray-500)] font-mono text-xs">TRAVA:</span>
+                                        <span className="text-[var(--gray-600)]">{dim.fear}</span>
 
-                                        <span className="text-[var(--gray-muted)] font-mono">CUSTO:</span>
-                                        <span className="text-[var(--gray-light)]">{dim.cost}</span>
+                                        <span className="text-[var(--gray-500)] font-mono text-xs">CUSTO:</span>
+                                        <span className="text-[var(--gray-600)]">{dim.cost}</span>
                                     </div>
                                 </div>
 
-                                <div className="pt-4 mt-4 bg-[var(--black-absolute)] -mx-8 -mb-8 p-6 border-t border-[var(--gray-dark)] group-hover:bg-[var(--black-deep)] transition-colors">
-                                    <span className="micro-label text-[var(--green-core)]">PROTOCOLO DE CORREÇÃO</span>
-                                    <p className="text-sm text-[var(--gray-light)] mt-2 font-light">
+                                <div className="pt-[var(--space-md)] mt-[var(--space-md)] bg-[var(--gray-50)] -mx-[var(--space-xl)] -mb-[var(--space-xl)] p-[var(--space-lg)] border-t border-[var(--gray-100)]">
+                                    <span className="micro-label text-[var(--green-core)]">CORREÇÃO IMEDIATA</span>
+                                    <p className="text-sm text-[var(--gray-700)] mt-2 font-medium">
                                         {dim.quick_fix}
                                     </p>
                                 </div>
                             </div>
                         ))}
                     </div>
-                </div>
+                </section>
 
                 {/* FOOTER ACTIONS */}
-                <div className="flex flex-col md:flex-row gap-6 justify-center items-center py-12 border-t border-[var(--gray-dark)]">
-                    <button onClick={onNext} className="btn-neurelic h-16 px-12 text-lg w-full md:w-auto">
+                <footer className="flex flex-col md:flex-row gap-[var(--space-lg)] justify-center items-center py-[var(--space-2xl)] border-t border-[var(--gray-200)]">
+                    <button onClick={onNext} className="btn-neurelic min-w-[280px]">
                         INICIAR PROTOCOLO DE {plan.length} DIAS
-                        <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                     </button>
 
-                    <button onClick={onReset} className="text-[var(--gray-muted)] hover:text-white transition-colors font-mono text-xs uppercase tracking-widest border-b border-transparent hover:border-white pb-1">
-                        DESCARTAR SESSÃO
+                    <button onClick={onReset} className="btn-outline min-w-[180px]">
+                        DESCARTAR
                     </button>
-                </div>
+                </footer>
 
             </div>
         </div>

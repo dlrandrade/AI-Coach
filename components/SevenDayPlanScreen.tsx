@@ -5,7 +5,7 @@ interface SevenDayPlanScreenProps {
     handle: string;
     result: AnalysisResult | null;
     onReset: () => void;
-    isLoadingPlan: boolean; // Prop to trigger loading state
+    isLoadingPlan: boolean;
 }
 
 export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, result, onReset, isLoadingPlan }) => {
@@ -19,18 +19,72 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
         setTimeout(() => setCopiedDay(null), 2000);
     };
 
-    // ChatGPT Deep Link Generator
     const getChatGPTLink = (prompt: string) => {
         return `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
     };
 
+    const downloadPDF = () => {
+        const content = generatePDFContent();
+        const blob = new Blob([content], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `plano-${handle}-${plan.length}dias.html`;
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const generatePDFContent = () => {
+        const days = plan.map(day => `
+            <div style="page-break-inside: avoid; margin-bottom: 32px; padding: 24px; border: 1px solid #e5e5e5; border-radius: 12px;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                    <span style="font-size: 32px; font-weight: 800; color: #059669;">DIA ${day.day.toString().padStart(2, '0')}</span>
+                    <span style="background: #f5f5f5; padding: 4px 12px; border-radius: 6px; font-size: 12px; text-transform: uppercase;">${day.format}</span>
+                </div>
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">${day.action}</h3>
+                <p style="color: #525252; margin-bottom: 16px;"><strong>Objetivo:</strong> ${day.objective}</p>
+                ${day.example ? `<div style="background: #f0fdf4; border-left: 4px solid #059669; padding: 16px; margin-bottom: 16px;">
+                    <strong style="color: #059669; font-size: 12px; text-transform: uppercase;">Exemplo de Aplicação</strong>
+                    <p style="margin-top: 8px; white-space: pre-wrap;">${day.example}</p>
+                </div>` : ''}
+                <div style="background: #f5f5f5; padding: 16px; border-radius: 8px;">
+                    <strong style="font-size: 12px; text-transform: uppercase; color: #737373;">Prompt para IA</strong>
+                    <p style="margin-top: 8px; font-family: monospace; font-size: 13px; white-space: pre-wrap;">${day.prompt}</p>
+                </div>
+            </div>
+        `).join('');
+
+        return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Plano de ${plan.length} Dias - @${handle}</title>
+    <style>
+        body { font-family: 'Inter', -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 48px 24px; color: #171717; }
+        h1 { font-size: 36px; font-weight: 800; color: #059669; margin-bottom: 8px; }
+        h2 { font-size: 24px; color: #404040; font-weight: 400; margin-bottom: 48px; }
+        @media print { body { padding: 0; } }
+    </style>
+</head>
+<body>
+    <h1>PLANO DE ${plan.length} DIAS</h1>
+    <h2>Estratégia para @${handle} • Gerado por LuzzIA</h2>
+    ${days}
+    <footer style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #e5e5e5; color: #a3a3a3; font-size: 12px;">
+        LuzzIA Architect • Feito com ♥️ por @DanielLuzz
+    </footer>
+</body>
+</html>`;
+    };
+
     if (isLoadingPlan) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-6 bg-[var(--black-absolute)]">
-                <div className="text-center space-y-6 animate-pulse">
-                    <h2 className="text-2xl text-[var(--green-core)] font-mono">ARQUITETANDO ESTRATÉGIA...</h2>
-                    <p className="text-[var(--gray-muted)]">A LuzzIA está desenhando seu plano de {plan.length || '30'} dias.</p>
-                    <div className="w-16 h-1 bg-[var(--green-core)] mx-auto rounded-full"></div>
+            <div className="min-h-screen flex items-center justify-center p-[var(--space-xl)] bg-white">
+                <div className="text-center space-y-[var(--space-lg)]">
+                    <div className="w-12 h-12 border-4 border-[var(--green-core)] border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    <h2 className="text-2xl text-[var(--green-core)] font-bold">ARQUITETANDO ESTRATÉGIA...</h2>
+                    <p className="text-[var(--gray-500)]">A LuzzIA está desenhando seu plano.</p>
                 </div>
             </div>
         );
@@ -38,7 +92,6 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
     if (plan.length === 0) return null;
 
-    // Grouping logic for layout
     const isLongPlan = plan.length > 7;
     const weekGroups = isLongPlan ? [
         { label: "FASE 01 // FUNDAÇÃO", days: plan.slice(0, 7) },
@@ -52,92 +105,83 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
         return (
             <div
-                className={`card-tech p-0 overflow-hidden cursor-pointer group transition-all duration-300 ${isExpanded ? 'ring-1 ring-[var(--green-core)] bg-[var(--black-deep)]' : 'hover:bg-[var(--black-panel)]'}`}
+                className={`card-tech p-0 overflow-hidden cursor-pointer transition-all ${isExpanded ? 'ring-2 ring-[var(--green-core)]' : ''}`}
                 onClick={() => setExpandedDay(isExpanded ? null : day.day)}
             >
-                {/* Header Row */}
                 <div className="flex items-stretch min-h-[80px]">
-                    <div className="w-20 bg-[var(--black-absolute)] border-r border-[var(--gray-dark)] flex flex-col items-center justify-center font-mono relative">
-                        <span className="text-[var(--gray-muted)] text-[10px]">DIA</span>
-                        <span className={`text-2xl font-bold ${isExpanded ? 'text-[var(--green-core)]' : 'text-white'}`}>
+                    <div className="w-20 bg-[var(--gray-50)] border-r border-[var(--gray-200)] flex flex-col items-center justify-center font-mono relative">
+                        <span className="text-[var(--gray-400)] text-[10px]">DIA</span>
+                        <span className={`text-2xl font-extrabold ${isExpanded ? 'text-[var(--green-core)]' : 'text-[var(--gray-900)]'}`}>
                             {day.day.toString().padStart(2, '0')}
                         </span>
-                        {isExpanded && <div className="absolute left-0 top-0 bottom-0 w-1 bg-[var(--green-core)]"></div>}
                     </div>
 
-                    <div className="flex-1 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="space-y-1">
-                            <div className="flex gap-2 items-center">
-                                <span className="tech-label text-[10px] py-1 px-2 uppercase">{day.format}</span>
-                                <span className="micro-label text-[var(--gray-muted)] uppercase">{day.dimension}</span>
+                    <div className="flex-1 p-[var(--space-lg)] flex flex-col md:flex-row md:items-center justify-between gap-[var(--space-md)]">
+                        <div className="space-y-[var(--space-xs)]">
+                            <div className="flex gap-[var(--space-sm)] items-center">
+                                <span className="tech-label">{day.format}</span>
+                                <span className="micro-label">{day.dimension}</span>
                             </div>
-                            <h3 className="text-lg font-bold text-white leading-tight">{day.action}</h3>
+                            <h3 className="text-lg font-bold text-[var(--gray-900)] leading-tight">{day.action}</h3>
                         </div>
 
-                        <div className={`transition-transform duration-300 ${isExpanded ? 'rotate-180 text-[var(--green-core)]' : 'text-[var(--gray-dark)]'}`}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </div>
+                        <svg className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180 text-[var(--green-core)]' : 'text-[var(--gray-400)]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
                     </div>
                 </div>
 
-                {/* Expanded Content */}
-                <div className={`grid transition-all duration-500 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
-                    <div className="overflow-hidden border-t border-[var(--gray-dark)] bg-[var(--black-absolute)]">
-                        <div className="p-8 grid md:grid-cols-[1fr_2fr] gap-8">
+                <div className={`grid transition-all duration-300 ${isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                    <div className="overflow-hidden border-t border-[var(--gray-200)] bg-[var(--gray-50)]">
+                        <div className="p-[var(--space-xl)] grid md:grid-cols-[1fr_2fr] gap-[var(--space-xl)]">
 
-                            <div className="space-y-6">
+                            <div className="space-y-[var(--space-lg)]">
                                 <div>
-                                    <span className="micro-label text-[var(--orange-action)]">OBJETIVO ESTRATÉGICO</span>
-                                    <p className="text-[var(--gray-light)] mt-2 font-light italic leading-relaxed">
-                                        "{day.objective}"
-                                    </p>
+                                    <span className="micro-label" style={{ color: '#CA8A04' }}>OBJETIVO</span>
+                                    <p className="text-[var(--gray-600)] mt-2 italic">"{day.objective}"</p>
                                 </div>
 
                                 {day.example && (
                                     <div>
-                                        <span className="micro-label text-[var(--green-core)]">SIMULAÇÃO DE APLICAÇÃO</span>
-                                        <div className="mt-2 p-3 bg-[var(--black-panel)] border-l-2 border-[var(--green-core)] text-sm text-[var(--gray-light)] font-mono">
+                                        <span className="micro-label text-[var(--green-core)]">APLICAÇÃO SUGERIDA</span>
+                                        <div className="mt-2 p-[var(--space-md)] bg-white border-l-4 border-[var(--green-core)] text-sm text-[var(--gray-700)]">
                                             {day.example}
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="p-4 border border-[var(--gray-dark)] rounded-lg bg-[var(--black-deep)]">
-                                    <span className="micro-label text-[var(--green-muted)]">NOTA DO SISTEMA</span>
-                                    <p className="text-xs text-[var(--gray-muted)] mt-1 font-mono">
-                                        Preencha os campos em [COLCHETES] no prompt para máxima precisão.
+                                <div className="p-[var(--space-md)] border border-[var(--gray-200)] rounded-[var(--radius-md)] bg-white">
+                                    <span className="micro-label">DICA</span>
+                                    <p className="text-xs text-[var(--gray-500)] mt-1">
+                                        Preencha os campos em [COLCHETES] para respostas mais precisas.
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
-                                <div className="flex flex-wrap justify-between items-center gap-2">
+                            <div className="space-y-[var(--space-md)]">
+                                <div className="flex flex-wrap justify-between items-center gap-[var(--space-sm)]">
                                     <span className="micro-label">PROMPT GENERATIVO</span>
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-[var(--space-sm)]">
                                         <a
                                             href={getChatGPTLink(day.prompt)}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             onClick={(e) => e.stopPropagation()}
-                                            className="btn-outline h-8 px-4 text-[10px] flex items-center gap-2 rounded-full hover:bg-[var(--green-muted)] hover:text-white transition-colors"
+                                            className="btn-outline h-10 min-w-[140px] text-xs"
                                         >
-                                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M20.4,3H3.6C1.6,3,0,4.6,0,6.6v10.8c0,2,1.6,3.6,3.6,3.6h8.4l4.8,4.8l0.8-4.8H20.4c2,0,3.6-1.6,3.6-3.6V6.6C24,4.6,22.4,3,20.4,3z" /></svg>
-                                            ABRIR NO CHATGPT
+                                            ABRIR CHATGPT
                                         </a>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); copyPrompt(day.prompt, day.day); }}
-                                            className={`btn-neurelic h-8 px-4 text-[10px] ${copiedDay === day.day ? 'bg-[var(--white)] text-black' : ''}`}
+                                            className={`btn-neurelic h-10 min-w-[140px] text-xs ${copiedDay === day.day ? 'bg-[var(--gray-900)]' : ''}`}
                                         >
-                                            {copiedDay === day.day ? 'COPIADO!' : 'COPIAR PROMPT'}
+                                            {copiedDay === day.day ? 'COPIADO!' : 'COPIAR'}
                                         </button>
                                     </div>
                                 </div>
 
-                                <div className="bg-[var(--black-panel)] border border-[var(--gray-dark)] rounded-lg p-5 font-mono text-sm text-[var(--gray-light)] leading-relaxed h-[180px] overflow-y-auto custom-scrollbar relative group">
+                                <div className="bg-white border border-[var(--gray-200)] rounded-[var(--radius-md)] p-[var(--space-lg)] font-mono text-sm text-[var(--gray-700)] leading-relaxed max-h-[200px] overflow-y-auto custom-scrollbar">
                                     {day.prompt}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--black-panel)] to-transparent pointer-events-none opacity-50"></div>
                                 </div>
                             </div>
 
@@ -149,57 +193,57 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
     };
 
     return (
-        <div className="min-h-screen bg-[var(--black-absolute)] py-20 pb-40">
-            <div className="container-neurelic space-y-20 reveal">
+        <div className="min-h-screen bg-white py-[var(--space-4xl)] pb-[200px]">
+            <div className="container-neurelic space-y-[var(--space-3xl)] reveal">
 
-                <header className="flex flex-col md:flex-row justify-between items-end gap-8 pb-8 border-b border-[var(--gray-dark)]">
-                    <div className="space-y-4">
-                        <span className="tech-label">MODO DE EXECUÇÃO</span>
-                        <h1 className="hero-title text-5xl md:text-7xl text-white">
-                            PLANO DE <br /> AÇÃO
+                <header className="flex flex-col md:flex-row justify-between items-end gap-[var(--space-xl)] pb-[var(--space-2xl)] border-b border-[var(--gray-200)]">
+                    <div className="space-y-[var(--space-md)]">
+                        <span className="tech-label">MODO EXECUÇÃO</span>
+                        <h1 className="hero-title">
+                            PLANO DE AÇÃO
                         </h1>
                     </div>
-                    <div className="text-right space-y-2">
-                        <p className="micro-label">DURAÇÃO DO ALVO</p>
-                        <p className="text-4xl font-mono text-[var(--green-core)]">{plan.length} DIAS</p>
+                    <div className="text-right space-y-[var(--space-xs)]">
+                        <p className="micro-label">DURAÇÃO</p>
+                        <p className="text-4xl font-extrabold text-[var(--green-core)]">{plan.length} DIAS</p>
                     </div>
                 </header>
 
-                <div className="space-y-16">
+                <div className="space-y-[var(--space-2xl)]">
                     {weekGroups.map((group, i) => (
-                        <div key={i} className="space-y-6">
-                            <div className="flex items-center gap-4">
-                                <div className="w-2 h-2 bg-[var(--green-core)] rounded-full"></div>
-                                <h2 className="text-xl font-mono text-[var(--gray-muted)] tracking-widest">{group.label}</h2>
-                                <div className="h-[1px] flex-1 bg-[var(--gray-dark)]"></div>
+                        <div key={i} className="space-y-[var(--space-lg)]">
+                            <div className="flex items-center gap-[var(--space-md)]">
+                                <div className="w-3 h-3 bg-[var(--green-core)] rounded-full"></div>
+                                <h2 className="text-lg font-mono text-[var(--gray-500)] tracking-widest">{group.label}</h2>
+                                <div className="h-[1px] flex-1 bg-[var(--gray-200)]"></div>
                             </div>
-                            <div className="space-y-4">
+                            <div className="space-y-[var(--space-md)]">
                                 {group.days.map(day => <PlanCard key={day.day} day={day} />)}
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="fixed bottom-0 left-0 w-full bg-[var(--black-absolute)] border-t border-[var(--gray-dark)] py-6 z-50">
-                    <div className="container-neurelic flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="fixed bottom-0 left-0 w-full bg-white border-t border-[var(--gray-200)] py-[var(--space-lg)] z-50 no-print">
+                    <div className="container-neurelic flex flex-col md:flex-row justify-between items-center gap-[var(--space-md)]">
 
-                        <a href="https://instagram.com/danielluzz" target="_blank" rel="noreferrer" className="text-[var(--gray-muted)] hover:text-[var(--green-core)] font-mono text-xs transition-colors">
+                        <a href="https://instagram.com/danielluzz" target="_blank" rel="noreferrer" className="text-[var(--gray-400)] hover:text-[var(--green-core)] font-mono text-xs transition-colors">
                             Feito com ♥️ por @DanielLuzz
                         </a>
 
-                        <a href="https://github.com/dlrandrade/AI-Coach" target="_blank" rel="noreferrer" className="hidden md:block text-[var(--gray-muted)] font-mono text-xs">
-                            SESSION_ID: {Math.random().toString(36).substring(7).toUpperCase()}
-                        </a>
-
-                        <div className="flex gap-4 w-full md:w-auto">
-                            <button onClick={onReset} className="btn-outline h-12 px-8 rounded-full text-xs font-bold uppercase w-full md:w-auto">
-                                REINICIAR MISSÃO
+                        <div className="flex gap-[var(--space-md)]">
+                            <button onClick={downloadPDF} className="btn-outline h-12 min-w-[180px]">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                BAIXAR PLANO
+                            </button>
+                            <button onClick={onReset} className="btn-neurelic h-12 min-w-[180px]">
+                                REINICIAR
                             </button>
                         </div>
                     </div>
                 </div>
 
             </div>
-        </div >
+        </div>
     );
 };
