@@ -36,7 +36,7 @@ function App() {
   };
 
   return (
-    <>
+    <div className="min-h-screen">
       {/* Input or Loading */}
       {(currentState === 'INPUT' || currentState === 'LOADING') && (
         <InputScreen
@@ -63,7 +63,7 @@ function App() {
           onReset={handleReset}
         />
       )}
-    </>
+    </div>
   );
 }
 

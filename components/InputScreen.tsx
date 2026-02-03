@@ -7,7 +7,6 @@ interface InputScreenProps {
 
 export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }) => {
   const [handle, setHandle] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,19 +18,19 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
 
   if (isLoading) {
     return (
-      <div className="loading-screen">
-        <div className="text-center space-y-6">
-          <div className="flex items-center justify-center gap-3">
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="text-center animate-fade-in-up">
+          <div className="flex items-center justify-center gap-3 mb-6">
             <div className="spinner"></div>
-            <span className="mono text-muted uppercase tracking-wide">Processando</span>
+            <span className="mono text-muted">Processando análise...</span>
           </div>
 
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight glitch-text">
-            ANALISANDO @{handle.replace('@', '')}
+          <h2 className="text-2xl font-semibold tracking-tight mb-4">
+            Analisando @{handle.replace('@', '')}
           </h2>
 
-          <div className="space-y-2 mono text-xs text-subtle">
-            <p className="animate-pulse">→ Identificando padrões psicológicos...</p>
+          <div className="space-y-2 text-sm text-muted">
+            <p className="animate-pulse">Identificando padrões psicológicos...</p>
           </div>
         </div>
       </div>
@@ -39,29 +38,34 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
   }
 
   return (
-    <div className="screen-input">
-      <div className="container text-center">
-        {/* Hero Title */}
-        <h1 className="hero-title">
-          AUTÓPSIA
-          <span className="highlight">BRUTAL</span>
-        </h1>
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="container max-w-md animate-fade-in-up">
+        {/* Logo / Brand */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-subtle mb-6">
+            <div className="pulse-dot"></div>
+            <span className="mono text-xs text-muted">AI-powered analysis</span>
+          </div>
 
-        <p className="mono text-muted text-sm md:text-base mb-8 max-w-md mx-auto">
-          Análise de padrões psicológicos que travam seu crescimento no Instagram
-        </p>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">
+            Autópsia do Instagram
+          </h1>
 
-        {/* Input Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="input-container">
+          <p className="text-secondary text-sm max-w-sm mx-auto">
+            Análise psicológica de padrões que travam crescimento, autoridade e conversão.
+          </p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted">@</span>
             <input
               type="text"
               value={handle}
               onChange={(e) => setHandle(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              placeholder="@seu_perfil"
-              className="brutal-input text-center"
+              placeholder="seu_perfil"
+              className="input pl-8"
               autoComplete="off"
               spellCheck="false"
             />
@@ -69,26 +73,25 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
 
           <button
             type="submit"
-            className="brutal-btn w-full md:w-auto"
+            className="btn btn-primary w-full"
             disabled={!handle.trim()}
           >
-            INICIAR AUTÓPSIA
+            Iniciar Análise
           </button>
         </form>
 
-        {/* Warning */}
-        <div className="mt-12 p-4 border border-dashed border-danger/30">
-          <p className="mono text-xs text-danger/70 uppercase tracking-wide">
-            ⚠ Aviso: Esta análise não será agradável.
-            <br />
-            O objetivo é expor verdades, não validar egos.
+        {/* Info */}
+        <div className="mt-8 p-4 rounded-lg bg-subtle border border-light">
+          <p className="text-xs text-muted text-center">
+            Esta análise expõe padrões inconscientes baseados em psicologia comportamental.
+            Você receberá um diagnóstico + plano de 7 dias com prompts prontos para usar.
           </p>
         </div>
 
         {/* Footer */}
-        <footer className="mt-16">
+        <footer className="mt-12 text-center">
           <p className="mono text-xs text-subtle">
-            Análise baseada em psicologia de consumo e posicionamento de mercado
+            Desenvolvido para profissionais que querem resultados reais
           </p>
         </footer>
       </div>
