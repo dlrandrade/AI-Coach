@@ -1,31 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 /* ============================================
-   OPTIKKA - DESIGN SYSTEM v2.1
-   Obsessive Alignment • Technical Clarity
+   LUZZIA - MINIMALIST DESIGN SYSTEM v3.0
    ============================================ */
 
 :root {
-  --neutral-sand: #F2ECE4;
-  --neutral-warm: #EFE7DD;
-  --neutral-grey: #6E6D6B;
-  --soft-black: #111111;
-  --accent-coral: #E67E5F;
-
-  --bg-main: var(--neutral-sand);
-  --bg-white: #ffffff;
-  --text-main: var(--soft-black);
-  --text-dim: #555555;
-  --border-technical: rgba(17, 17, 17, 0.12);
-  --border-heavy: #111111;
-
-  --unit: 8px;
-  --ease-op: cubic-bezier(0.2, 1, 0.3, 1);
-  --duration: 0.2s;
+  --bg: #FAFAFA;
+  --white: #FFFFFF;
+  --black: #111111;
+  --dim: #666666;
+  --accent: #E67E5F;
+  --border: rgba(0, 0, 0, 0.08);
 }
 
-/* --- Base --- */
 * {
   margin: 0;
   padding: 0;
@@ -33,184 +21,144 @@
 }
 
 body {
-  background-color: var(--bg-main);
-  color: var(--text-main);
-  font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 14px;
+  background: var(--bg);
+  color: var(--black);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Grid Aesthetic */
-.optikka-grid {
-  background-image: radial-gradient(var(--border-technical) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-/* --- Rigid Layout --- */
-.container-optikka {
-  max-width: 1200px;
+/* Layout */
+.container {
+  max-width: 800px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 24px;
 }
 
-@media (max-width: 768px) {
-  .container-optikka {
-    padding: 0 20px;
-  }
-}
-
-/* --- Typography (Clinical) --- */
+/* Typography */
 h1 {
-  font-size: clamp(48px, 8vw, 72px);
+  font-size: 48px;
   font-weight: 600;
-  letter-spacing: -0.05em;
-  line-height: 0.95;
-}
-
-h2 {
-  font-size: clamp(32px, 5vw, 48px);
-  font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.1;
 }
 
-.label-meta {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--neutral-grey);
-  display: block;
+h2 {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-/* --- Components --- */
+h3 {
+  font-size: 20px;
+  font-weight: 500;
+}
 
-.btn-optikka {
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+}
+
+/* Components */
+.btn {
   height: 56px;
-  padding: 0 40px;
-  background: var(--soft-black);
+  padding: 0 32px;
+  background: var(--black);
   color: white;
-  font-family: 'Inter', sans-serif;
   font-weight: 600;
   font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   border: none;
   cursor: pointer;
-  transition: all var(--duration) var(--ease-op);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  transition: background 0.2s;
 }
 
-.btn-optikka:hover {
-  background: var(--accent-coral);
-  transform: translateY(-2px);
+.btn:hover {
+  background: var(--accent);
 }
 
-.btn-optikka-ghost {
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-outline {
   background: transparent;
-  color: var(--soft-black);
-  border: 1px solid var(--soft-black);
+  color: var(--black);
+  border: 1px solid var(--border);
 }
 
-/* Precise Input */
-.optikka-input {
+.btn-outline:hover {
+  background: var(--border);
+}
+
+.input {
   width: 100%;
   height: 64px;
   background: transparent;
   border: none;
-  border-bottom: 2px solid var(--border-technical);
+  border-bottom: 2px solid var(--border);
   font-size: 32px;
   font-weight: 500;
-  letter-spacing: -0.03em;
-  padding: 0;
-  transition: border-color var(--duration);
+  transition: border-color 0.2s;
 }
 
-.optikka-input:focus {
+.input:focus {
   outline: none;
-  border-bottom-color: var(--soft-black);
+  border-bottom-color: var(--black);
 }
 
-/* Data Cells */
-.data-cell {
-  border: 1px solid var(--border-technical);
-  background: var(--bg-white);
-  padding: 40px;
+.input::placeholder {
+  color: #CCC;
 }
 
-.data-row {
-  display: grid;
-  border-bottom: 1px solid var(--border-technical);
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 32px;
 }
 
-.data-row:last-child {
-  border-bottom: none;
+/* Progress */
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  overflow: hidden;
 }
 
-/* Badge */
-.badge-optikka {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  font-weight: 600;
-  padding: 4px 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.5s ease-out;
 }
 
-/* --- Animations --- */
-.reveal {
-  opacity: 0;
-  transform: translateY(15px);
-  animation: revealUp 0.8s var(--ease-op) forwards;
+/* Animation */
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-@keyframes revealUp {
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* --- Utils --- */
-.border-b-tech {
-  border-bottom: 1px solid var(--border-technical);
-}
-
-.border-t-tech {
-  border-top: 1px solid var(--border-technical);
-}
-
-.border-l-tech {
-  border-left: 1px solid var(--border-technical);
-}
-
-.border-r-tech {
-  border-right: 1px solid var(--border-technical);
-}
-
-.bg-warm {
-  background-color: var(--neutral-sand);
-}
-
-.bg-warm-soft {
-  background-color: var(--neutral-warm);
-}
-
-/* Print Overrides */
+/* Print */
 @media print {
   .no-print {
     display: none !important;
   }
 
   body {
-    background: white !important;
-  }
-
-  .container-optikka {
-    max-width: 100% !important;
-    padding: 0 !important;
+    background: white;
   }
 }
