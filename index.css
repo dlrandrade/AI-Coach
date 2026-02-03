@@ -1,19 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 /* ============================================
-   LUZZIA - MINIMALIST DESIGN SYSTEM v3.0
+   NEURELIC-008 — DESIGN SYSTEM
+   Codinome: NEURELIC.DS
+   Essência: Dark-tech, precisão, inteligência mensurável.
    ============================================ */
 
 :root {
-  --bg: #FAFAFA;
-  --white: #FFFFFF;
-  --black: #111111;
-  --dim: #666666;
-  --accent: #E67E5F;
-  --border: rgba(0, 0, 0, 0.08);
+  /* 02 · CORES (TOKENS) */
+  /* Core Palette */
+  --black-absolute: #050505;
+  --black-deep: #0B0F0E;
+  --black-panel: #111615;
+  --black-soft: #161B1A;
+
+  /* Primary Accent (Neon Green) */
+  --green-core: #0FB355;
+  --green-soft: #50DC95;
+  --green-muted: #3B5A4A;
+
+  /* Support / Neutral */
+  --gray-light: #D4D7D6;
+  --gray-muted: #9DB9AC;
+  --gray-dark: #1F2A27;
+
+  /* Alert / Highlight */
+  --orange-action: #F42B0D;
+
+  /* 03 · TIPOGRAFIA */
+  --font-primary: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
+/* 01 · FUNDAMENTOS */
 * {
   margin: 0;
   padding: 0;
@@ -21,144 +41,228 @@
 }
 
 body {
-  background: var(--bg);
-  color: var(--black);
-  font-family: 'Inter', sans-serif;
+  background-color: var(--black-absolute);
+  color: var(--gray-light);
+  font-family: var(--font-primary);
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-/* Layout */
-.container {
-  max-width: 800px;
+/* 04 · GRID & LAYOUT */
+.container-neurelic {
+  max-width: 1320px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
-/* Typography */
-h1 {
-  font-size: 48px;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
+/* 03 · TIPOGRAFIA */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--white);
+  letter-spacing: -0.04em;
 }
 
-h2 {
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-h3 {
-  font-size: 20px;
-  font-weight: 500;
-}
-
-.label {
-  font-size: 12px;
-  font-weight: 500;
+.hero-title {
+  font-family: var(--font-primary);
+  font-weight: 800;
+  font-size: clamp(48px, 8vw, 120px);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--dim);
+  color: var(--green-core);
+  line-height: 0.9;
 }
 
-/* Components */
-.btn {
-  height: 56px;
+.section-title {
+  font-weight: 700;
+  font-size: clamp(32px, 4vw, 40px);
+  color: var(--gray-light);
+  letter-spacing: -0.02em;
+}
+
+.micro-label {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-muted);
+}
+
+/* 05 · COMPONENTES */
+
+/* BOTÃO (CTA) */
+.btn-neurelic {
+  height: 48px;
   padding: 0 32px;
-  background: var(--black);
-  color: white;
+  background-color: var(--green-core);
+  color: var(--black-absolute);
   font-weight: 600;
   font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 999px;
   border: none;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
-.btn:hover {
-  background: var(--accent);
+.btn-neurelic:hover {
+  background-color: var(--green-soft);
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(15, 179, 85, 0.4);
 }
 
-.btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+.btn-neurelic:active {
+  transform: scale(0.98);
 }
 
 .btn-outline {
   background: transparent;
-  color: var(--black);
-  border: 1px solid var(--border);
+  color: var(--green-core);
+  border: 1px solid var(--green-core);
 }
 
 .btn-outline:hover {
-  background: var(--border);
+  background: rgba(15, 179, 85, 0.1);
 }
 
-.input {
+/* INPUT */
+.input-neurelic {
   width: 100%;
   height: 64px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid var(--border);
-  font-size: 32px;
-  font-weight: 500;
-  transition: border-color 0.2s;
+  background: var(--black-panel);
+  border: 1px solid var(--gray-dark);
+  color: var(--green-core);
+  font-family: var(--font-mono);
+  font-size: 24px;
+  padding: 0 24px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
 }
 
-.input:focus {
+.input-neurelic:focus {
   outline: none;
-  border-bottom-color: var(--black);
+  border-color: var(--green-core);
+  box-shadow: 0 0 0 1px var(--green-core);
 }
 
-.input::placeholder {
-  color: #CCC;
+.input-neurelic::placeholder {
+  color: var(--gray-dark);
+  font-family: var(--font-primary);
 }
 
-.card {
-  background: var(--white);
-  border: 1px solid var(--border);
+/* CARD (GLASS TECH) */
+.card-tech {
+  background: linear-gradient(180deg, var(--black-panel), var(--black-absolute));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   padding: 32px;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Progress */
-.progress-bar {
-  height: 4px;
-  background: var(--border);
+.card-tech:hover {
+  border-color: rgba(15, 179, 85, 0.2);
+  transform: translateY(-4px);
+}
+
+/* SCORE BAR */
+.score-track {
+  width: 100%;
+  height: 6px;
+  background-color: var(--black-panel);
+  border-radius: 4px;
   overflow: hidden;
+  position: relative;
 }
 
-.progress-fill {
+.score-fill {
   height: 100%;
-  background: var(--accent);
-  transition: width 0.5s ease-out;
+  background-color: var(--green-core);
+  border-radius: 4px;
 }
 
-/* Animation */
-.fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+/* LABEL TÉCNICA */
+.tech-label {
+  background: var(--black-deep);
+  border: 1px solid var(--gray-dark);
+  color: var(--green-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border-radius: 6px;
+  padding: 6px 10px;
+  display: inline-block;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+/* UTILS */
+.text-accent {
+  color: var(--green-core);
+}
+
+.text-dim {
+  color: var(--gray-muted);
+}
+
+.border-tech {
+  border: 1px solid var(--gray-dark);
+}
+
+.bg-tech {
+  background-color: var(--black-panel);
+}
+
+/* ANIMATION */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
   }
 
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.reveal {
+  animation: reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes reveal {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Print */
+/* PRINT OVERRIDES */
 @media print {
-  .no-print {
-    display: none !important;
+  body {
+    background-color: white !important;
+    color: black !important;
   }
 
-  body {
-    background: white;
+  .card-tech {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    color: black !important;
+  }
+
+  .text-accent {
+    color: black !important;
+    font-weight: bold;
+  }
+
+  .btn-neurelic {
+    display: none !important;
   }
 }
