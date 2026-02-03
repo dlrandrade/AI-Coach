@@ -2,12 +2,12 @@
 @import "tailwindcss";
 
 /* ============================================
-   NEURELIC-008 — DESIGN SYSTEM v3.0
-   LIGHT MODE - Clean, Professional
+   NEURELIC-008 — DESIGN SYSTEM v4.0
+   Clean, minimal, lots of breathing room
    ============================================ */
 
 :root {
-  /* CORES - LIGHT MODE */
+  /* CORES */
   --white: #FFFFFF;
   --gray-50: #FAFAFA;
   --gray-100: #F5F5F5;
@@ -19,15 +19,12 @@
   --gray-700: #404040;
   --gray-800: #262626;
   --gray-900: #171717;
-  --black: #0A0A0A;
 
   --green-core: #059669;
   --green-light: #10B981;
   --green-soft: #D1FAE5;
-  --green-muted: #6EE7B7;
 
   --orange-action: #EA580C;
-  --orange-soft: #FED7AA;
 
   /* TIPOGRAFIA */
   --font-primary: 'Inter', system-ui, sans-serif;
@@ -37,22 +34,20 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 20px;
 
+  /* GENEROUS SPACING */
   --space-xs: 8px;
-  --space-sm: 12px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 48px;
-  --space-3xl: 64px;
-  --space-4xl: 96px;
-  --space-5xl: 128px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+  --space-xl: 48px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+  --space-4xl: 128px;
 
-  /* BUTTON TOKENS */
-  --btn-height: 48px;
+  /* BUTTON */
+  --btn-height: 52px;
   --btn-min-width: 160px;
-  --btn-padding: 0 var(--space-xl);
 }
 
 /* BASE */
@@ -64,36 +59,25 @@
 
 body {
   background-color: var(--white);
-  color: var(--gray-800);
+  color: var(--gray-700);
   font-family: var(--font-primary);
   font-size: 16px;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
 }
 
 /* LAYOUT */
 .container-neurelic {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 var(--space-xl);
+  padding: 0 var(--space-lg);
 }
 
 /* TIPOGRAFIA */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--gray-900);
-  letter-spacing: -0.03em;
-}
-
 .hero-title {
   font-family: var(--font-primary);
   font-weight: 800;
-  font-size: clamp(40px, 7vw, 72px);
+  font-size: clamp(36px, 6vw, 64px);
   text-transform: uppercase;
   color: var(--green-core);
   line-height: 1;
@@ -102,9 +86,9 @@ h6 {
 
 .section-title {
   font-weight: 800;
-  font-size: clamp(28px, 4vw, 40px);
+  font-size: clamp(24px, 3vw, 32px);
   color: var(--gray-900);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
 }
 
@@ -112,22 +96,22 @@ h6 {
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: 11px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gray-500);
 }
 
-/* === BOTÕES UNIFORMES === */
+/* === BOTÕES === */
 .btn-neurelic {
   height: var(--btn-height);
   min-width: var(--btn-min-width);
-  padding: var(--btn-padding);
+  padding: 0 var(--space-lg);
   background-color: var(--green-core);
   color: white;
   font-weight: 600;
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   border-radius: var(--radius-md);
   border: 2px solid var(--green-core);
   cursor: pointer;
@@ -141,26 +125,23 @@ h6 {
 .btn-neurelic:hover {
   background-color: var(--green-light);
   border-color: var(--green-light);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
 }
 
 .btn-neurelic:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
-  transform: none;
 }
 
 .btn-outline {
   height: var(--btn-height);
   min-width: var(--btn-min-width);
-  padding: var(--btn-padding);
+  padding: 0 var(--space-lg);
   background: transparent;
   color: var(--green-core);
   font-weight: 600;
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   border: 2px solid var(--green-core);
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -173,19 +154,18 @@ h6 {
 
 .btn-outline:hover {
   background: var(--green-soft);
-  transform: translateY(-1px);
 }
 
 /* INPUT */
 .input-neurelic {
   width: 100%;
-  height: 56px;
+  height: 60px;
   background: var(--white);
   border: 2px solid var(--gray-300);
   color: var(--gray-900);
   font-family: var(--font-mono);
   font-size: 18px;
-  padding: 0 var(--space-lg);
+  padding: 0 var(--space-md);
   border-radius: var(--radius-md);
   transition: all 0.2s ease;
 }
@@ -193,7 +173,6 @@ h6 {
 .input-neurelic:focus {
   outline: none;
   border-color: var(--green-core);
-  box-shadow: 0 0 0 3px var(--green-soft);
 }
 
 .input-neurelic::placeholder {
@@ -201,19 +180,19 @@ h6 {
   font-family: var(--font-primary);
 }
 
-/* CARD */
+/* CARD - NO SHADOW, ONLY BORDER */
 .card-tech {
   background: var(--white);
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-lg);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: var(--space-xl);
-  transition: all 0.2s ease;
+  padding: var(--space-lg);
 }
 
-.card-tech:hover {
-  border-color: var(--gray-300);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.08);
+/* CARD FLAT - For loading state */
+.card-flat {
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
 }
 
 /* SCORE BAR */
@@ -232,18 +211,17 @@ h6 {
   transition: width 1s ease-out;
 }
 
-/* LABEL TÉCNICA */
+/* LABEL */
 .tech-label {
   background: var(--gray-100);
-  border: 1px solid var(--gray-200);
   color: var(--gray-600);
   font-family: var(--font-mono);
   font-size: 10px;
-  border-radius: var(--radius-sm);
-  padding: 6px var(--space-sm);
+  border-radius: 6px;
+  padding: 6px 12px;
   display: inline-block;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
 /* UTILS */
@@ -255,20 +233,11 @@ h6 {
   color: var(--gray-500);
 }
 
-.border-tech {
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
-}
-
-.bg-tech {
-  background-color: var(--gray-50);
-}
-
 /* ANIMATION */
 .reveal {
-  animation: reveal 0.5s ease-out forwards;
+  animation: reveal 0.4s ease-out forwards;
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(8px);
 }
 
 @keyframes reveal {
@@ -285,26 +254,17 @@ h6 {
 
 .custom-scrollbar::-webkit-scrollbar-track {
   background: var(--gray-100);
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: var(--gray-300);
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
 }
 
 /* PRINT */
 @media print {
-  body {
-    background-color: white !important;
-  }
-
   .no-print {
     display: none !important;
-  }
-
-  .card-tech {
-    box-shadow: none !important;
-    border: 1px solid #ddd !important;
   }
 }

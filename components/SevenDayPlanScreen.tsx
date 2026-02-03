@@ -36,42 +36,42 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
     const generatePDFContent = () => {
         const days = plan.map(day => `
-            <div style="page-break-inside: avoid; margin-bottom: 32px; padding: 24px; border: 1px solid #e5e5e5; border-radius: 12px;">
-                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
-                    <span style="font-size: 32px; font-weight: 800; color: #059669;">DIA ${day.day.toString().padStart(2, '0')}</span>
-                    <span style="background: #f5f5f5; padding: 4px 12px; border-radius: 6px; font-size: 12px; text-transform: uppercase;">${day.format}</span>
+            <div style="page-break-inside: avoid; margin-bottom: 48px; padding: 32px; border: 1px solid #e5e5e5; border-radius: 16px;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+                    <span style="font-size: 36px; font-weight: 800; color: #059669;">DIA ${day.day.toString().padStart(2, '0')}</span>
+                    <span style="background: #f5f5f5; padding: 6px 16px; border-radius: 8px; font-size: 12px; text-transform: uppercase; font-weight: 600;">${day.format}</span>
+                    <span style="color: #737373; font-size: 12px; text-transform: uppercase;">${day.dimension}</span>
                 </div>
-                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">${day.action}</h3>
-                <p style="color: #525252; margin-bottom: 16px;"><strong>Objetivo:</strong> ${day.objective}</p>
-                ${day.example ? `<div style="background: #f0fdf4; border-left: 4px solid #059669; padding: 16px; margin-bottom: 16px;">
-                    <strong style="color: #059669; font-size: 12px; text-transform: uppercase;">Exemplo de Aplicação</strong>
-                    <p style="margin-top: 8px; white-space: pre-wrap;">${day.example}</p>
+                <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">${day.action}</h3>
+                <p style="color: #525252; margin-bottom: 24px; line-height: 1.6;"><strong>Objetivo:</strong> ${day.objective}</p>
+                ${day.example ? `<div style="background: #f0fdf4; border-left: 4px solid #059669; padding: 20px; margin-bottom: 24px; border-radius: 0 12px 12px 0;">
+                    <strong style="color: #059669; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;">Aplicação Sugerida</strong>
+                    <p style="margin-top: 12px; white-space: pre-wrap; line-height: 1.6;">${day.example}</p>
                 </div>` : ''}
-                <div style="background: #f5f5f5; padding: 16px; border-radius: 8px;">
-                    <strong style="font-size: 12px; text-transform: uppercase; color: #737373;">Prompt para IA</strong>
-                    <p style="margin-top: 8px; font-family: monospace; font-size: 13px; white-space: pre-wrap;">${day.prompt}</p>
+                <div style="background: #fafafa; padding: 20px; border-radius: 12px;">
+                    <strong style="font-size: 11px; text-transform: uppercase; color: #737373; letter-spacing: 0.1em;">Prompt para IA</strong>
+                    <p style="margin-top: 12px; font-family: monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.7;">${day.prompt}</p>
                 </div>
             </div>
         `).join('');
 
-        return `
-<!DOCTYPE html>
+        return `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Plano de ${plan.length} Dias - @${handle}</title>
     <style>
-        body { font-family: 'Inter', -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 48px 24px; color: #171717; }
-        h1 { font-size: 36px; font-weight: 800; color: #059669; margin-bottom: 8px; }
-        h2 { font-size: 24px; color: #404040; font-weight: 400; margin-bottom: 48px; }
-        @media print { body { padding: 0; } }
+        body { font-family: 'Inter', -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 64px 32px; color: #171717; line-height: 1.6; }
+        h1 { font-size: 42px; font-weight: 800; color: #059669; margin-bottom: 8px; letter-spacing: -0.03em; }
+        h2 { font-size: 20px; color: #525252; font-weight: 400; margin-bottom: 64px; }
+        @media print { body { padding: 32px; } }
     </style>
 </head>
 <body>
     <h1>PLANO DE ${plan.length} DIAS</h1>
     <h2>Estratégia para @${handle} • Gerado por LuzzIA</h2>
     ${days}
-    <footer style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #e5e5e5; color: #a3a3a3; font-size: 12px;">
+    <footer style="margin-top: 64px; padding-top: 32px; border-top: 1px solid #e5e5e5; color: #a3a3a3; font-size: 12px;">
         LuzzIA Architect • Feito com ♥️ por @DanielLuzz
     </footer>
 </body>
@@ -80,11 +80,11 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
     if (isLoadingPlan) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-[var(--space-xl)] bg-white">
-                <div className="text-center space-y-[var(--space-lg)]">
-                    <div className="w-12 h-12 border-4 border-[var(--green-core)] border-t-transparent rounded-full animate-spin mx-auto"></div>
-                    <h2 className="text-2xl text-[var(--green-core)] font-bold">ARQUITETANDO ESTRATÉGIA...</h2>
-                    <p className="text-[var(--gray-500)]">A LuzzIA está desenhando seu plano.</p>
+            <div className="min-h-screen flex flex-col items-center justify-center px-6 py-24 bg-white">
+                <div className="text-center space-y-6">
+                    <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    <h2 className="text-2xl text-green-600 font-bold">ARQUITETANDO ESTRATÉGIA...</h2>
+                    <p className="text-gray-500">A LuzzIA está desenhando seu plano.</p>
                 </div>
             </div>
         );
@@ -105,83 +105,90 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
         return (
             <div
-                className={`card-tech p-0 overflow-hidden cursor-pointer transition-all ${isExpanded ? 'ring-2 ring-[var(--green-core)]' : ''}`}
+                className={`card-tech p-0 overflow-hidden cursor-pointer transition-all ${isExpanded ? 'ring-2 ring-green-600' : ''}`}
                 onClick={() => setExpandedDay(isExpanded ? null : day.day)}
             >
-                <div className="flex items-stretch min-h-[80px]">
-                    <div className="w-20 bg-[var(--gray-50)] border-r border-[var(--gray-200)] flex flex-col items-center justify-center font-mono relative">
-                        <span className="text-[var(--gray-400)] text-[10px]">DIA</span>
-                        <span className={`text-2xl font-extrabold ${isExpanded ? 'text-[var(--green-core)]' : 'text-[var(--gray-900)]'}`}>
+                {/* Header */}
+                <div className="flex items-stretch">
+                    <div className="w-24 bg-gray-50 border-r border-gray-200 flex flex-col items-center justify-center py-6">
+                        <span className="text-gray-400 text-xs font-mono">DIA</span>
+                        <span className={`text-3xl font-extrabold ${isExpanded ? 'text-green-600' : 'text-gray-900'}`}>
                             {day.day.toString().padStart(2, '0')}
                         </span>
                     </div>
 
-                    <div className="flex-1 p-[var(--space-lg)] flex flex-col md:flex-row md:items-center justify-between gap-[var(--space-md)]">
-                        <div className="space-y-[var(--space-xs)]">
-                            <div className="flex gap-[var(--space-sm)] items-center">
+                    <div className="flex-1 p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="space-y-2">
+                            <div className="flex flex-wrap gap-3 items-center">
                                 <span className="tech-label">{day.format}</span>
                                 <span className="micro-label">{day.dimension}</span>
                             </div>
-                            <h3 className="text-lg font-bold text-[var(--gray-900)] leading-tight">{day.action}</h3>
+                            <h3 className="text-lg font-bold text-gray-900">{day.action}</h3>
                         </div>
 
-                        <svg className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180 text-[var(--green-core)]' : 'text-[var(--gray-400)]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className={`w-6 h-6 shrink-0 transition-transform ${isExpanded ? 'rotate-180 text-green-600' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                     </div>
                 </div>
 
+                {/* Expanded Content */}
                 <div className={`grid transition-all duration-300 ${isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-                    <div className="overflow-hidden border-t border-[var(--gray-200)] bg-[var(--gray-50)]">
-                        <div className="p-[var(--space-xl)] grid md:grid-cols-[1fr_2fr] gap-[var(--space-xl)]">
+                    <div className="overflow-hidden border-t border-gray-200 bg-gray-50">
+                        <div className="p-8 space-y-8">
 
-                            <div className="space-y-[var(--space-lg)]">
-                                <div>
-                                    <span className="micro-label" style={{ color: '#CA8A04' }}>OBJETIVO</span>
-                                    <p className="text-[var(--gray-600)] mt-2 italic">"{day.objective}"</p>
+                            {/* Two columns on desktop */}
+                            <div className="grid lg:grid-cols-2 gap-8">
+                                {/* Left column */}
+                                <div className="space-y-6">
+                                    <div>
+                                        <span className="micro-label" style={{ color: '#B45309' }}>OBJETIVO</span>
+                                        <p className="text-gray-600 mt-3 italic text-lg leading-relaxed">"{day.objective}"</p>
+                                    </div>
+
+                                    {day.example && (
+                                        <div>
+                                            <span className="micro-label text-green-600">APLICAÇÃO SUGERIDA</span>
+                                            <div className="mt-3 p-5 bg-white border-l-4 border-green-600 text-gray-700 leading-relaxed rounded-r-lg">
+                                                {day.example}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="p-4 border border-gray-200 rounded-xl bg-white">
+                                        <span className="micro-label">DICA</span>
+                                        <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+                                            Preencha os campos em [COLCHETES] para respostas mais precisas.
+                                        </p>
+                                    </div>
                                 </div>
 
-                                {day.example && (
-                                    <div>
-                                        <span className="micro-label text-[var(--green-core)]">APLICAÇÃO SUGERIDA</span>
-                                        <div className="mt-2 p-[var(--space-md)] bg-white border-l-4 border-[var(--green-core)] text-sm text-[var(--gray-700)]">
-                                            {day.example}
+                                {/* Right column */}
+                                <div className="space-y-5">
+                                    <div className="flex flex-wrap justify-between items-center gap-4">
+                                        <span className="micro-label">PROMPT GENERATIVO</span>
+                                        <div className="flex gap-3">
+                                            <a
+                                                href={getChatGPTLink(day.prompt)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="btn-outline h-11 text-xs"
+                                            >
+                                                ABRIR CHATGPT
+                                            </a>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); copyPrompt(day.prompt, day.day); }}
+                                                className={`btn-neurelic h-11 text-xs ${copiedDay === day.day ? 'bg-gray-900 border-gray-900' : ''}`}
+                                            >
+                                                {copiedDay === day.day ? 'COPIADO!' : 'COPIAR'}
+                                            </button>
                                         </div>
                                     </div>
-                                )}
 
-                                <div className="p-[var(--space-md)] border border-[var(--gray-200)] rounded-[var(--radius-md)] bg-white">
-                                    <span className="micro-label">DICA</span>
-                                    <p className="text-xs text-[var(--gray-500)] mt-1">
-                                        Preencha os campos em [COLCHETES] para respostas mais precisas.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="space-y-[var(--space-md)]">
-                                <div className="flex flex-wrap justify-between items-center gap-[var(--space-sm)]">
-                                    <span className="micro-label">PROMPT GENERATIVO</span>
-                                    <div className="flex gap-[var(--space-sm)]">
-                                        <a
-                                            href={getChatGPTLink(day.prompt)}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="btn-outline h-10 min-w-[140px] text-xs"
-                                        >
-                                            ABRIR CHATGPT
-                                        </a>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); copyPrompt(day.prompt, day.day); }}
-                                            className={`btn-neurelic h-10 min-w-[140px] text-xs ${copiedDay === day.day ? 'bg-[var(--gray-900)]' : ''}`}
-                                        >
-                                            {copiedDay === day.day ? 'COPIADO!' : 'COPIAR'}
-                                        </button>
+                                    <div className="bg-white border border-gray-200 rounded-xl p-6 font-mono text-sm text-gray-700 leading-relaxed max-h-[280px] overflow-y-auto custom-scrollbar">
+                                        {day.prompt}
                                     </div>
-                                </div>
-
-                                <div className="bg-white border border-[var(--gray-200)] rounded-[var(--radius-md)] p-[var(--space-lg)] font-mono text-sm text-[var(--gray-700)] leading-relaxed max-h-[200px] overflow-y-auto custom-scrollbar">
-                                    {day.prompt}
                                 </div>
                             </div>
 
@@ -193,56 +200,66 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
     };
 
     return (
-        <div className="min-h-screen bg-white py-[var(--space-4xl)] pb-[200px]">
-            <div className="container-neurelic space-y-[var(--space-3xl)] reveal">
+        <div className="min-h-screen bg-white">
+            {/* Top spacing */}
+            <div className="h-24 md:h-32"></div>
 
-                <header className="flex flex-col md:flex-row justify-between items-end gap-[var(--space-xl)] pb-[var(--space-2xl)] border-b border-[var(--gray-200)]">
-                    <div className="space-y-[var(--space-md)]">
+            <div className="container-neurelic space-y-16 reveal">
+
+                {/* Header */}
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+                    <div className="space-y-4">
                         <span className="tech-label">MODO EXECUÇÃO</span>
-                        <h1 className="hero-title">
-                            PLANO DE AÇÃO
-                        </h1>
+                        <h1 className="hero-title">PLANO DE AÇÃO</h1>
                     </div>
-                    <div className="text-right space-y-[var(--space-xs)]">
+                    <div className="text-left md:text-right space-y-1">
                         <p className="micro-label">DURAÇÃO</p>
-                        <p className="text-4xl font-extrabold text-[var(--green-core)]">{plan.length} DIAS</p>
+                        <p className="text-5xl font-extrabold text-green-600">{plan.length} DIAS</p>
                     </div>
                 </header>
 
-                <div className="space-y-[var(--space-2xl)]">
+                {/* Divider */}
+                <div className="h-px bg-gray-200"></div>
+
+                {/* Plan content */}
+                <div className="space-y-16">
                     {weekGroups.map((group, i) => (
-                        <div key={i} className="space-y-[var(--space-lg)]">
-                            <div className="flex items-center gap-[var(--space-md)]">
-                                <div className="w-3 h-3 bg-[var(--green-core)] rounded-full"></div>
-                                <h2 className="text-lg font-mono text-[var(--gray-500)] tracking-widest">{group.label}</h2>
-                                <div className="h-[1px] flex-1 bg-[var(--gray-200)]"></div>
+                        <div key={i} className="space-y-8">
+                            <div className="flex items-center gap-4">
+                                <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+                                <h2 className="text-base font-mono text-gray-500 tracking-widest">{group.label}</h2>
+                                <div className="h-px flex-1 bg-gray-200"></div>
                             </div>
-                            <div className="space-y-[var(--space-md)]">
+                            <div className="space-y-6">
                                 {group.days.map(day => <PlanCard key={day.day} day={day} />)}
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="fixed bottom-0 left-0 w-full bg-white border-t border-[var(--gray-200)] py-[var(--space-lg)] z-50 no-print">
-                    <div className="container-neurelic flex flex-col md:flex-row justify-between items-center gap-[var(--space-md)]">
+            </div>
 
-                        <a href="https://instagram.com/danielluzz" target="_blank" rel="noreferrer" className="text-[var(--gray-400)] hover:text-[var(--green-core)] font-mono text-xs transition-colors">
-                            Feito com ♥️ por @DanielLuzz
-                        </a>
+            {/* Bottom spacing for fixed footer */}
+            <div className="h-48"></div>
 
-                        <div className="flex gap-[var(--space-md)]">
-                            <button onClick={downloadPDF} className="btn-outline h-12 min-w-[180px]">
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                BAIXAR PLANO
-                            </button>
-                            <button onClick={onReset} className="btn-neurelic h-12 min-w-[180px]">
-                                REINICIAR
-                            </button>
-                        </div>
+            {/* Fixed Footer */}
+            <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 py-5 z-50 no-print">
+                <div className="container-neurelic flex flex-col md:flex-row justify-between items-center gap-4">
+
+                    <a href="https://instagram.com/danielluzz" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-green-600 text-sm transition-colors">
+                        Feito com ♥️ por @DanielLuzz
+                    </a>
+
+                    <div className="flex gap-4">
+                        <button onClick={downloadPDF} className="btn-outline h-12">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            BAIXAR PLANO
+                        </button>
+                        <button onClick={onReset} className="btn-neurelic h-12">
+                            REINICIAR
+                        </button>
                     </div>
                 </div>
-
             </div>
         </div>
     );
