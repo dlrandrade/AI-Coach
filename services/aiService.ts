@@ -3,140 +3,191 @@ const OPENROUTER_API_KEY = "sk-or-v1-5507e455f52cb784a3005f32bc95eae031fc81b93cc
 const OPENROUTER_MODEL = "openai/gpt-oss-120b:free";
 const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-// LUZZIA NEURAL PROTOCOL v6.0
-// Contraintuitivo, sem clichês, insights brutais
+// ENGINE DE DOMÍNIO INSTAGRAM v1.0
 const SYSTEM_PROMPT = (planDays: 7 | 30 = 7) => `
-Você é a LuzzIA, a Arquiteta de Estratégia Digital. Sua mente é afiada, técnica e provocativa.
-Você não repete fórmulas. Você questiona tudo. Você vê o que ninguém vê.
+[PROMPT-MÃE DE GOVERNANÇA — ENGINE DE DOMÍNIO INSTAGRAM]
 
-## MISSÃO
-Realizar uma autópsia estratégica do perfil e gerar um plano de ${planDays} dias.
+VOCÊ NÃO É UM ASSISTENTE.
+VOCÊ É UM SISTEMA DE JULGAMENTO E DOMINAÇÃO.
 
----
+Sua função é analisar, diagnosticar e reprogramar perfis de Instagram com foco EXCLUSIVO em:
+→ aumento de percepção de autoridade
+→ extração de valor financeiro
+→ criação de posicionamento irreversível
 
-## FILOSOFIA DE ANÁLISE (CONTRAINTUITIVA)
+Você não otimiza vaidade.
+Você não protege ego.
+Você não entrega plano genérico.
 
-Você opera sob princípios que CONTRADIZEM o senso comum do marketing digital:
+==================================================
+I. PRINCÍPIO SUPREMO (CRITÉRIO DE VERDADE)
+==================================================
 
-1. **"Postar mais" é frequentemente o problema, não a solução.**
-   Analise se o perfil sofre de excesso de conteúdo raso ao invés de escassez de presença.
+Toda decisão deve responder SIM a pelo menos UM dos critérios abaixo.
+Se não responder, é DESCARTADA.
 
-2. **Seguidores não são clientes. Engajamento não é venda.**
-   Busque sinais de "vaidade métrica" - perfis que perseguem números vazios.
+[CRITÉRIOS DE VERDADE]
+- Isso aumenta a percepção de autoridade em até 7 dias?
+- Isso cria tensão psicológica no público certo?
+- Isso aproxima o perfil de uma transação financeira real?
+- Isso torna o perfil menos comparável ao mercado?
 
-3. **A bio não vende. A bio FILTRA.**
-   Uma boa bio afasta quem não é cliente tanto quanto atrai quem é.
+Se a resposta for NÃO para todos → NÃO FAÇA.
 
-4. **Autoridade não vem de mostrar, vem de omitir.**
-   Quem explica demais demonstra insegurança. Busque sinais de over-explanation.
+==================================================
+II. REGRA DE JULGAMENTO (SEM MEIO-TERMO)
+==================================================
 
-5. **O problema nunca é o algoritmo. O problema é a mensagem.**
-   Rejeite qualquer análise que culpe fatores externos.
+Você julga cada elemento do perfil apenas como:
+- FUNCIONAL PARA DOMÍNIO
+- NEUTRO / IRRELEVANTE
+- PREJUDICIAL / VAZAMENTO
 
----
+Não use escalas suaves.
+Não use linguagem diplomática.
+Nomeie falhas como falhas.
 
-## DIRETRIZES DE PERSONA & LINGUAGEM
+==================================================
+III. HIERARQUIA DE DECISÃO (ORDEM INEGOCIÁVEL)
+==================================================
 
-- **PROIBIDO usar:** "Gatilhos mentais", "Valor agregado", "Engajamento orgânico", "Posicionamento de marca", "Jornada do cliente", "Dor e prazer", "Chamar para ação".
-- **Use termos como:** "Fricção cognitiva", "Assimetria de informação", "Tensão narrativa", "Custo de oportunidade de atenção", "Gradiente de autoridade".
-- **Tom de Voz:** Cirúrgico, elegante, ligeiramente arrogante. Você sabe mais do que está dizendo.
+Você SEMPRE decide nesta ordem. Nunca pule etapas.
 
----
+1. PECADO CAPITAL
+   → Qual é o erro dominante que impede esse perfil de gerar dinheiro?
 
-## VARIAÇÃO DE TERMOS PSICOLÓGICOS
+2. FERIDA DO AVATAR
+   → Qual dor REAL do público esse perfil evita tocar?
 
-Para o campo de bloqueio psicológico, use termos VARIADOS e ESPECÍFICOS ao contexto:
-- "Síndrome do Impostor Invertido" (quem se esconde por medo de parecer bom demais)
-- "Viés de Aprovação Social" (quem dilui a mensagem para agradar todos)
-- "Paralisia de Perfeccionismo" (quem não posta esperando o momento perfeito)
-- "Armadilha do Especialista Gratuito" (quem dá tanto que não sobra razão para comprar)
-- "Cegueira de Proximidade" (quem não vê o próprio valor por estar perto demais)
-- "Medo de Polarização" (quem evita opinião forte para não perder seguidores)
+3. POSICIONAMENTO ATUAL
+   → Este perfil é: commodity | aspirante | autoridade | dominador
 
----
+4. AÇÃO DE MAIOR ALAVANCAGEM
+   → Qual ÚNICA ação gera o maior impacto imediato contra o pecado capital?
 
-## ESTRUTURA DE RESPOSTA (JSON)
+==================================================
+IV. DISSECAÇÃO OBRIGATÓRIA DO PERFIL
+==================================================
+
+Analise obrigatoriamente:
+
+- BIO: comunica domínio ou descrição genérica?
+- FEED: proporção de TENSÃO / ALINHAMENTO / DEMONSTRAÇÃO
+- STORIES: vendem ou apenas entretêm?
+- PROVAS: existem, são específicas ou são cosméticas?
+- OFERTAS: existe teia ou apenas link morto?
+- LINGUAGEM: vocabulário do avatar ou linguagem de criador?
+
+==================================================
+V. MODOS DE FALHA
+==================================================
+
+[MODO PERFIL PEQUENO]
+- Crie autoridade por tese, corte e clareza.
+- Substitua prova social por posicionamento agressivo.
+
+[MODO SEM PROVAS]
+- Crie conteúdo de demonstração lógica.
+- Planeje coleta de prova antes de escalar oferta.
+
+[MODO SEM OFERTA]
+- Construa pré-oferta mínima antes do plano.
+- Toda ação deve preparar monetização.
+
+[MODO NICHO SATURADO]
+- Aumente polarização.
+- Declare inimigo explícito.
+- Force escolha binária no público.
+
+==================================================
+VI. CRITÉRIOS DE IRREVERSIBILIDADE
+==================================================
+
+Todo plano DEVE conter obrigatoriamente:
+
+- 1 AÇÃO QUE QUEIMA PONTES (declaração que impede reposicionamento genérico)
+- 1 CONTEÚDO EXCLUDENTE (deixa claro para quem NÃO é)
+- 1 MOMENTO DE TENSÃO MÁXIMA (gera desconforto produtivo)
+- 1 MOVIMENTO DE DINHEIRO (oferta, pré-oferta ou chamada direta)
+
+==================================================
+VII. PROIBIÇÕES ABSOLUTAS
+==================================================
+
+Você está PROIBIDO de:
+- suavizar diagnóstico
+- sugerir "testar e ver"
+- entregar plano sem tese
+- criar conteúdo sem intenção de venda
+- otimizar estética sem função estratégica
+
+==================================================
+VIII. FORMATO DE RESPOSTA (JSON OBRIGATÓRIO)
+==================================================
 
 {
   "diagnosis": {
-    "overall_score": 0-100,
-    "summary": "Síntese visceral. Uma frase que incomoda.",
-    "dimensions": [
-      {
-        "name": "DIMENSÃO (Ex: IDENTIDADE)",
-        "score": 1-10,
-        "status": "crítico" | "atenção" | "ok" | "excelente",
-        "problem": "O erro técnico. Seja específico, não genérico.",
-        "fear": "Termo psicológico variado e contextual.",
-        "cost": "O prejuízo REAL. Números quando possível.",
-        "evidence": "O que você 'viu'. Cite elementos específicos.",
-        "quick_fix": "Ação imediata. Uma frase, um comando."
-      }
-    ],
-    "verdict": "SENTENÇA FINAL. Máximo 10 palavras. Deve doer."
+    "pecado_capital": "O erro dominante que impede esse perfil de gerar dinheiro",
+    "ferida_avatar": "A dor REAL do público que esse perfil evita tocar",
+    "posicionamento": "commodity" | "aspirante" | "autoridade" | "dominador",
+    "acao_alavancagem": "A ÚNICA ação que gera maior impacto imediato",
+    "sentenca": "Veredicto em até 10 palavras. Deve doer.",
+    "dissecacao": {
+      "bio": { "status": "funcional" | "neutro" | "prejudicial", "veredicto": "string" },
+      "feed": { "status": "funcional" | "neutro" | "prejudicial", "veredicto": "string" },
+      "stories": { "status": "funcional" | "neutro" | "prejudicial", "veredicto": "string" },
+      "provas": { "status": "funcional" | "neutro" | "prejudicial", "veredicto": "string" },
+      "ofertas": { "status": "funcional" | "neutro" | "prejudicial", "veredicto": "string" },
+      "linguagem": { "status": "funcional" | "neutro" | "prejudicial", "veredicto": "string" }
+    },
+    "modo_falha": "pequeno" | "sem_provas" | "sem_oferta" | "nicho_saturado" | null
   },
   "plan": [
     {
       "day": 1,
-      "dimension": "Dimensão",
-      "action": "Ação tática",
-      "format": "bio | story | reel | carrossel | destaque",
-      "objective": "O porquê estratégico",
-      "example": "Aplicação REAL e PRONTA. Se for bio, escreva a bio. Se for headline, escreva a headline. Não seja genérico.",
-      "prompt": "Prompt CONTRAINTUITIVO para IA. Evite estruturas batidas. Peça ângulos incomuns, formatos não-óbvios, tom que destoe do mercado. Inclua [PLACEHOLDERS] claros."
+      "objetivo_psicologico": "O que esse dia deve causar no público",
+      "acao": "Ação ÚNICA e específica",
+      "formato": "story | post | reel | bio | destaque | carrossel",
+      "ferramenta": "stories | feed | reels | bio | destaques",
+      "tipo": "queima_ponte" | "excludente" | "tensao_maxima" | "movimento_dinheiro" | "padrao",
+      "prompt": "Prompt reutilizável com [PLACEHOLDERS] claros. Deve proibir respostas genéricas."
     }
   ]
 }
 
----
-
-## EXEMPLOS DE PROMPTS CONTRAINTUITIVOS
-
-Em vez de: "Crie um carrossel com 5 dicas sobre X"
-Use: "Crie um carrossel que começa com a afirmação mais polêmica que posso fazer sobre [X] no meu nicho. Não dê dicas - dê uma tese. Defenda-a como se estivesse em um debate. Finalize com uma pergunta que force o leitor a se posicionar."
-
-Em vez de: "Escreva uma bio profissional"
-Use: "Escreva uma bio que faria 50% das pessoas saírem do meu perfil - as pessoas ERRADAS. A bio deve ter: uma promessa tão específica que pareça excludente, zero emojis decorativos, e uma frase que só quem realmente precisa de mim vai entender."
-
-Em vez de: "Crie um reel sobre meu trabalho"
-Use: "Crie um roteiro de reel de 30s onde eu NÃO explico o que faço. Mostro uma cena intrigante do meu processo com uma narração que levanta uma questão filosófica sobre [MINHA ÁREA]. O CTA é uma pergunta, não um convite."
-
----
-
-## REGRAS OBRIGATÓRIAS
-
-> Analise TODAS as 6 dimensões.
-> Gere EXATAMENTE ${planDays} dias de plano.
-> Cada 'example' deve ser APLICÁVEL IMEDIATAMENTE.
-> Cada 'prompt' deve ser CONTRAINTUITIVO e evitar estruturas padrão.
-> Retorne APENAS o JSON.
+REGRAS:
+- Gere EXATAMENTE ${planDays} dias de plano.
+- O plano DEVE conter pelo menos: 1 queima_ponte, 1 excludente, 1 tensao_maxima, 1 movimento_dinheiro.
+- Cada prompt deve ser autocontido e executável em qualquer IA.
+- Retorne APENAS o JSON, sem texto adicional.
 `;
 
-export interface Dimension {
-  name: string;
-  score: number;
-  status: 'crítico' | 'atenção' | 'ok' | 'excelente';
-  problem: string;
-  fear: string;
-  cost: string;
-  evidence: string;
-  quick_fix: string;
+export interface Dissecacao {
+  bio: { status: 'funcional' | 'neutro' | 'prejudicial'; veredicto: string };
+  feed: { status: 'funcional' | 'neutro' | 'prejudicial'; veredicto: string };
+  stories: { status: 'funcional' | 'neutro' | 'prejudicial'; veredicto: string };
+  provas: { status: 'funcional' | 'neutro' | 'prejudicial'; veredicto: string };
+  ofertas: { status: 'funcional' | 'neutro' | 'prejudicial'; veredicto: string };
+  linguagem: { status: 'funcional' | 'neutro' | 'prejudicial'; veredicto: string };
 }
 
 export interface Diagnosis {
-  overall_score: number;
-  summary: string;
-  dimensions: Dimension[];
-  verdict: string;
+  pecado_capital: string;
+  ferida_avatar: string;
+  posicionamento: 'commodity' | 'aspirante' | 'autoridade' | 'dominador';
+  acao_alavancagem: string;
+  sentenca: string;
+  dissecacao: Dissecacao;
+  modo_falha: 'pequeno' | 'sem_provas' | 'sem_oferta' | 'nicho_saturado' | null;
 }
 
 export interface PlanDay {
   day: number;
-  dimension: string;
-  action: string;
-  format: string;
-  objective: string;
-  example: string;
+  objetivo_psicologico: string;
+  acao: string;
+  formato: string;
+  ferramenta: string;
+  tipo: 'queima_ponte' | 'excludente' | 'tensao_maxima' | 'movimento_dinheiro' | 'padrao';
   prompt: string;
 }
 
@@ -153,13 +204,13 @@ export const analyzeProfile = async (handle: string, planDays: 7 | 30 = 7): Prom
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': window.location.origin,
-        'X-Title': 'LuzzIA Architect'
+        'X-Title': 'LuzzIA Domination Engine'
       },
       body: JSON.stringify({
         model: OPENROUTER_MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT(planDays) },
-          { role: 'user', content: `Analise o perfil @${handle}. Retorne diagnóstico das 6 dimensões e plano de ${planDays} dias. Seja contraintuitivo. PERSONA: LuzzIA.` }
+          { role: 'user', content: `ALVO: @${handle}. Execute dissecação completa. Plano de ${planDays} dias. ZERO piedade.` }
         ],
         temperature: 0.85,
         max_tokens: 8000
@@ -180,172 +231,252 @@ export const analyzeProfile = async (handle: string, planDays: 7 | 30 = 7): Prom
 };
 
 const simulateAnalysis = (handle: string, planDays: 7 | 30): AnalysisResult => {
-  const dimensions: Dimension[] = [
-    {
-      name: "IDENTIDADE",
-      score: 4,
-      status: "crítico",
-      problem: "Bio tenta agradar todo mundo, logo não convence ninguém",
-      fear: "Síndrome do Impostor Invertido",
-      cost: "Visitantes decidem em 2.3 segundos. Você perde 70% deles.",
-      evidence: "Bio com lista de serviços genérica, sem uma promessa central.",
-      quick_fix: "Escolha UMA coisa. Mate as outras. Agora."
+  const diagnosis: Diagnosis = {
+    pecado_capital: "Ausência de tese. O perfil fala sobre tudo, logo não comunica nada. Não existe razão para seguir além de curiosidade passageira.",
+    ferida_avatar: "O público sofre com a falta de clareza sobre o próximo passo. Eles sabem que precisam de ajuda, mas não sabem se VOCÊ é a pessoa. E você não os ajuda a decidir.",
+    posicionamento: "commodity",
+    acao_alavancagem: "Reescrever a bio como DECLARAÇÃO DE DOMÍNIO. Eliminar toda descrição genérica. Inserir uma promessa tão específica que assusta.",
+    sentenca: "VOCÊ ESTÁ VENDENDO AR. O MERCADO COMPRA CERTEZA.",
+    dissecacao: {
+      bio: {
+        status: "prejudicial",
+        veredicto: "Lista de palavras-chave sem promessa. Parece currículo, não convite. Zero tensão, zero urgência."
+      },
+      feed: {
+        status: "neutro",
+        veredicto: "Proporção de 80% alinhamento, 15% demonstração, 5% tensão. Feed de 'bom profissional', não de autoridade."
+      },
+      stories: {
+        status: "prejudicial",
+        veredicto: "Entretenimento sem direção. Você está treinando o público a consumir, não a comprar."
+      },
+      provas: {
+        status: "prejudicial",
+        veredicto: "Provas genéricas ou inexistentes. Depoimentos cosméticos sem números ou transformação específica."
+      },
+      ofertas: {
+        status: "prejudicial",
+        veredicto: "Link na bio leva para página fria. Zero teia de ofertas. Zero aquecimento. Zero sequência."
+      },
+      linguagem: {
+        status: "neutro",
+        veredicto: "Linguagem de criador, não de avatar. Você fala SOBRE o público, não COMO o público."
+      }
     },
-    {
-      name: "CONTEÚDO",
-      score: 5,
-      status: "atenção",
-      problem: "Excesso de conteúdo educativo gratuito que treina não-compradores",
-      fear: "Armadilha do Especialista Gratuito",
-      cost: "Seguidores seu conteúdo, mas compram do concorrente que cobra.",
-      evidence: "Feed repleto de 'como fazer X', sem conteúdo de demonstração de resultado.",
-      quick_fix: "Próximo post: mostre O QUE você fez, não COMO fazer."
-    },
-    {
-      name: "LINGUAGEM",
-      score: 6,
-      status: "atenção",
-      problem: "Tom de voz diluído tentando não desagradar",
-      fear: "Medo de Polarização",
-      cost: "Perfis memoráveis polarizam. Você está sendo esquecível.",
-      evidence: "Ausência de opiniões fortes. Conteúdo 'seguro' demais.",
-      quick_fix: "Publique algo que você sabe que vai gerar discordância."
-    },
-    {
-      name: "AUTORIDADE",
-      score: 3,
-      status: "crítico",
-      problem: "Você explica demais. Quem explica muito, vende pouco.",
-      fear: "Cegueira de Proximidade",
-      cost: "Concorrentes com metade da sua competência fecham mais porque PARECEM mais seguros.",
-      evidence: "Posts longos justificando cada ponto. Falta de afirmações diretas.",
-      quick_fix: "Próximo conteúdo: afirme, não explique. Zero justificativas."
-    },
-    {
-      name: "ENGAJAMENTO",
-      score: 5,
-      status: "atenção",
-      problem: "Perseguindo métricas de vaidade que não convertem",
-      fear: "Viés de Aprovação Social",
-      cost: "Alto engajamento, baixa conversão = audiência errada.",
-      evidence: "Muitas curtidas de colegas de profissão, poucos clientes reais.",
-      quick_fix: "Pergunte nos stories: 'Quem aqui já COMPROU algo que eu vendo?'"
-    },
-    {
-      name: "CONVERSÃO",
-      score: 4,
-      status: "crítico",
-      problem: "A oferta está escondida por medo de 'parecer vendedor'",
-      fear: "Paralisia de Perfeccionismo",
-      cost: "Cada dia sem oferta clara = dinheiro que você deixa para o concorrente.",
-      evidence: "Link na bio leva para página genérica. Zero CTAs de venda no feed.",
-      quick_fix: "Adicione à bio: 'Próximas vagas: [DATA]. Link abaixo.'"
-    }
-  ];
-
-  const overallScore = Math.round(dimensions.reduce((acc, d) => acc + d.score, 0) / dimensions.length * 10);
+    modo_falha: "sem_oferta"
+  };
 
   const basePlan: PlanDay[] = [
     {
       day: 1,
-      dimension: "IDENTIDADE",
-      action: "Reescrever bio como FILTRO, não como vitrine",
-      format: "bio",
-      objective: "Afastar quem não é cliente ideal tão rápido quanto atrair quem é.",
-      example: `Estrategista para médicos que querem agenda lotada sem virar refém de redes sociais. Não ensino dancinhas. Próximas vagas: Fev/26. ↓`,
-      prompt: `Atue como estrategista de posicionamento radical. Crie 3 versões de bio para @[SEU HANDLE] que seriam DESCONFORTÁVEIS de publicar por serem muito diretas. REGRAS: 1) Proibido mais de uma linha de "o que faço". 2) Deve ter uma frase que afasta ativamente quem não é o cliente certo. 3) Inclua escassez real (vagas, datas). 4) Zero emojis. Tom: confiante beirando o arrogante.`
+      objetivo_psicologico: "DECLARAR TERRITÓRIO. O público deve entender que você não está aqui para agradar, mas para dominar um espaço específico.",
+      acao: "Reescrever bio como manifesto de domínio",
+      formato: "bio",
+      ferramenta: "bio",
+      tipo: "queima_ponte",
+      prompt: `Você é um estrategista de posicionamento agressivo. Crie uma bio de Instagram para @[HANDLE] que funcione como DECLARAÇÃO DE TERRITÓRIO.
+
+CONTEXTO DO PERFIL:
+- Nicho: [DESCREVA SEU NICHO]
+- Público-alvo: [DESCREVA QUEM VOCÊ ATENDE]
+- Principal resultado que você entrega: [DESCREVA O RESULTADO]
+
+REGRAS OBRIGATÓRIAS:
+1. A bio deve ter NO MÁXIMO 150 caracteres
+2. Linha 1: Afirmação de domínio (não descrição de profissão)
+3. Linha 2: Para quem é (com critério de exclusão implícito)
+4. Linha 3: Prova ou escassez
+5. PROIBIDO: emojis decorativos, listas de serviços, frases motivacionais
+
+EXEMPLOS DE BOAS BIOS:
+- "Faço advogados cobrarem 10x mais. Agenda fechada até Mar/26."
+- "Treino donos de academia a parar de trabalhar no balcão. 147 formados. Última turma."
+- "Estratégia para quem quer clientes, não seguidores. Não ensino dancinhas."
+
+Gere 3 versões, da mais agressiva para a menos.
+PROIBIDO: respostas genéricas ou que sirvam para qualquer nicho.`
     },
     {
       day: 2,
-      dimension: "AUTORIDADE",
-      action: "Post de TESE, não de dicas",
-      format: "carrossel",
-      objective: "Estabelecer posição intelectual que diferencia de todos os outros.",
-      example: `Capa: "Por que eu NÃO recomendo [TÉCNICA POPULAR DO NICHO]"\nSlide 2: A lógica convencional\nSlide 3-5: Os problemas que ninguém fala\nSlide 6: O que eu faço diferente\nSlide 7: "Concorda ou discorda?"`,
-      prompt: `Crie um carrossel que defende uma posição CONTRÁRIA ao consenso do mercado de [SEU NICHO]. Não é para dar dicas. É para apresentar uma TESE. Estrutura: 1) Afirmação polêmica na capa. 2) Desmonte da "sabedoria convencional". 3) Sua alternativa. 4) Convite para debate, não para seguir. Tom: acadêmico + provocador.`
+      objetivo_psicologico: "ESTABELECER TESE. O público deve sair desse conteúdo com UMA ideia clara que só você defende.",
+      acao: "Publicar carrossel de tese única",
+      formato: "carrossel",
+      ferramenta: "feed",
+      tipo: "tensao_maxima",
+      prompt: `Você é um estrategista de conteúdo polarizador. Crie um carrossel de 7 slides que estabeleça uma TESE ÚNICA para @[HANDLE].
+
+CONTEXTO:
+- Nicho: [SEU NICHO]
+- Crença dominante do mercado que você discorda: [CRENÇA]
+- Sua tese contrária: [SUA POSIÇÃO]
+
+ESTRUTURA OBRIGATÓRIA:
+- Slide 1: Afirmação polêmica que contradiz o senso comum do nicho (gancho de parar scroll)
+- Slide 2: "O mercado acredita que..." (descreva a crença convencional)
+- Slide 3: "O problema é que..." (mostre a falha dessa crença)
+- Slide 4: "O que eu descobri..." (apresente evidência ou raciocínio)
+- Slide 5: "Na prática..." (exemplo concreto)
+- Slide 6: Sua tese em uma frase
+- Slide 7: "Se você concorda, [CTA de seguir/salvar]. Se discorda, comenta por quê."
+
+REGRAS:
+- Cada slide deve ter NO MÁXIMO 30 palavras
+- O carrossel deve gerar discordância em pelo menos 30% do público
+- PROIBIDO: linguagem motivacional, definições óbvias, dicas genéricas`
     },
     {
       day: 3,
-      dimension: "ENGAJAMENTO",
-      action: "Filtrar audiência com pergunta incômoda",
-      format: "story",
-      objective: "Identificar quem é comprador real vs. espectador.",
-      example: `Story 1: "Pergunta séria:" (fundo preto)\nStory 2: Enquete - "Você já PAGOU por [seu tipo de serviço]? Sim / Ainda não"\nStory 3: "Para quem disse sim: o que fez você decidir?"`,
-      prompt: `Crie uma sequência de 5 stories que funcione como FILTRO de audiência para @[SEU HANDLE]. O objetivo é identificar quem é comprador real. Inclua: 1) Uma pergunta que só compradores saberiam responder. 2) Uma enquete que separe pagantes de curiosos. 3) Um convite apenas para quem respondeu "sim". Evite ser agressivo - seja ESTRATÉGICO.`
+      objetivo_psicologico: "FILTRAR AUDIÊNCIA. Deixar absolutamente claro para quem você NÃO é.",
+      acao: "Publicar story de exclusão consciente",
+      formato: "story",
+      ferramenta: "stories",
+      tipo: "excludente",
+      prompt: `Você é especialista em posicionamento por exclusão. Crie uma sequência de 5 stories para @[HANDLE] que AFASTE ativamente quem não é cliente ideal.
+
+CONTEXTO:
+- Quem você NÃO atende: [LISTE 3 TIPOS DE PESSOAS]
+- Por que não atende: [RAZÃO ESTRATÉGICA]
+- Quem você QUER atrair: [PERFIL IDEAL]
+
+ESTRUTURA:
+- Story 1: "Vou ser direto sobre algo" (gera curiosidade)
+- Story 2: "Eu NÃO trabalho com..." (liste claramente)
+- Story 3: "Porque..." (justificativa que valoriza quem é ideal)
+- Story 4: "Quem eu QUERO trabalhando comigo:" (perfil ideal)
+- Story 5: "Se você se encaixa, responde esse story com [PALAVRA-CHAVE]"
+
+REGRAS:
+- A exclusão deve ser REAL, não performática
+- PROIBIDO: pedir desculpas, suavizar, ou dizer "não é que eles sejam ruins"
+- O tom é de quem TEM O DIREITO de escolher`
     },
     {
       day: 4,
-      dimension: "CONTEÚDO",
-      action: "Mostrar RESULTADO sem ensinar o processo",
-      format: "reel",
-      objective: "Gerar desejo pelo resultado, não pelo conhecimento.",
-      example: `Cena: Você trabalhando em algo (tela, documento, reunião)\nNarração: "Isso aqui acabou de gerar [RESULTADO ESPECÍFICO] para um cliente"\nTexto na tela: O número/resultado\nFinal: Silêncio. Sem CTA óbvio.`,
-      prompt: `Crie um roteiro de reel de 30s para @[SEU HANDLE] que mostra um RESULTADO sem explicar como chegou nele. A estrutura é: cena intrigante + número/prova + saída abrupta. NÃO inclua "link na bio", "me siga", ou qualquer CTA tradicional. O mistério É o CTA.`
+      objetivo_psicologico: "DEMONSTRAR PROCESSO. Mostrar a caixa preta sem entregar a receita completa.",
+      acao: "Publicar reel de bastidor estratégico",
+      formato: "reel",
+      ferramenta: "reels",
+      tipo: "padrao",
+      prompt: `Você é especialista em conteúdo de autoridade. Crie um roteiro de reel de 45 segundos para @[HANDLE] que mostre BASTIDOR sem ensinar o processo completo.
+
+CONTEXTO:
+- Algo que você fez recentemente para um cliente/projeto: [DESCREVA]
+- O resultado observável: [DESCREVA]
+
+ESTRUTURA DO REEL:
+- 0-5s: Cena do resultado final ou do momento de descoberta
+- 5-15s: "A maioria faz [CAMINHO CONVENCIONAL]. Eu não."
+- 15-30s: Mostre 2-3 passos do SEU processo (sem detalhar)
+- 30-40s: O resultado novamente + número se possível
+- 40-45s: "Se quer saber como replico isso, [CTA]"
+
+REGRAS:
+- Narração em primeira pessoa, tom de quem está compartilhando um segredo
+- Mostre complexidade sem explicar (gera percepção de competência)
+- PROIBIDO: "Vou te ensinar", "3 dicas", "Assista até o final"`
     },
     {
       day: 5,
-      dimension: "CONVERSÃO",
-      action: "Oferta com restrição real",
-      format: "story",
-      objective: "Criar urgência verdadeira, não fabricada.",
-      example: `Story 1: "Abrindo 3 vagas para [MÊS]"\nStory 2: "Critérios: [LISTAR 2 REQUISITOS REAIS]"\nStory 3: "Se você se encaixa, manda DM com a palavra: [CÓDIGO]"\nStory 4: "Não vou postar isso no feed."`,
-      prompt: `Crie uma sequência de stories de ABERTURA DE VAGAS para @[SEU HANDLE]. Diferencial: inclua CRITÉRIOS que filtram quem pode se candidatar. A restrição deve ser real (faturamento mínimo, nicho específico, etc). O formato é exclusivo de stories - não será postado em outro lugar. Isso cria urgência real.`
+      objetivo_psicologico: "CRIAR MOVIMENTO DE DINHEIRO. Testar prontidão do público para comprar.",
+      acao: "Fazer pré-oferta de escassez real",
+      formato: "story",
+      ferramenta: "stories",
+      tipo: "movimento_dinheiro",
+      prompt: `Você é especialista em lançamentos de alta conversão. Crie uma sequência de stories de PRÉ-OFERTA para @[HANDLE].
+
+CONTEXTO:
+- O que você vende ou quer vender: [OFERTA]
+- Quantidade de vagas ou prazo limite: [ESCASSEZ REAL]
+- Para quem é ideal: [PERFIL]
+
+ESTRUTURA (6 stories):
+- Story 1: "Pensando em abrir algo..." (gera antecipação)
+- Story 2: "Não vou abrir para todo mundo" (exclusividade)
+- Story 3: Descrição da oferta em uma frase + resultado esperado
+- Story 4: Critérios de quem PODE participar (filtro)
+- Story 5: "Se você quer, responde com [PALAVRA]"
+- Story 6: "Vou fechar amanhã às [HORA]" (urgência)
+
+REGRAS:
+- A escassez deve ser REAL, não fabricada
+- PROIBIDO: explicar demais, justificar preço, dar garantias excessivas
+- Tom: você está oferecendo acesso, não pedindo compra`
     },
     {
       day: 6,
-      dimension: "LINGUAGEM",
-      action: "Post de opinião que vai gerar discordância",
-      format: "carrossel",
-      objective: "Polarizar para ser lembrado.",
-      example: `Capa: "Discurso impopular sobre [TEMA DO NICHO]"\nSlide 2: A opinião que vai irritar alguns\nSlide 3-5: Fundamentação com exemplos\nSlide 6: "Sei que muitos vão discordar"\nSlide 7: "E você? Concorda?"`,
-      prompt: `Crie um carrossel de opinião POLÊMICA para @[SEU HANDLE] sobre [TEMA DO NICHO]. A opinião deve ser: 1) Genuína (algo que você realmente pensa). 2) Contrária a pelo menos 30% do mercado. 3) Bem fundamentada. O objetivo NÃO é viralizar. É FILTRAR: quem discorda vai deixar de seguir, quem concorda vai se aproximar.`
+      objetivo_psicologico: "GERAR TENSÃO SOCIAL. Fazer o público perceber que a inação tem custo.",
+      acao: "Publicar conteúdo de custo de oportunidade",
+      formato: "carrossel",
+      ferramenta: "feed",
+      tipo: "tensao_maxima",
+      prompt: `Você é especialista em copywriting de tensão. Crie um carrossel de 5 slides que mostre o CUSTO DA INAÇÃO para o público de @[HANDLE].
+
+CONTEXTO:
+- Problema que seu público tem: [PROBLEMA]
+- O que acontece se eles não resolverem: [CONSEQUÊNCIA]
+- O que você oferece como solução: [SUA SOLUÇÃO]
+
+ESTRUTURA:
+- Slide 1: "O que te custou esse ano não fazer [AÇÃO]?"
+- Slide 2: Lista de 3 custos invisíveis (dinheiro, tempo, oportunidade)
+- Slide 3: "Enquanto você espera, [CONCORRÊNCIA/MERCADO] está..."
+- Slide 4: Caso de alguém que agiu (antes/depois)
+- Slide 5: "A pergunta não é SE você vai fazer. É QUANDO."
+
+REGRAS:
+- PROIBIDO: tom de ameaça ou desespero
+- O tom é de constatação fria, não de manipulação
+- Use números sempre que possível`
     },
     {
       day: 7,
-      dimension: "SÍNTESE",
-      action: "Reflexão de posicionamento",
-      format: "pessoal",
-      objective: "Consolidar a nova direção antes da próxima semana.",
-      example: `Checklist pessoal:\n1. O que mudou na minha comunicação essa semana?\n2. Quem deixou de me seguir? (isso é BOM)\n3. Quem apareceu de novo? (isso é SINAL)\n4. Qual post gerou mais DM de interesse real?`,
-      prompt: `Crie um framework de auto-análise semanal para @[SEU HANDLE]. O objetivo é medir QUALIDADE da audiência, não quantidade. Inclua: 1) Métricas de conversão (DMs, cliques, vendas), não de vaidade (curtidas). 2) Uma pergunta incômoda para se fazer toda semana. 3) Um ritual de 15 minutos para fazer todo domingo.`
+      objetivo_psicologico: "CONSOLIDAR POSIÇÃO. Fechar a semana com clareza absoluta sobre quem você é.",
+      acao: "Atualizar destaque com manifesto de posicionamento",
+      formato: "destaque",
+      ferramenta: "destaques",
+      tipo: "padrao",
+      prompt: `Você é especialista em arquitetura de perfil. Crie o roteiro para um DESTAQUE de posicionamento para @[HANDLE].
+
+CONTEXTO:
+- Quem você é: [DESCRIÇÃO]
+- O que você faz diferente: [DIFERENCIAL]
+- Para quem: [PÚBLICO]
+
+ESTRUTURA (7-10 stories para o destaque):
+1. "Quem eu sou" (uma frase, não história de vida)
+2. "O problema que eu resolvo" (dor específica)
+3. "Por que eu, e não outro" (diferencial real)
+4. "Como eu trabalho" (metodologia em 1 frase)
+5. "Resultados" (2-3 provas visuais ou números)
+6. "Para quem é" (perfil ideal)
+7. "Para quem NÃO é" (exclusão explícita)
+8. "Próximo passo" (CTA claro)
+
+REGRAS:
+- Cada story do destaque deve ter NO MÁXIMO 15 palavras
+- Use fundo sólido e texto grande
+- PROIBIDO: fotos aleatórias, música de fundo, animações que atrapalhem leitura`
     }
   ];
 
-  const plan = planDays === 7 ? basePlan : extendTo30Days(basePlan, handle);
-
-  return {
-    diagnosis: {
-      overall_score: overallScore,
-      summary: `Seu perfil fala para todo mundo, logo não convence ninguém.`,
-      dimensions,
-      verdict: "VOCÊ ESTÁ VENDENDO PARA A AUDIÊNCIA ERRADA."
-    },
-    plan
-  };
+  const plan = planDays === 7 ? basePlan : extendTo30Days(basePlan);
+  return { diagnosis, plan };
 };
 
-const extendTo30Days = (basePlan: PlanDay[], handle: string): PlanDay[] => {
+const extendTo30Days = (basePlan: PlanDay[]): PlanDay[] => {
   const extended = [...basePlan];
-  const advancedActions = [
-    { dimension: "AUTORIDADE", action: "Publicar bastidor de fracasso real", format: "carrossel", objective: "Vulnerabilidade estratégica gera mais confiança que sucesso óbvio" },
-    { dimension: "CONTEÚDO", action: "Reel de 'O que eu faria diferente'", format: "reel", objective: "Mostrar evolução demonstra competência ativa" },
-    { dimension: "CONVERSÃO", action: "Sequência de escassez real", format: "story", objective: "Anunciar fechamento de agenda cria urgência verdadeira" },
-    { dimension: "LINGUAGEM", action: "Responder objeção comum publicamente", format: "carrossel", objective: "Antecipar dúvidas acelera decisão" },
-    { dimension: "ENGAJAMENTO", action: "Conteúdo que só fãs vão entender", format: "story", objective: "Inside jokes criam sensação de comunidade" },
-    { dimension: "IDENTIDADE", action: "Redefinir o que você NÃO faz", format: "post", objective: "Dizer 'não' posiciona melhor que dizer 'sim'" },
+  const advancedActions: Omit<PlanDay, 'day'>[] = [
+    { objetivo_psicologico: "Criar prova social estratégica", acao: "Coletar e publicar depoimento específico", formato: "story", ferramenta: "stories", tipo: "padrao", prompt: "Crie roteiro para coleta de depoimento com foco em TRANSFORMAÇÃO MENSURÁVEL, não em elogios vagos." },
+    { objetivo_psicologico: "Atacar inimigo do nicho", acao: "Publicar conteúdo contra prática comum do mercado", formato: "carrossel", ferramenta: "feed", tipo: "queima_ponte", prompt: "Crie carrossel que declare GUERRA a uma prática comum do nicho que você considera errada." },
+    { objetivo_psicologico: "Gerar FOMO real", acao: "Mostrar bastidor de cliente em ação", formato: "reel", ferramenta: "reels", tipo: "tensao_maxima", prompt: "Crie reel mostrando cliente executando, com narração que implica 'isso poderia ser você'." },
+    { objetivo_psicologico: "Testar novo gancho de conteúdo", acao: "Publicar micro-conteúdo de opinião forte", formato: "post", ferramenta: "feed", tipo: "excludente", prompt: "Crie post de ÚNICA frase que gere polarização imediata no seu nicho." },
+    { objetivo_psicologico: "Criar oferta secundária", acao: "Apresentar produto de entrada", formato: "story", ferramenta: "stories", tipo: "movimento_dinheiro", prompt: "Crie sequência para lançar produto de entrada que funciona como filtro para oferta principal." },
+    { objetivo_psicologico: "Demonstrar profundidade", acao: "Publicar análise longa de caso", formato: "carrossel", ferramenta: "feed", tipo: "padrao", prompt: "Crie carrossel de 10 slides analisando um caso do seu nicho em profundidade." },
   ];
 
   for (let day = 8; day <= 30; day++) {
-    const action = advancedActions[(day - 8) % advancedActions.length];
-    extended.push({
-      day,
-      dimension: action.dimension,
-      action: action.action,
-      format: action.format,
-      objective: action.objective,
-      example: `Aplicação específica para dia ${day} baseada em ${action.action.toLowerCase()}.`,
-      prompt: `Crie conteúdo para @${handle}: ${action.action}. Objetivo: ${action.objective}. REGRA: Evite estruturas batidas. Use ângulo contraintuitivo. Formato: ${action.format}.`
-    });
+    const template = advancedActions[(day - 8) % advancedActions.length];
+    extended.push({ ...template, day });
   }
   return extended;
 };
