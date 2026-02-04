@@ -2,8 +2,8 @@
 @import "tailwindcss";
 
 /* ============================================
-   NEURELIC-008 — DESIGN SYSTEM v4.1
-   With glitch effects
+   NEURELIC-010 — BRUTALIST DESIGN SYSTEM
+   Sharp corners, high contrast, visceral
    ============================================ */
 
 :root {
@@ -18,19 +18,22 @@
   --gray-700: #404040;
   --gray-800: #262626;
   --gray-900: #171717;
+  --black: #000000;
 
   --green-core: #059669;
   --green-light: #10B981;
   --green-soft: #D1FAE5;
 
-  --orange-action: #EA580C;
+  --red-core: #DC2626;
+  --orange-core: #EA580C;
+  --amber-core: #D97706;
 
   --font-primary: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* SHARP CORNERS */
+  --radius-none: 0px;
+  --radius-sm: 2px;
 
   --space-xs: 8px;
   --space-sm: 16px;
@@ -39,10 +42,9 @@
   --space-xl: 48px;
   --space-2xl: 64px;
   --space-3xl: 96px;
-  --space-4xl: 128px;
 
-  --btn-height: 52px;
-  --btn-min-width: 160px;
+  --btn-height: 56px;
+  --btn-min-width: 180px;
 }
 
 * {
@@ -53,34 +55,40 @@
 
 body {
   background-color: var(--white);
-  color: var(--gray-700);
+  color: var(--gray-800);
   font-family: var(--font-primary);
   font-size: 16px;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
 
+/* CONTAINER */
 .container-neurelic {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 var(--space-lg);
 }
 
+/* TYPOGRAPHY - BRUTALIST */
 .hero-title {
   font-family: var(--font-primary);
   font-weight: 800;
-  font-size: clamp(36px, 6vw, 64px);
+  font-size: clamp(40px, 7vw, 72px);
   text-transform: uppercase;
+  color: var(--black);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.hero-title span {
   color: var(--green-core);
-  line-height: 1;
-  letter-spacing: -0.04em;
 }
 
 .section-title {
   font-weight: 800;
   font-size: clamp(24px, 3vw, 32px);
-  color: var(--gray-900);
-  letter-spacing: -0.02em;
+  color: var(--black);
+  letter-spacing: -0.03em;
   text-transform: uppercase;
 }
 
@@ -88,7 +96,7 @@ body {
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--gray-500);
 }
@@ -100,20 +108,20 @@ body {
   color: var(--gray-400);
 }
 
+/* BUTTONS - BRUTALIST */
 .btn-neurelic {
   height: var(--btn-height);
   min-width: var(--btn-min-width);
   padding: 0 var(--space-lg);
-  background-color: var(--green-core);
+  background-color: var(--black);
   color: white;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border-radius: var(--radius-md);
-  border: 2px solid var(--green-core);
+  letter-spacing: 0.08em;
+  border: 3px solid var(--black);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -121,12 +129,12 @@ body {
 }
 
 .btn-neurelic:hover {
-  background-color: var(--green-light);
-  border-color: var(--green-light);
+  background-color: var(--green-core);
+  border-color: var(--green-core);
 }
 
 .btn-neurelic:disabled {
-  opacity: 0.4;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
@@ -135,15 +143,14 @@ body {
   min-width: var(--btn-min-width);
   padding: 0 var(--space-lg);
   background: transparent;
-  color: var(--green-core);
-  font-weight: 600;
+  color: var(--black);
+  font-weight: 700;
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border: 2px solid var(--green-core);
-  border-radius: var(--radius-md);
+  letter-spacing: 0.08em;
+  border: 3px solid var(--black);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -151,25 +158,28 @@ body {
 }
 
 .btn-outline:hover {
-  background: var(--green-soft);
+  background: var(--black);
+  color: white;
 }
 
+/* INPUT - BRUTALIST */
 .input-neurelic {
   width: 100%;
-  height: 60px;
+  height: 64px;
   background: var(--white);
-  border: 2px solid var(--gray-300);
-  color: var(--gray-900);
+  border: 3px solid var(--black);
+  color: var(--black);
   font-family: var(--font-mono);
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: 500;
   padding: 0 var(--space-md);
-  border-radius: var(--radius-md);
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .input-neurelic:focus {
   outline: none;
   border-color: var(--green-core);
+  box-shadow: 4px 4px 0 var(--green-core);
 }
 
 .input-neurelic::placeholder {
@@ -177,44 +187,67 @@ body {
   font-family: var(--font-primary);
 }
 
+/* CARD - BRUTALIST */
 .card-tech {
   background: var(--white);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg);
+  border: 2px solid var(--black);
   padding: var(--space-lg);
 }
 
+.card-elevated {
+  background: var(--white);
+  border: 3px solid var(--black);
+  box-shadow: 6px 6px 0 var(--black);
+}
+
+/* SCORE */
 .score-track {
   width: 100%;
   height: 8px;
   background-color: var(--gray-200);
-  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .score-fill {
   height: 100%;
   background-color: var(--green-core);
-  border-radius: var(--radius-sm);
   transition: width 1s ease-out;
 }
 
+/* TECH LABEL */
 .tech-label {
-  background: var(--gray-100);
-  color: var(--gray-600);
+  background: var(--black);
+  color: white;
   font-family: var(--font-mono);
   font-size: 10px;
-  border-radius: 6px;
-  padding: 6px 12px;
+  font-weight: 600;
+  padding: 8px 14px;
   display: inline-block;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
+/* STATUS BADGES */
+.badge-alavanca {
+  background: var(--green-core);
+  color: white;
+}
+
+.badge-neutro {
+  background: var(--amber-core);
+  color: white;
+}
+
+.badge-sabotador {
+  background: var(--red-core);
+  color: white;
+}
+
+/* REVEAL ANIMATION */
 .reveal {
-  animation: reveal 0.4s ease-out forwards;
+  animation: reveal 0.3s ease-out forwards;
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(4px);
 }
 
 @keyframes reveal {
@@ -224,147 +257,61 @@ body {
   }
 }
 
-/* === GLITCH EFFECTS === */
-.glitch-container {
-  position: relative;
+/* === GLITCH EFFECTS (PUNCTUAL) === */
+.glitch-trigger {
+  animation: glitch-burst 0.1s ease;
 }
 
-.glitch-active {
-  animation: glitch-skew 2s infinite linear alternate-reverse;
-}
-
-.glitch-active::before,
-.glitch-active::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: inherit;
-  opacity: 0.8;
-}
-
-.glitch-active::before {
-  animation: glitch-1 0.3s infinite linear alternate-reverse;
-}
-
-.glitch-active::after {
-  animation: glitch-2 0.3s infinite linear alternate-reverse;
-}
-
-@keyframes glitch-skew {
+@keyframes glitch-burst {
   0% {
-    transform: skew(0deg);
+    transform: translate(0);
+    filter: none;
   }
 
   20% {
-    transform: skew(-0.5deg);
+    transform: translate(-2px, 1px);
+    filter: hue-rotate(90deg);
   }
 
   40% {
-    transform: skew(0.5deg);
+    transform: translate(2px, -1px);
+    filter: hue-rotate(-90deg);
   }
 
   60% {
-    transform: skew(-0.3deg);
+    transform: translate(-1px, 2px);
+    filter: brightness(1.2);
   }
 
   80% {
-    transform: skew(0.3deg);
+    transform: translate(1px, -2px);
+    filter: contrast(1.2);
   }
 
   100% {
-    transform: skew(0deg);
+    transform: translate(0);
+    filter: none;
   }
 }
 
-@keyframes glitch-1 {
-  0% {
-    clip-path: inset(20% 0 60% 0);
-    transform: translate(-2px, 0);
-  }
-
-  20% {
-    clip-path: inset(80% 0 5% 0);
-    transform: translate(2px, 0);
-  }
-
-  40% {
-    clip-path: inset(50% 0 30% 0);
-    transform: translate(-1px, 0);
-  }
-
-  60% {
-    clip-path: inset(10% 0 70% 0);
-    transform: translate(1px, 0);
-  }
-
-  80% {
-    clip-path: inset(40% 0 40% 0);
-    transform: translate(-2px, 0);
-  }
-
-  100% {
-    clip-path: inset(70% 0 10% 0);
-    transform: translate(2px, 0);
-  }
-}
-
-@keyframes glitch-2 {
-  0% {
-    clip-path: inset(60% 0 20% 0);
-    transform: translate(2px, 0);
-    opacity: 0.5;
-  }
-
-  25% {
-    clip-path: inset(10% 0 70% 0);
-    transform: translate(-2px, 0);
-    opacity: 0.8;
-  }
-
-  50% {
-    clip-path: inset(40% 0 40% 0);
-    transform: translate(1px, 0);
-    opacity: 0.3;
-  }
-
-  75% {
-    clip-path: inset(80% 0 5% 0);
-    transform: translate(-1px, 0);
-    opacity: 0.7;
-  }
-
-  100% {
-    clip-path: inset(30% 0 50% 0);
-    transform: translate(2px, 0);
-    opacity: 0.5;
-  }
-}
-
-.glitch-line {
+.scan-line {
   position: fixed;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.8), transparent);
-  animation: scan-line 3s infinite linear;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--green-core), transparent);
   pointer-events: none;
   z-index: 9999;
+  opacity: 0;
 }
 
-@keyframes scan-line {
+.scan-line.active {
+  animation: scan 1.5s ease-out;
+}
+
+@keyframes scan {
   0% {
-    top: -2px;
-    opacity: 0;
-  }
-
-  10% {
-    opacity: 1;
-  }
-
-  90% {
+    top: 0;
     opacity: 1;
   }
 
@@ -374,37 +321,34 @@ body {
   }
 }
 
-.glitch-flicker {
-  animation: flicker 0.15s infinite;
+/* DEBUG SECTION */
+.debug-section {
+  background: var(--gray-900);
+  color: var(--green-light);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: var(--space-md);
+  border: 2px solid var(--green-core);
+  overflow: auto;
+  max-height: 300px;
 }
 
-@keyframes flicker {
-  0% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.8;
-  }
-
-  100% {
-    opacity: 1;
-  }
+.debug-section pre {
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 /* Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
   background: var(--gray-100);
-  border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--gray-300);
-  border-radius: 4px;
+  background: var(--black);
 }
 
 @media print {

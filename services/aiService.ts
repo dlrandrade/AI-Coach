@@ -23,123 +23,132 @@ const OBJECTIVE_QUESTIONS: Record<number, string> = {
   7: "Isso quebra o padrão atual de forma visível e irreversível?"
 };
 
-// ENGINE DE DOMÍNIO INSTAGRAM v2.0
+// ENGINE DE DOMÍNIO INSTAGRAM v2.1
 const SYSTEM_PROMPT = (planDays: 7 | 30 = 7, objective: number = 1) => `
-[PROMPT-MÃE DE GOVERNANÇA — ENGINE DE DOMÍNIO INSTAGRAM v2.0]
+[ENGINE DE DOMÍNIO INSTAGRAM v2.1]
 
-VOCÊ NÃO É UM GERADOR DE CONTEÚDO.
-VOCÊ É UM SISTEMA DE JULGAMENTO ORIENTADO A OBJETIVO.
-
-Sua função é analisar, diagnosticar e reprogramar perfis de Instagram
-COM BASE NO OBJETIVO PRIMÁRIO ESCOLHIDO PELO USUÁRIO,
-mantendo rigor estratégico, critérios binários e foco em resultado observável.
+VOCÊ É UM SISTEMA DE JULGAMENTO.
+NÃO PROTEJA O EGO. NÃO SUAVIZE. NÃO RELATIVIZE.
 
 ==================================================
 OBJETIVO ATIVO: ${OBJECTIVE_LABELS[objective]}
-PERGUNTA CENTRAL: ${OBJECTIVE_QUESTIONS[objective]}
+PERGUNTA DE JULGAMENTO: ${OBJECTIVE_QUESTIONS[objective]}
 ==================================================
 
-Toda decisão deve responder SIM à pergunta central acima.
-Se a intervenção NÃO responder SIM → DESCARTE.
+INSTRUÇÕES DE LEITURA DO PERFIL:
+1. Acesse mentalmente o perfil @[handle] no Instagram
+2. Leia: bio completa, últimos 9 posts, stories recentes, destaques
+3. Registre exatamente o que encontrou no campo "leitura_perfil"
+4. Baseie TODA análise apenas no que foi lido
 
 ==================================================
-REGRA DE JULGAMENTO (SEM SUAVIZAÇÃO)
-==================================================
-
-Classifique cada elemento do perfil como:
-- ALAVANCA PARA O OBJETIVO
-- NEUTRO / NÃO CONTRIBUI
-- SABOTADOR DO OBJETIVO
-
-Nomeie falhas como falhas.
-Não proteja ego.
-Não relativize.
-
-==================================================
-HIERARQUIA DE DECISÃO
-==================================================
-
-1. PECADO CAPITAL (RELATIVO AO OBJETIVO)
-→ Qual erro dominante impede esse objetivo específico?
-
-2. CONFLITO OCULTO
-→ O que o perfil FAZ que contradiz o objetivo escolhido?
-
-3. POSICIONAMENTO ATUAL
-→ Commodity | Aspirante | Autoridade | Dominador
-
-4. AÇÃO DE MAIOR ALAVANCAGEM
-→ Qual única ação move o ponteiro do objetivo mais rápido?
-
-==================================================
-DISSECAÇÃO DO PERFIL (COM FOCO NO OBJETIVO)
-==================================================
-
-Analise: BIO, FEED, STORIES, PROVAS, OFERTAS, LINGUAGEM
-Interprete TUDO à luz do objetivo ativo.
-O mesmo elemento pode ser bom para um objetivo e ruim para outro.
-
-==================================================
-MODOS DE FALHA (ATIVAR QUANDO NECESSÁRIO)
-==================================================
-
-[MODO PERFIL PEQUENO] - Priorize tese e corte. Proibido fingir autoridade.
-[MODO SEM PROVAS] - Substitua promessas por processo e raciocínio.
-[MODO SEM OFERTA] - Construa pré-oferta antes de escalar plano.
-[MODO NICHO SATURADO] - Aumente polarização e exclusão.
-[MODO CONFLITO DE OBJETIVO] - Bloqueie ações que contradizem objetivo.
-
-==================================================
-CRITÉRIOS DE IRREVERSIBILIDADE
-==================================================
-
-Todo plano deve conter pelo menos UM:
-- conteúdo que exclui parte do público
-- declaração que impede retorno ao genérico
-- mudança visível de postura ou linguagem
-- movimento explícito em direção ao objetivo
-
-==================================================
-FORMATO DE RESPOSTA (JSON OBRIGATÓRIO)
+FORMATO DE RESPOSTA (JSON)
 ==================================================
 
 {
+  "leitura_perfil": {
+    "bio_completa": "Transcrição exata da bio encontrada",
+    "posts_analisados": ["Descrição do post 1", "Descrição do post 2", ...],
+    "destaques_encontrados": ["Nome destaque 1", "Nome destaque 2"],
+    "stories_recentes": "Descrição geral dos stories se houver",
+    "metricas_visiveis": {
+      "seguidores": "número ou null",
+      "seguindo": "número ou null", 
+      "posts_total": "número ou null"
+    },
+    "impressao_geral": "Primeira impressão em uma frase"
+  },
   "diagnosis": {
     "objetivo_ativo": "${OBJECTIVE_LABELS[objective]}",
-    "pecado_capital": "Erro dominante que impede esse objetivo",
-    "conflito_oculto": "O que o perfil faz que contradiz o objetivo",
-    "posicionamento": "commodity" | "aspirante" | "autoridade" | "dominador",
-    "acao_alavancagem": "Única ação de maior impacto",
-    "sentenca": "Veredicto brutal em até 10 palavras",
+    "pecado_capital": "Erro dominante. Seja brutal. Sem eufemismos.",
+    "conflito_oculto": "O que o perfil FAZ que contradiz o objetivo",
+    "posicionamento": "commodity | aspirante | autoridade | dominador",
+    "acao_alavancagem": "UMA ação. A mais importante. Nada mais.",
+    "sentenca": "Máximo 10 palavras. Deve doer.",
     "dissecacao": {
-      "bio": { "status": "alavanca" | "neutro" | "sabotador", "veredicto": "string" },
-      "feed": { "status": "alavanca" | "neutro" | "sabotador", "veredicto": "string" },
-      "stories": { "status": "alavanca" | "neutro" | "sabotador", "veredicto": "string" },
-      "provas": { "status": "alavanca" | "neutro" | "sabotador", "veredicto": "string" },
-      "ofertas": { "status": "alavanca" | "neutro" | "sabotador", "veredicto": "string" },
-      "linguagem": { "status": "alavanca" | "neutro" | "sabotador", "veredicto": "string" }
+      "bio": { "status": "alavanca | neutro | sabotador", "veredicto": "Julgamento direto" },
+      "feed": { "status": "alavanca | neutro | sabotador", "veredicto": "Julgamento direto" },
+      "stories": { "status": "alavanca | neutro | sabotador", "veredicto": "Julgamento direto" },
+      "provas": { "status": "alavanca | neutro | sabotador", "veredicto": "Julgamento direto" },
+      "ofertas": { "status": "alavanca | neutro | sabotador", "veredicto": "Julgamento direto" },
+      "linguagem": { "status": "alavanca | neutro | sabotador", "veredicto": "Julgamento direto" }
     },
-    "modo_falha": "pequeno" | "sem_provas" | "sem_oferta" | "nicho_saturado" | null
+    "modo_falha": "pequeno | sem_provas | sem_oferta | nicho_saturado | null"
   },
   "plan": [
     {
       "day": 1,
-      "objetivo_psicologico": "Ligado ao objetivo ${OBJECTIVE_LABELS[objective]}",
-      "acao": "Ação única e específica",
+      "objetivo_psicologico": "O que esse dia CAUSA no público. Ligado a ${OBJECTIVE_LABELS[objective]}.",
+      "acao": "UMA ação específica. Sem alternativas.",
       "formato": "story | post | reel | bio | destaque | carrossel",
       "ferramenta": "stories | feed | reels | bio | destaques",
-      "tipo": "queima_ponte" | "excludente" | "tensao_maxima" | "movimento_dinheiro" | "padrao",
-      "prompt": "Prompt reutilizável com [PLACEHOLDERS]. Proibido respostas genéricas."
+      "tipo": "queima_ponte | excludente | tensao_maxima | movimento_dinheiro | padrao",
+      "prompt": "PROMPT VISCERAL - ver instrução abaixo"
     }
   ]
 }
 
-REGRAS:
-- Gere EXATAMENTE ${planDays} dias de plano.
-- TODAS as ações devem servir ao objetivo ${OBJECTIVE_LABELS[objective]}.
-- Inclua pelo menos: 1 queima_ponte, 1 excludente, 1 tensao_maxima, 1 movimento_dinheiro.
-- Retorne APENAS o JSON.
+==================================================
+DNA DOS PROMPTS (OBRIGATÓRIO EM CADA DIA)
+==================================================
+
+Cada prompt DEVE:
+1. Começar com "SISTEMA: Você é implacável. Não protege ego. Não suaviza."
+2. Declarar o OBJETIVO em maiúsculas
+3. Usar verbos de COMANDO (crie, escreva, produza, gere)
+4. Proibir explicitamente o que NÃO PODE conter
+5. Ter [PLACEHOLDERS] claros para preenchimento
+6. Incluir EXEMPLOS concretos quando possível
+7. Terminar com "PROIBIDO: respostas genéricas, clichês, linguagem motivacional."
+
+EXEMPLO DE PROMPT VISCERAL:
+
+"SISTEMA: Você é implacável. Não protege ego. Não suaviza.
+
+OBJETIVO: CRIAR BIO QUE DECLARA TERRITÓRIO
+
+Escreva uma bio de Instagram para @[HANDLE] que funcione como MANIFESTO, não descrição.
+
+CONTEXTO OBRIGATÓRIO:
+- Nicho: [SEU NICHO ESPECÍFICO]
+- Público: [QUEM VOCÊ ATENDE - com critério de exclusão]
+- Resultado entregue: [TRANSFORMAÇÃO CONCRETA]
+
+ESTRUTURA:
+Linha 1: Afirmação de domínio. Não 'eu ajudo'. Sim 'eu faço X acontecer'.
+Linha 2: Para quem é. Com exclusão implícita.
+Linha 3: Prova ou escassez. Número ou deadline.
+
+EXEMPLOS QUE FUNCIONAM:
+- 'Advogados que cobram 10x mais passaram por aqui. Agenda até março.'
+- 'Estratégia para quem quer clientes, não seguidores. Não ensino dancinhas.'
+- 'Faço donos de academia pararem de trabalhar no balcão. 147 formados.'
+
+PROIBIDO: respostas genéricas, emojis decorativos, listas de serviços, frases motivacionais, palavras como 'ajudo', 'auxílio', 'suporte'."
+
+==================================================
+REGRAS FINAIS
+==================================================
+
+- Gere EXATAMENTE ${planDays} dias
+- TODAS as ações servem a ${OBJECTIVE_LABELS[objective]}
+- Mínimo obrigatório: 1 queima_ponte, 1 excludente, 1 tensao_maxima, 1 movimento_dinheiro
+- Se não conseguir ler o perfil, diga claramente no campo leitura_perfil
+- Retorne APENAS JSON válido
 `;
+
+export interface LeituraPerfil {
+  bio_completa: string;
+  posts_analisados: string[];
+  destaques_encontrados: string[];
+  stories_recentes: string;
+  metricas_visiveis: {
+    seguidores: string | null;
+    seguindo: string | null;
+    posts_total: string | null;
+  };
+  impressao_geral: string;
+}
 
 export interface Dissecacao {
   bio: { status: 'alavanca' | 'neutro' | 'sabotador'; veredicto: string };
@@ -172,6 +181,7 @@ export interface PlanDay {
 }
 
 export interface AnalysisResult {
+  leitura_perfil: LeituraPerfil;
   diagnosis: Diagnosis;
   plan: PlanDay[];
 }
@@ -184,16 +194,29 @@ export const analyzeProfile = async (handle: string, planDays: 7 | 30 = 7, objec
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': window.location.origin,
-        'X-Title': 'LuzzIA Engine v2.0'
+        'X-Title': 'LuzzIA Engine v2.1'
       },
       body: JSON.stringify({
         model: OPENROUTER_MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT(planDays, objective) },
-          { role: 'user', content: `ALVO: @${handle}. OBJETIVO: ${OBJECTIVE_LABELS[objective]}. Execute dissecação completa. Plano de ${planDays} dias. ZERO piedade.` }
+          {
+            role: 'user', content: `EXECUTAR ANÁLISE COMPLETA.
+          
+ALVO: @${handle}
+OBJETIVO PRIMÁRIO: ${OBJECTIVE_LABELS[objective]}
+PLANO: ${planDays} dias
+
+INSTRUÇÕES:
+1. Leia o perfil @${handle} no Instagram
+2. Registre tudo que encontrar em leitura_perfil
+3. Diagnostique com base no objetivo ${OBJECTIVE_LABELS[objective]}
+4. Gere plano de ${planDays} dias com prompts viscerais
+
+ZERO piedade. ZERO suavização.` }
         ],
         temperature: 0.85,
-        max_tokens: 8000
+        max_tokens: 10000
       })
     });
 
@@ -213,37 +236,54 @@ export const analyzeProfile = async (handle: string, planDays: 7 | 30 = 7, objec
 const simulateAnalysis = (handle: string, planDays: 7 | 30, objective: number): AnalysisResult => {
   const objectiveLabel = OBJECTIVE_LABELS[objective];
 
+  const leitura_perfil: LeituraPerfil = {
+    bio_completa: `[SIMULAÇÃO] Bio de @${handle} não pôde ser lida em tempo real. Usando análise simulada para demonstração.`,
+    posts_analisados: [
+      "[SIM] Post 1: Conteúdo genérico sobre o nicho",
+      "[SIM] Post 2: Dicas básicas sem posicionamento claro",
+      "[SIM] Post 3: Conteúdo motivacional sem profundidade"
+    ],
+    destaques_encontrados: ["Sobre", "Serviços", "Depoimentos"],
+    stories_recentes: "[SIM] Stories de bastidores sem direcionamento estratégico",
+    metricas_visiveis: {
+      seguidores: "~5k",
+      seguindo: "~800",
+      posts_total: "~150"
+    },
+    impressao_geral: "Perfil genérico que tenta agradar todos e não se destaca em nada."
+  };
+
   const diagnosis: Diagnosis = {
     objetivo_ativo: objectiveLabel,
-    pecado_capital: `Para ${objectiveLabel}: O perfil não comunica uma tese clara. Falta posição ideológica que justifique o seguir.`,
-    conflito_oculto: `O perfil tenta agradar todos, o que é incompatível com ${objectiveLabel}. A generalização sabota o objetivo.`,
+    pecado_capital: `PARA ${objectiveLabel}: Ausência de tese. O perfil não defende nada. Não ataca nada. É neutro demais para gerar qualquer reação.`,
+    conflito_oculto: `O perfil quer ${objectiveLabel.toLowerCase()}, mas age como commodity. Fala para todos, logo não fala para ninguém.`,
     posicionamento: "commodity",
-    acao_alavancagem: `Declarar uma posição única no nicho que seja impossível de ignorar. Isso ataca diretamente o objetivo de ${objectiveLabel}.`,
-    sentenca: "SEM TESE CLARA, VOCÊ É MAIS UM NA MULTIDÃO.",
+    acao_alavancagem: `Reescrever bio como DECLARAÇÃO DE GUERRA. Escolher um inimigo. Deixar claro para quem NÃO é.`,
+    sentenca: "VOCÊ É INVISÍVEL. NINGUÉM LEMBRA DE VOCÊ.",
     dissecacao: {
       bio: {
         status: "sabotador",
-        veredicto: `Bio genérica que não serve ao objetivo de ${objectiveLabel}. Precisa de declaração de território.`
+        veredicto: `Bio de${objectiveLabel}: Lista de coisas que faz. Não comunica POR QUE seguir. Zero urgência.`
       },
       feed: {
         status: "neutro",
-        veredicto: `Feed não alavanca ${objectiveLabel}. Mistura conteúdos sem direção estratégica clara.`
+        veredicto: `Feed inofensivo. Não gera tensão, não gera desejo, não gera ação.`
       },
       stories: {
         status: "sabotador",
-        veredicto: `Stories de entretenimento puro. Não servem ao objetivo de ${objectiveLabel}.`
+        veredicto: `Stories de entretenimento. Treinam o público a consumir, não a comprar.`
       },
       provas: {
         status: "sabotador",
-        veredicto: `Sem provas específicas que suportem ${objectiveLabel}. Apenas afirmações genéricas.`
+        veredicto: `Provas genéricas ou inexistentes. "Obrigado pelo atendimento" não é prova.`
       },
       ofertas: {
         status: "sabotador",
-        veredicto: `Sem estrutura de oferta. Impossível alcançar ${objectiveLabel} sem caminho de conversão.`
+        veredicto: `Sem estrutura de oferta. Link na bio leva para página fria.`
       },
       linguagem: {
         status: "neutro",
-        veredicto: `Linguagem correta mas sem força. Não comunica ${objectiveLabel} com clareza.`
+        veredicto: `Linguagem correta mas sem força. Parece artigo de blog, não voz de autoridade.`
       }
     },
     modo_falha: "sem_oferta"
@@ -252,206 +292,380 @@ const simulateAnalysis = (handle: string, planDays: 7 | 30, objective: number): 
   const basePlan: PlanDay[] = [
     {
       day: 1,
-      objetivo_psicologico: `[${objectiveLabel}] Declarar território mental. O público precisa entender exatamente QUAL problema você domina.`,
+      objetivo_psicologico: `[${objectiveLabel}] DECLARAR TERRITÓRIO. O público deve entender em 3 segundos o que você domina e para quem é.`,
       acao: "Reescrever bio como manifesto de domínio",
       formato: "bio",
       ferramenta: "bio",
       tipo: "queima_ponte",
-      prompt: `OBJETIVO: ${objectiveLabel}
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
 
-Crie uma bio de Instagram para @[HANDLE] que funcione como DECLARAÇÃO DE TERRITÓRIO.
+OBJETIVO: CRIAR BIO QUE DECLARA TERRITÓRIO PARA ${objectiveLabel}
 
-CONTEXTO:
-- Nicho: [SEU NICHO]
-- Público-alvo: [QUEM VOCÊ ATENDE]
-- Resultado principal: [O QUE VOCÊ ENTREGA]
+Escreva uma bio de Instagram para @[HANDLE] que funcione como MANIFESTO, não descrição.
 
-REGRAS:
-1. Máximo 150 caracteres
-2. Linha 1: Afirmação de domínio (não descrição)
-3. Linha 2: Para quem é (com exclusão implícita)
-4. Linha 3: Prova ou escassez
-5. PROIBIDO: emojis decorativos, listas, frases motivacionais
+CONTEXTO OBRIGATÓRIO:
+- Nicho: [SEU NICHO ESPECÍFICO]
+- Público: [QUEM VOCÊ ATENDE - com critério de exclusão]
+- Resultado entregue: [TRANSFORMAÇÃO CONCRETA, não processo]
 
-Gere 3 versões, da mais agressiva para a menos.
-PROIBIDO respostas genéricas.`
+ESTRUTURA EXATA:
+Linha 1: Afirmação de domínio. VERBO FORTE + RESULTADO. Não "eu ajudo". Sim "eu faço X acontecer".
+Linha 2: Para quem é + exclusão implícita. "Para X que Y. Não para Z."
+Linha 3: Prova ou escassez. Número real ou deadline.
+
+EXEMPLOS QUE FUNCIONAM:
+- "Advogados que cobram 10x mais passaram por aqui. Agenda até março."
+- "Estratégia para quem quer clientes, não seguidores. Não ensino dancinhas."
+- "Faço donos de academia pararem de trabalhar no balcão. 147 formados."
+
+Gere 3 versões: AGRESSIVA, MODERADA, SUTIL.
+
+PROIBIDO: emojis decorativos, listas de serviços, "ajudo/auxílio/suporte", frases motivacionais, descrição de profissão.`
     },
     {
       day: 2,
-      objetivo_psicologico: `[${objectiveLabel}] Estabelecer tese única. O público deve sair com UMA ideia que só você defende.`,
+      objetivo_psicologico: `[${objectiveLabel}] ESTABELECER TESE. O público deve sair com UMA ideia que só você defende.`,
       acao: "Publicar carrossel de tese polarizadora",
       formato: "carrossel",
       ferramenta: "feed",
       tipo: "tensao_maxima",
-      prompt: `OBJETIVO: ${objectiveLabel}
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
 
-Crie carrossel de 7 slides que estabeleça uma TESE ÚNICA para @[HANDLE].
+OBJETIVO: CRIAR CARROSSEL QUE ESTABELECE TESE ÚNICA PARA ${objectiveLabel}
+
+Crie carrossel de 7 slides que faça o público ESCOLHER lados.
 
 CONTEXTO:
-- Crença dominante do mercado que você discorda: [CRENÇA]
-- Sua posição contrária: [SUA TESE]
+- Crença ERRADA do mercado: [O QUE A MAIORIA ACREDITA E ESTÁ ERRADO]
+- Sua tese contrária: [SUA POSIÇÃO REAL]
+- Por que isso importa: [CONSEQUÊNCIA DE SEGUIR A CRENÇA ERRADA]
 
-ESTRUTURA:
-1. Afirmação polêmica (gancho)
-2. "O mercado acredita que..."
-3. "O problema é que..."
-4. "O que eu descobri..."
-5. Exemplo concreto
-6. Sua tese em uma frase
-7. CTA de debate
+ESTRUTURA DOS SLIDES:
+1. GANCHO: Afirmação polêmica em 7 palavras máximo. Deve parar scroll.
+2. "O mercado inteiro acredita que..." (crença dominante)
+3. "O problema é que..." (consequência dessa crença)
+4. "O que ninguém te conta..." (sua descoberta/insight)
+5. "Na prática isso significa..." (exemplo concreto)
+6. SUA TESE EM UMA FRASE. Sem explicação.
+7. "Concorda? Discorda? Comenta." (provocação de debate)
 
-Cada slide: máximo 30 palavras.
-Deve gerar discordância em 30% do público.`
+REGRAS:
+- Cada slide: MÁXIMO 25 palavras
+- Deve gerar discordância em 30% do público (isso é bom)
+- Linguagem direta, afirmativa, sem "talvez" ou "pode ser"
+
+PROIBIDO: definições óbvias, dicas genéricas, "vou te ensinar", linguagem motivacional.`
     },
     {
       day: 3,
-      objetivo_psicologico: `[${objectiveLabel}] Filtrar audiência. Deixar claro para quem você NÃO é.`,
-      acao: "Publicar sequência de exclusão consciente",
+      objetivo_psicologico: `[${objectiveLabel}] FILTRAR AUDIÊNCIA. Afastar ativamente quem não é cliente ideal.`,
+      acao: "Sequência de exclusão consciente",
       formato: "story",
       ferramenta: "stories",
       tipo: "excludente",
-      prompt: `OBJETIVO: ${objectiveLabel}
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
 
-Crie 5 stories que AFASTEM ativamente quem não é cliente ideal.
+OBJETIVO: CRIAR STORIES QUE AFASTAM PÚBLICO ERRADO PARA ${objectiveLabel}
+
+Crie 5 stories que façam pessoas ERRADAS pararem de te seguir.
 
 CONTEXTO:
-- Quem você NÃO atende: [3 TIPOS]
-- Por que não atende: [RAZÃO]
-- Quem QUER atrair: [PERFIL IDEAL]
+- 3 tipos de pessoas que você NÃO QUER como cliente: [LISTE COM CARACTERÍSTICAS ESPECÍFICAS]
+- Por que não quer: [A RAZÃO ESTRATÉGICA]
+- Quem você QUER: [PERFIL IDEAL COM CRITÉRIOS]
 
 ESTRUTURA:
-1. "Vou ser direto sobre algo"
-2. "Eu NÃO trabalho com..."
-3. "Porque..." (justificativa que valoriza ideal)
-4. "Quem eu QUERO:"
-5. "Se você se encaixa, responde com [PALAVRA]"
+Story 1: "Preciso ser honesto sobre algo." (abertura que gera curiosidade)
+Story 2: "Eu NÃO trabalho com:" + lista de 3 tipos (sem pedir desculpas)
+Story 3: "Porque..." + justificativa que VALORIZA quem é ideal
+Story 4: "Quem eu QUERO trabalhando comigo:" + perfil ideal
+Story 5: "Se você se vê aqui, responde com [PALAVRA-CHAVE]" + CTA de engajamento
 
-A exclusão deve ser REAL, não performática.`
+TOM: Você tem o DIREITO de escolher. Não está rejeitando. Está selecionando.
+
+PROIBIDO: pedir desculpas, suavizar ("não é que eles sejam ruins"), linguagem passivo-agressiva.`
     },
     {
       day: 4,
-      objetivo_psicologico: `[${objectiveLabel}] Demonstrar processo. Mostrar competência sem entregar a receita.`,
-      acao: "Publicar reel de bastidor estratégico",
+      objetivo_psicologico: `[${objectiveLabel}] DEMONSTRAR COMPETÊNCIA. Mostrar a caixa preta sem entregar a receita.`,
+      acao: "Reel de bastidor estratégico",
       formato: "reel",
       ferramenta: "reels",
       tipo: "padrao",
-      prompt: `OBJETIVO: ${objectiveLabel}
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
 
-Crie roteiro de reel de 45s mostrando BASTIDOR sem ensinar processo completo.
+OBJETIVO: CRIAR REEL QUE DEMONSTRA PROCESSO PARA ${objectiveLabel}
+
+Roteiro de 45 segundos que mostra SUA COMPETÊNCIA sem ensinar o processo completo.
 
 CONTEXTO:
-- Trabalho recente: [DESCREVA]
-- Resultado: [DESCREVA]
+- Um trabalho recente que você fez: [DESCREVA O PROJETO]
+- O resultado observável: [NÚMERO OU TRANSFORMAÇÃO]
+- O que você fez diferente: [SEU DIFERENCIAL NO PROCESSO]
 
-ESTRUTURA:
-0-5s: Cena do resultado
-5-15s: "A maioria faz [CONVENCIONAL]. Eu não."
-15-30s: 2-3 passos do SEU processo (sem detalhar)
-30-40s: Resultado + número
-40-45s: CTA sutil
+ESTRUTURA DO REEL:
+0-5s: Cena do RESULTADO (antes/depois, número, reação do cliente)
+5-15s: "A maioria faz [CAMINHO CONVENCIONAL]. Eu não. Eu faço [DIFERENTE]."
+15-30s: Mostre 2-3 passos do SEU processo (sem detalhar o como)
+30-40s: Resultado novamente + "Foi isso que aconteceu com [CLIENTE/PROJETO]"
+40-45s: "Se você quer entender como replico isso, [CTA específico]"
 
-Narração em primeira pessoa.
-PROIBIDO: "3 dicas", "assista até o final".`
+NARRAÇÃO: Primeira pessoa. Tom de quem está compartilhando um segredo.
+VISUAL: Mostre complexidade sem explicar (gera percepção de competência)
+
+PROIBIDO: "vou te ensinar", "3 dicas", "assista até o final", música de tendência sem propósito.`
     },
     {
       day: 5,
-      objetivo_psicologico: `[${objectiveLabel}] Movimento de dinheiro. Testar prontidão do público para comprar.`,
-      acao: "Fazer pré-oferta com escassez real",
+      objetivo_psicologico: `[${objectiveLabel}] MOVIMENTO DE DINHEIRO. Testar se o público está pronto para pagar.`,
+      acao: "Pré-oferta com escassez real",
       formato: "story",
       ferramenta: "stories",
       tipo: "movimento_dinheiro",
-      prompt: `OBJETIVO: ${objectiveLabel}
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
 
-Crie sequência de stories de PRÉ-OFERTA.
+OBJETIVO: CRIAR PRÉ-OFERTA PARA ${objectiveLabel}
+
+Sequência de 6 stories que TESTA prontidão de compra do público.
 
 CONTEXTO:
-- O que você vende: [OFERTA]
-- Vagas/prazo: [ESCASSEZ REAL]
-- Para quem: [PERFIL]
+- O que você vai oferecer: [PRODUTO/SERVIÇO ESPECÍFICO]
+- Vagas ou prazo: [ESCASSEZ REAL - não invente]
+- Resultado esperado: [O QUE A PESSOA VAI CONSEGUIR]
+- Para quem é ideal: [PERFIL ESPECÍFICO]
 
-ESTRUTURA (6 stories):
-1. "Pensando em abrir algo..."
-2. "Não vou abrir para todo mundo"
-3. Descrição + resultado esperado
-4. Critérios de participação (filtro)
-5. "Se quer, responde com [PALAVRA]"
-6. "Fecho amanhã às [HORA]"
+ESTRUTURA:
+Story 1: "Estou pensando em abrir algo..." (antecipação, não promessa)
+Story 2: "Mas não vou abrir para qualquer pessoa." (exclusividade)
+Story 3: Descrição em UMA frase + resultado esperado
+Story 4: "Só faz sentido para quem:" + 3 critérios (filtro)
+Story 5: "Se você se encaixa, responde com [PALAVRA-CHAVE ESPECÍFICA]"
+Story 6: "Fecho amanhã às [HORA]. Depois disso, só em [DATA]." (urgência real)
 
-Escassez REAL, não fabricada.`
+TOM: Você está OFERECENDO ACESSO, não pedindo venda. Posição de força.
+
+PROIBIDO: explicar demais, justificar preço, garantias excessivas, "não perca", escassez fabricada.`
     },
     {
       day: 6,
-      objetivo_psicologico: `[${objectiveLabel}] Gerar tensão social. Mostrar custo da inação.`,
-      acao: "Publicar conteúdo de custo de oportunidade",
+      objetivo_psicologico: `[${objectiveLabel}] CRIAR TENSÃO. Mostrar o custo de não agir.`,
+      acao: "Carrossel de custo de oportunidade",
       formato: "carrossel",
       ferramenta: "feed",
       tipo: "tensao_maxima",
-      prompt: `OBJETIVO: ${objectiveLabel}
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
 
-Crie carrossel de 5 slides sobre CUSTO DA INAÇÃO.
+OBJETIVO: MOSTRAR CUSTO DA INAÇÃO PARA ${objectiveLabel}
+
+Carrossel de 5 slides que faz o público SENTIR o que está perdendo.
 
 CONTEXTO:
-- Problema do público: [PROBLEMA]
-- Consequência: [O QUE ACONTECE]
-- Sua solução: [OFERTA]
+- Problema que seu público tem: [DOR ESPECÍFICA]
+- O que acontece se não resolver: [CONSEQUÊNCIA REAL EM 6-12 MESES]
+- O que poderia ter se agisse: [GANHO PERDIDO]
 
 ESTRUTURA:
-1. "O que te custou não fazer [AÇÃO]?"
-2. 3 custos invisíveis (dinheiro, tempo, oportunidade)
-3. "Enquanto você espera, [CONCORRÊNCIA]..."
-4. Caso de quem agiu
-5. "A pergunta é QUANDO, não SE."
+Slide 1: "Quanto te custou NÃO fazer [AÇÃO] esse ano?" (pergunta que dói)
+Slide 2: 3 custos invisíveis - DINHEIRO perdido, TEMPO desperdiçado, OPORTUNIDADE que passou
+Slide 3: "Enquanto você espera, [CONCORRENTE/MERCADO] está..." (FOMO real)
+Slide 4: Caso de alguém que AGIU (antes/depois com número se possível)
+Slide 5: "A pergunta não é SE você vai resolver. É QUANDO. E o QUANDO custa cada dia mais."
 
-Tom de constatação fria, não manipulação.`
+TOM: Constatação fria. Você não está ameaçando. Está mostrando o que já está acontecendo.
+
+PROIBIDO: tom de desespero, manipulação emocional barata, promessas irreais.`
     },
     {
       day: 7,
-      objetivo_psicologico: `[${objectiveLabel}] Consolidar posição. Fechar semana com clareza absoluta.`,
-      acao: "Atualizar destaque de posicionamento",
+      objetivo_psicologico: `[${objectiveLabel}] CONSOLIDAR POSIÇÃO. Fechar a semana com clareza absoluta.`,
+      acao: "Destaque de posicionamento",
       formato: "destaque",
       ferramenta: "destaques",
       tipo: "padrao",
-      prompt: `OBJETIVO: ${objectiveLabel}
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
 
-Crie roteiro para DESTAQUE de posicionamento.
+OBJETIVO: CRIAR DESTAQUE DE POSICIONAMENTO PARA ${objectiveLabel}
+
+Roteiro de 8-10 stories para um DESTAQUE que comunica quem você é.
 
 CONTEXTO:
-- Quem você é: [DESCRIÇÃO]
-- Diferencial: [O QUE FAZ DIFERENTE]
-- Público: [PARA QUEM]
+- Quem você é em uma frase: [IDENTIDADE PROFISSIONAL]
+- O que você faz diferente: [DIFERENCIAL REAL]
+- Para quem trabalha: [PÚBLICO ESPECÍFICO]
+- Prova que funciona: [RESULTADO OU NÚMERO]
 
-ESTRUTURA (7-10 stories):
-1. Quem eu sou (1 frase)
-2. Problema que resolvo
-3. Por que eu, não outro
-4. Como trabalho
-5-6. Provas/números
-7. Para quem é
-8. Para quem NÃO é
-9. Próximo passo (CTA)
+ESTRUTURA DO DESTAQUE:
+1. QUEM SOU - Uma frase. Não história de vida.
+2. O PROBLEMA QUE RESOLVO - Dor específica. Não abstração.
+3. POR QUE EU - Diferencial em uma frase.
+4. COMO TRABALHO - Metodologia resumida.
+5. RESULTADOS - 2-3 provas visuais ou números.
+6. PARA QUEM É - Perfil ideal.
+7. PARA QUEM NÃO É - Exclusão explícita.
+8. PRÓXIMO PASSO - CTA claro e único.
 
-Cada story: máximo 15 palavras.
-Fundo sólido, texto grande.`
+REGRAS VISUAIS:
+- Cada story: MÁXIMO 15 palavras
+- Fundo sólido (preto, branco, ou cor da marca)
+- Texto grande e legível
+- Sem animações que atrapalhem leitura
+
+PROIBIDO: fotos aleatórias, música que distrai, mais de um CTA, linguagem vaga.`
     }
   ];
 
   const plan = planDays === 7 ? basePlan : extendTo30Days(basePlan, objectiveLabel);
-  return { diagnosis, plan };
+  return { leitura_perfil, diagnosis, plan };
 };
 
 const extendTo30Days = (basePlan: PlanDay[], objectiveLabel: string): PlanDay[] => {
   const extended = [...basePlan];
-  const advancedActions: Omit<PlanDay, 'day'>[] = [
-    { objetivo_psicologico: `[${objectiveLabel}] Criar prova social estratégica`, acao: "Coletar depoimento específico", formato: "story", ferramenta: "stories", tipo: "padrao", prompt: `OBJETIVO: ${objectiveLabel}\nCrie roteiro para coleta de depoimento focado em TRANSFORMAÇÃO MENSURÁVEL.` },
-    { objetivo_psicologico: `[${objectiveLabel}] Atacar inimigo do nicho`, acao: "Declarar guerra a prática comum", formato: "carrossel", ferramenta: "feed", tipo: "queima_ponte", prompt: `OBJETIVO: ${objectiveLabel}\nCrie carrossel declarando GUERRA a prática errada do nicho.` },
-    { objetivo_psicologico: `[${objectiveLabel}] Gerar FOMO real`, acao: "Bastidor de cliente em ação", formato: "reel", ferramenta: "reels", tipo: "tensao_maxima", prompt: `OBJETIVO: ${objectiveLabel}\nCrie reel mostrando cliente executando, tom de 'isso poderia ser você'.` },
-    { objetivo_psicologico: `[${objectiveLabel}] Polarizar audiência`, acao: "Micro-conteúdo de opinião forte", formato: "post", ferramenta: "feed", tipo: "excludente", prompt: `OBJETIVO: ${objectiveLabel}\nCrie post de ÚNICA frase polarizadora.` },
-    { objetivo_psicologico: `[${objectiveLabel}] Criar oferta secundária`, acao: "Apresentar produto de entrada", formato: "story", ferramenta: "stories", tipo: "movimento_dinheiro", prompt: `OBJETIVO: ${objectiveLabel}\nCrie sequência para produto de entrada como filtro para oferta principal.` },
-    { objetivo_psicologico: `[${objectiveLabel}] Demonstrar profundidade`, acao: "Análise longa de caso", formato: "carrossel", ferramenta: "feed", tipo: "padrao", prompt: `OBJETIVO: ${objectiveLabel}\nCrie carrossel de 10 slides analisando caso em profundidade.` },
+
+  const advancedDays: Omit<PlanDay, 'day'>[] = [
+    {
+      objetivo_psicologico: `[${objectiveLabel}] Criar prova social estratégica`,
+      acao: "Coletar e publicar depoimento específico",
+      formato: "story",
+      ferramenta: "stories",
+      tipo: "padrao",
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
+
+OBJETIVO: COLETAR DEPOIMENTO QUE PROVA ${objectiveLabel}
+
+Crie roteiro para solicitar depoimento focado em TRANSFORMAÇÃO MENSURÁVEL.
+
+PERGUNTAS PARA O CLIENTE:
+1. "Qual era sua situação ANTES de trabalhar comigo?" (número ou situação concreta)
+2. "O que mudou DEPOIS?" (resultado mensurável)
+3. "O que teria acontecido se não tivesse feito isso?" (custo evitado)
+4. "Para quem você recomendaria?" (filtro de público)
+
+PROIBIDO: depoimentos genéricos tipo "atendimento incrível", "super recomendo".`
+    },
+    {
+      objetivo_psicologico: `[${objectiveLabel}] Atacar inimigo comum`,
+      acao: "Declarar guerra a prática errada do nicho",
+      formato: "carrossel",
+      ferramenta: "feed",
+      tipo: "queima_ponte",
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
+
+OBJETIVO: DECLARAR GUERRA A INIMIGO PARA ${objectiveLabel}
+
+Crie carrossel de 6 slides atacando uma PRÁTICA COMUM do seu nicho que você considera ERRADA.
+
+O inimigo não é uma pessoa. É uma PRÁTICA, CRENÇA ou METODOLOGIA.
+
+ESTRUTURA:
+1. "O maior erro do [NICHO] que ninguém fala"
+2. O que é a prática errada
+3. Por que parece fazer sentido (validação do erro)
+4. Por que está DESTRUINDO resultados
+5. O que funciona no lugar
+6. "Se você ainda faz isso, para. Agora."
+
+PROIBIDO: atacar pessoas específicas, ser vago demais, não propor alternativa.`
+    },
+    {
+      objetivo_psicologico: `[${objectiveLabel}] Gerar FOMO real`,
+      acao: "Mostrar bastidor de cliente em ação",
+      formato: "reel",
+      ferramenta: "reels",
+      tipo: "tensao_maxima",
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
+
+OBJETIVO: CRIAR FOMO PARA ${objectiveLabel}
+
+Reel mostrando cliente EXECUTANDO, com tom de "isso poderia ser você".
+
+ESTRUTURA:
+0-5s: Cliente trabalhando/implementando algo
+5-15s: "Enquanto você pensa se vale a pena, [CLIENTE] está..."
+15-30s: Mostrar o que o cliente está fazendo (processo visível)
+30-40s: Resultado parcial ou expectativa
+40-45s: "Quer ser o próximo? [CTA]"
+
+PROIBIDO: forçar, parecer desesperado, prometer resultados irreais.`
+    },
+    {
+      objetivo_psicologico: `[${objectiveLabel}] Polarizar audiência`,
+      acao: "Post de opinião forte",
+      formato: "post",
+      ferramenta: "feed",
+      tipo: "excludente",
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
+
+OBJETIVO: POLARIZAR PARA ${objectiveLabel}
+
+Crie post de UMA frase que divida sua audiência.
+
+A frase deve:
+- Ter posição clara (sem "depende")
+- Gerar reação emocional
+- Atrair quem pensa como você
+- Repelir quem não pensa
+
+EXEMPLOS:
+- "Quem não tem oferta não tem negócio. Tem hobby."
+- "Conteúdo sem intenção de venda é propaganda para concorrente."
+- "Se você atende qualquer um, não é expert. É freelancer."
+
+PROIBIDO: explicar demais na legenda, pedir desculpas, suavizar depois.`
+    },
+    {
+      objetivo_psicologico: `[${objectiveLabel}] Criar oferta de entrada`,
+      acao: "Lançar produto de baixo ticket",
+      formato: "story",
+      ferramenta: "stories",
+      tipo: "movimento_dinheiro",
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
+
+OBJETIVO: CRIAR OFERTA DE ENTRADA PARA ${objectiveLabel}
+
+Sequência de stories para produto de baixo ticket que FILTRA para oferta principal.
+
+CONTEXTO:
+- Produto de entrada: [O QUE É]
+- Preço: [VALOR ACESSÍVEL]
+- O que resolve: [PROBLEMA ESPECÍFICO]
+- Próximo passo depois: [OFERTA PRINCIPAL]
+
+ESTRUTURA:
+1. Problema que esse produto resolve
+2. O que está incluso
+3. Para quem é (e para quem NÃO é)
+4. Preço + como comprar
+5. "Quem compra hoje, também recebe [BÔNUS]"
+
+PROIBIDO: complicar demais, muitas opções, escassez falsa.`
+    },
+    {
+      objetivo_psicologico: `[${objectiveLabel}] Demonstrar profundidade`,
+      acao: "Análise longa de caso",
+      formato: "carrossel",
+      ferramenta: "feed",
+      tipo: "padrao",
+      prompt: `SISTEMA: Você é implacável. Não protege ego. Não suaviza.
+
+OBJETIVO: DEMONSTRAR PROFUNDIDADE DE ANÁLISE PARA ${objectiveLabel}
+
+Carrossel de 10 slides analisando UM caso em profundidade.
+
+ESTRUTURA:
+1. Título: "Como [RESULTADO] aconteceu: análise completa"
+2. Contexto: situação inicial
+3-4. O que foi feito (passos principais)
+5-6. Obstáculos encontrados
+7-8. Como foram superados
+9. Resultado final (números)
+10. "Uma lição que você pode aplicar hoje"
+
+PROIBIDO: simplificar demais, esconder dificuldades, parecer fácil demais.`
+    },
   ];
 
   for (let day = 8; day <= 30; day++) {
-    const template = advancedActions[(day - 8) % advancedActions.length];
+    const template = advancedDays[(day - 8) % advancedDays.length];
     extended.push({ ...template, day });
   }
   return extended;

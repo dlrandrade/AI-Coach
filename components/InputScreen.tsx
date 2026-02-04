@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 
 interface InputScreenProps {
   onAnalyze: (handle: string, planDays: 7 | 30, objective: number) => void;
@@ -6,102 +6,120 @@ interface InputScreenProps {
 }
 
 const OBJECTIVES = [
-  { id: 1, label: "DOMINAR TERRITÓRIO MENTAL", short: "AUTORIDADE", desc: "Tornar-se referência ideológica do nicho" },
-  { id: 2, label: "CLAREZA DE POSICIONAMENTO", short: "POSICIONAMENTO", desc: "Ser impossível de confundir ou comparar" },
-  { id: 3, label: "ATRAIR PÚBLICO CERTO", short: "QUALIFICAÇÃO", desc: "Menos curiosos, mais decisores reais" },
-  { id: 4, label: "CONSTRUIR PROVA", short: "CREDIBILIDADE", desc: "Aumentar confiança sem prometer resultado" },
-  { id: 5, label: "PREPARAR MONETIZAÇÃO", short: "PRÉ-VENDA", desc: "Educar desejo antes da oferta" },
-  { id: 6, label: "PERCEPÇÃO DE VALOR", short: "STATUS", desc: "Elevar respeito, reduzir acesso irrelevante" },
-  { id: 7, label: "QUEBRAR ESTAGNAÇÃO", short: "RESET", desc: "Mudança visível e irreversível" },
+  { id: 1, label: "DOMINAR TERRITÓRIO", short: "AUTORIDADE", desc: "Ser referência ideológica do nicho" },
+  { id: 2, label: "CLAREZA ABSOLUTA", short: "POSICIONAMENTO", desc: "Impossível de confundir ou comparar" },
+  { id: 3, label: "PÚBLICO CERTO", short: "QUALIFICAÇÃO", desc: "Menos curiosos, mais decisores" },
+  { id: 4, label: "CONSTRUIR PROVA", short: "CREDIBILIDADE", desc: "Confiança sem promessa falsa" },
+  { id: 5, label: "PREPARAR VENDA", short: "PRÉ-VENDA", desc: "Educar desejo antes da oferta" },
+  { id: 6, label: "ELEVAR STATUS", short: "STATUS", desc: "Mais respeito, menos acesso" },
+  { id: 7, label: "QUEBRAR PADRÃO", short: "RESET", desc: "Mudança visível e irreversível" },
 ];
 
-const LUZZIA_BASE_OBSERVATIONS = [
-  "Iniciando varredura neural...",
-  "Decodificando camadas de posicionamento...",
-  "Lendo entrelinhas da bio...",
-  "Escaneando padrões de conteúdo...",
-  "Detectando vazamentos de autoridade...",
-  "Analisando coerência de linguagem...",
-  "Identificando pontos de fricção...",
+const SYSTEM_MESSAGES = [
+  "Iniciando protocolo de análise...",
+  "Conectando ao Instagram...",
+  "Lendo bio do perfil...",
+  "Escaneando últimos posts...",
+  "Analisando padrão de conteúdo...",
+  "Verificando stories recentes...",
+  "Mapeando destaques...",
+  "Detectando sinais de autoridade...",
   "Procurando provas de resultado...",
-  "Mapeando arquitetura de ofertas...",
-  "Avaliando tensão narrativa...",
-  "Calculando custo de oportunidade...",
-  "Dissecando hierarquia de prioridades...",
+  "Avaliando estrutura de oferta...",
 ];
 
-const LUZZIA_PROVOCATIONS = [
-  "Isso aqui está confuso...",
-  "Hmm, interessante escolha.",
-  "Vejo um padrão se repetindo...",
-  "Aqui tem um problema sério.",
+const LUZZIA_MESSAGES = [
+  "Hmm... Interessante.",
+  "Isso aqui está confuso.",
+  "Vejo um padrão problemático.",
   "Achei. Isso explica muita coisa.",
   "Você está deixando dinheiro na mesa.",
   "Esse erro é mais comum do que parece.",
-  "O público não entende isso ainda...",
   "Falta coragem nessa comunicação.",
-  "Aqui precisa de cirurgia, não band-aid.",
-  "Você está competindo com você mesmo.",
-  "A mensagem está fragmentada."
+  "A mensagem está fragmentada.",
+  "Aqui precisa de cirurgia.",
+  "O público não entende isso.",
 ];
 
 const ONBOARDING_STEPS = [
-  { title: "BEM-VINDO AO ENGINE", desc: "Sistema de diagnóstico e dominação para Instagram." },
-  { title: "ESCOLHA SEU OBJETIVO", desc: "Cada diagnóstico é focado em UM objetivo primário." },
-  { title: "RECEBA O PLANO", desc: "Ações diárias com prompts executáveis em qualquer IA." },
+  { title: "ENGINE DE DOMÍNIO", desc: "Sistema de diagnóstico e reprogramação de perfis de Instagram." },
+  { title: "ESCOLHA UM OBJETIVO", desc: "Cada diagnóstico é focado em UM objetivo primário. Sem dispersão." },
+  { title: "EXECUTE O PLANO", desc: "Receba ações diárias com prompts executáveis em qualquer IA." },
 ];
 
 export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }) => {
   const [handle, setHandle] = useState('');
   const [planDays, setPlanDays] = useState<7 | 30>(7);
-  const [selectedObjective, setSelectedObjective] = useState<number>(1);
+  const [selectedObjective, setSelectedObjective] = useState<number | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [currentObservation, setCurrentObservation] = useState('');
-  const [isProvocation, setIsProvocation] = useState(false);
+  const [currentMessage, setCurrentMessage] = useState('');
+  const [isLuzziaMessage, setIsLuzziaMessage] = useState(false);
+  const [glitchCount, setGlitchCount] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Check for first visit
   useEffect(() => {
-    const hasVisited = localStorage.getItem('luzzia_visited');
+    const hasVisited = localStorage.getItem('luzzia_visited_v2');
     if (!hasVisited) {
       setShowOnboarding(true);
     }
   }, []);
 
-  // Generate shuffled observations
-  const shuffledObservations = useMemo(() => {
-    const all = [...LUZZIA_BASE_OBSERVATIONS, ...LUZZIA_PROVOCATIONS];
-    for (let i = all.length - 1; i > 0; i--) {
+  // Shuffle and generate unique messages
+  const allMessages = useMemo(() => {
+    const combined = [
+      ...SYSTEM_MESSAGES.map(m => ({ text: m, type: 'system' })),
+      ...LUZZIA_MESSAGES.map(m => ({ text: m, type: 'luzzia' }))
+    ];
+    for (let i = combined.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [all[i], all[j]] = [all[j], all[i]];
+      [combined[i], combined[j]] = [combined[j], combined[i]];
     }
-    return all;
+    return combined;
   }, [isLoading]);
 
+  // Loading state management with punctual glitch
   useEffect(() => {
     if (isLoading) {
-      let obsIndex = 0;
-      const obsInterval = setInterval(() => {
-        const obs = shuffledObservations[obsIndex % shuffledObservations.length];
-        setCurrentObservation(obs);
-        setIsProvocation(LUZZIA_PROVOCATIONS.includes(obs));
-        obsIndex++;
-      }, 1800);
+      let msgIndex = 0;
+      const msgInterval = setInterval(() => {
+        const msg = allMessages[msgIndex % allMessages.length];
+        setCurrentMessage(msg.text);
+        setIsLuzziaMessage(msg.type === 'luzzia');
+        msgIndex++;
+      }, 2000);
 
       const progressInterval = setInterval(() => {
-        setProgress(prev => Math.min(prev + 0.8, 99.5));
+        setProgress(prev => Math.min(prev + 0.7, 99));
       }, 100);
 
+      // Punctual glitch effect - 3 times max
+      const glitchTimes = [3000, 7000, 12000];
+      const glitchTimeouts = glitchTimes.map((time, i) =>
+        setTimeout(() => {
+          if (glitchCount < 3 && containerRef.current) {
+            containerRef.current.classList.add('glitch-trigger');
+            setTimeout(() => {
+              containerRef.current?.classList.remove('glitch-trigger');
+            }, 150);
+            setGlitchCount(prev => prev + 1);
+          }
+        }, time)
+      );
+
       return () => {
-        clearInterval(obsInterval);
+        clearInterval(msgInterval);
         clearInterval(progressInterval);
+        glitchTimeouts.forEach(t => clearTimeout(t));
       };
     } else {
       setProgress(0);
-      setCurrentObservation('');
+      setCurrentMessage('');
+      setGlitchCount(0);
     }
-  }, [isLoading, shuffledObservations]);
+  }, [isLoading, allMessages, glitchCount]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +128,7 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
   };
 
   const completeOnboarding = () => {
-    localStorage.setItem('luzzia_visited', 'true');
+    localStorage.setItem('luzzia_visited_v2', 'true');
     setShowOnboarding(false);
   };
 
@@ -122,26 +140,24 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
     }
   };
 
-  // ONBOARDING MODAL
+  // ONBOARDING
   if (showOnboarding) {
     const step = ONBOARDING_STEPS[onboardingStep];
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6 py-24 bg-white">
         <div className="w-full max-w-md text-center space-y-12">
-          <div className="space-y-2">
-            <span className="credit-label">PASSO {onboardingStep + 1} DE {ONBOARDING_STEPS.length}</span>
-          </div>
+          <div className="credit-label">PASSO {onboardingStep + 1} / {ONBOARDING_STEPS.length}</div>
 
           <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-gray-900">{step.title}</h1>
-            <p className="text-gray-500 text-lg">{step.desc}</p>
+            <h1 className="text-4xl font-extrabold text-black tracking-tight">{step.title}</h1>
+            <p className="text-gray-600 text-lg">{step.desc}</p>
           </div>
 
           <div className="flex gap-2 justify-center">
             {ONBOARDING_STEPS.map((_, i) => (
               <div
                 key={i}
-                className={`w-2 h-2 rounded-full transition-all ${i === onboardingStep ? 'bg-green-600 w-6' : 'bg-gray-300'}`}
+                className={`h-1 transition-all ${i === onboardingStep ? 'w-8 bg-black' : 'w-2 bg-gray-300'}`}
               />
             ))}
           </div>
@@ -150,7 +166,7 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
             {onboardingStep < ONBOARDING_STEPS.length - 1 ? 'PRÓXIMO' : 'COMEÇAR'}
           </button>
 
-          <button onClick={completeOnboarding} className="text-gray-400 text-sm hover:text-gray-600">
+          <button onClick={completeOnboarding} className="text-gray-400 text-xs hover:text-black transition-colors">
             Pular introdução
           </button>
         </div>
@@ -158,25 +174,24 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
     );
   }
 
-  // LOADING STATE WITH GLITCH
+  // LOADING STATE
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-24 bg-white glitch-container glitch-active">
-        {/* Scan line effect */}
-        <div className="glitch-line"></div>
+      <div ref={containerRef} className="min-h-screen flex flex-col items-center justify-center px-6 py-24 bg-white">
+        <div className="scan-line active"></div>
 
-        <div className="w-full max-w-lg space-y-12 glitch-flicker">
+        <div className="w-full max-w-lg space-y-12">
           <div className="flex justify-between items-center">
-            <span className="micro-label" style={{ color: '#EA580C' }}>PROCESSANDO</span>
-            <span className="font-mono text-sm text-gray-400">{progress.toFixed(0)}%</span>
+            <span className="tech-label" style={{ background: '#DC2626' }}>ANALISANDO</span>
+            <span className="font-mono text-xl font-bold text-black">{progress.toFixed(0)}%</span>
           </div>
 
-          <div className="min-h-[120px] space-y-4">
-            <p className={`text-2xl leading-relaxed transition-all duration-300 ${isProvocation ? 'text-gray-900 italic font-medium' : 'text-gray-500'}`}>
-              "{currentObservation}"
+          <div className="min-h-[100px] space-y-4">
+            <p className={`text-2xl leading-relaxed transition-all duration-300 ${isLuzziaMessage ? 'text-black font-bold italic' : 'text-gray-500'}`}>
+              {currentMessage}
             </p>
-            {isProvocation && (
-              <span className="text-sm text-green-600 font-medium block">— LUZZIA</span>
+            {isLuzziaMessage && (
+              <span className="text-sm font-mono text-green-600">— LUZZIA</span>
             )}
           </div>
 
@@ -184,13 +199,9 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
             <div className="score-track">
               <div className="score-fill" style={{ width: `${progress}%` }}></div>
             </div>
-            <div className="text-center space-y-2">
-              <p className="font-mono text-xs text-gray-400 tracking-wider">
-                ALVO: @{handle.toUpperCase()}
-              </p>
-              <p className="font-mono text-xs text-green-600 tracking-wider">
-                OBJETIVO: {OBJECTIVES.find(o => o.id === selectedObjective)?.short}
-              </p>
+            <div className="flex justify-between text-xs font-mono text-gray-500">
+              <span>ALVO: @{handle.toUpperCase()}</span>
+              <span>OBJETIVO: {OBJECTIVES.find(o => o.id === selectedObjective)?.short}</span>
             </div>
           </div>
         </div>
@@ -200,24 +211,24 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
 
   // MAIN FORM
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-24 bg-white">
-      <div className="w-full max-w-lg text-center space-y-12 reveal">
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16 bg-white">
+      <div className="w-full max-w-xl text-center space-y-12 reveal">
 
         {/* Header */}
         <header className="space-y-6">
           <div className="flex justify-center items-center gap-4">
             <span className="tech-label">LUZZIA</span>
-            <span className="w-8 h-px bg-gray-300"></span>
-            <span className="micro-label">ENGINE v2.0</span>
+            <span className="w-12 h-0.5 bg-black"></span>
+            <span className="micro-label">ENGINE v2.1</span>
           </div>
 
           <h1 className="hero-title">
-            DIAGNÓSTICO<br />DE DOMÍNIO
+            DIAGNÓSTICO<br /><span>DE DOMÍNIO</span>
           </h1>
 
-          <p className="text-gray-500 text-lg max-w-md mx-auto leading-relaxed text-center">
-            Sistema de julgamento orientado a objetivo para Instagram.
-            Escolha um objetivo. Receba um plano de dominação.
+          <p className="text-gray-600 text-lg max-w-md mx-auto leading-relaxed">
+            Sistema de julgamento para Instagram.<br />
+            Um objetivo. Um plano. Zero desculpas.
           </p>
         </header>
 
@@ -239,35 +250,33 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
 
           {/* Objective Selection */}
           <div className="space-y-3">
-            <label className="micro-label block">OBJETIVO PRIMÁRIO</label>
+            <label className="micro-label block">OBJETIVO PRIMÁRIO <span className="text-red-600">*</span></label>
             <div className="grid gap-2">
               {OBJECTIVES.map((obj) => (
                 <button
                   key={obj.id}
                   type="button"
                   onClick={() => setSelectedObjective(obj.id)}
-                  className={`p-4 rounded-xl border-2 transition-all text-left ${selectedObjective === obj.id
-                      ? 'border-green-600 bg-green-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                  className={`p-4 border-2 transition-all text-left flex justify-between items-center ${selectedObjective === obj.id
+                      ? 'border-black bg-black text-white'
+                      : 'border-gray-200 hover:border-black'
                     }`}
                 >
-                  <div className="flex justify-between items-start gap-4">
-                    <div>
-                      <span className={`font-bold text-sm ${selectedObjective === obj.id ? 'text-green-700' : 'text-gray-900'}`}>
-                        {obj.label}
-                      </span>
-                      <p className="text-xs text-gray-500 mt-1">{obj.desc}</p>
-                    </div>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${selectedObjective === obj.id
-                        ? 'border-green-600 bg-green-600'
-                        : 'border-gray-300'
-                      }`}>
-                      {selectedObjective === obj.id && (
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      )}
-                    </div>
+                  <div>
+                    <span className={`font-bold text-sm ${selectedObjective === obj.id ? 'text-white' : 'text-black'}`}>
+                      {obj.label}
+                    </span>
+                    <p className={`text-xs mt-0.5 ${selectedObjective === obj.id ? 'text-gray-300' : 'text-gray-500'}`}>
+                      {obj.desc}
+                    </p>
+                  </div>
+                  <div className={`w-4 h-4 border-2 flex items-center justify-center ${selectedObjective === obj.id
+                      ? 'border-white bg-white'
+                      : 'border-gray-400'
+                    }`}>
+                    {selectedObjective === obj.id && (
+                      <div className="w-2 h-2 bg-black"></div>
+                    )}
                   </div>
                 </button>
               ))}
@@ -277,18 +286,18 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
           {/* Plan Duration */}
           <div className="space-y-3">
             <label className="micro-label block">DURAÇÃO DO PLANO</label>
-            <div className="flex bg-gray-100 rounded-xl p-1.5 h-14">
+            <div className="flex border-2 border-black">
               <button
                 type="button"
                 onClick={() => setPlanDays(7)}
-                className={`flex-1 rounded-lg text-sm font-bold transition-all ${planDays === 7 ? 'bg-green-600 text-white' : 'text-gray-500 hover:text-gray-900'}`}
+                className={`flex-1 py-4 text-sm font-bold transition-all ${planDays === 7 ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
               >
                 7 DIAS
               </button>
               <button
                 type="button"
                 onClick={() => setPlanDays(30)}
-                className={`flex-1 rounded-lg text-sm font-bold transition-all ${planDays === 30 ? 'bg-green-600 text-white' : 'text-gray-500 hover:text-gray-900'}`}
+                className={`flex-1 py-4 text-sm font-bold transition-all border-l-2 border-black ${planDays === 30 ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
               >
                 30 DIAS
               </button>
@@ -304,13 +313,16 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
             >
               INICIAR DIAGNÓSTICO
             </button>
+            {!selectedObjective && (
+              <p className="text-xs text-red-600 mt-2 text-center">Selecione um objetivo primário</p>
+            )}
           </div>
         </form>
 
         {/* Footer */}
         <footer className="pt-8">
-          <a href="https://instagram.com/danielluzz" target="_blank" rel="noreferrer" className="credit-label hover:text-green-600 transition-colors">
-            FEITO COM ♥️ POR @DANIELLUZZ
+          <a href="https://instagram.com/danielluzz" target="_blank" rel="noreferrer" className="credit-label hover:text-black transition-colors">
+            FEITO POR @DANIELLUZZ
           </a>
         </footer>
       </div>

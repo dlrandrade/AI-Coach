@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AnalysisResult } from '../services/aiService';
 
 interface DiagnosisScreenProps {
@@ -10,8 +10,8 @@ interface DiagnosisScreenProps {
 
 const getStatusColor = (status: string) => {
     if (status === 'alavanca') return '#059669';
-    if (status === 'neutro') return '#CA8A04';
-    return '#EA580C';
+    if (status === 'neutro') return '#D97706';
+    return '#DC2626';
 };
 
 const getStatusLabel = (status: string) => {
@@ -33,13 +33,15 @@ const getPositionLabel = (pos: string) => {
 const getPositionColor = (pos: string) => {
     if (pos === 'dominador') return '#059669';
     if (pos === 'autoridade') return '#0EA5E9';
-    if (pos === 'aspirante') return '#CA8A04';
-    return '#EA580C';
+    if (pos === 'aspirante') return '#D97706';
+    return '#DC2626';
 };
 
 export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result, onReset, onNext }) => {
+    const [showDebug, setShowDebug] = useState(true);
+
     if (!result) return null;
-    const { diagnosis, plan } = result;
+    const { leitura_perfil, diagnosis, plan } = result;
 
     const dissecacaoItems = [
         { key: 'bio', label: 'BIO', ...diagnosis.dissecacao.bio },
@@ -52,84 +54,102 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="h-24 md:h-32"></div>
+            <div className="h-16 md:h-24"></div>
 
-            <div className="container-neurelic space-y-16 reveal">
+            <div className="container-neurelic space-y-12 reveal">
+
+                {/* DEBUG: LEITURA DO PERFIL (PROVISÓRIO) */}
+                {showDebug && leitura_perfil && (
+                    <section className="space-y-4">
+                        <div className="flex justify-between items-center">
+                            <span className="micro-label text-green-600">DEBUG: O QUE A IA LEU (PROVISÓRIO)</span>
+                            <button
+                                onClick={() => setShowDebug(false)}
+                                className="text-xs font-mono text-gray-400 hover:text-red-600"
+                            >
+                                [ESCONDER]
+                            </button>
+                        </div>
+                        <div className="debug-section custom-scrollbar">
+                            <pre>{JSON.stringify(leitura_perfil, null, 2)}</pre>
+                        </div>
+                    </section>
+                )}
 
                 {/* HEADER */}
-                <header className="space-y-8">
+                <header className="space-y-6">
                     <div className="flex flex-wrap items-center gap-4">
-                        <span className="tech-label" style={{ background: '#DCFCE7', color: '#166534' }}>{diagnosis.objetivo_ativo}</span>
-                        <span className="micro-label">ALVO: @{handle.toUpperCase()}</span>
+                        <span className="tech-label">{diagnosis.objetivo_ativo}</span>
+                        <span className="micro-label">@{handle.toUpperCase()}</span>
                     </div>
 
                     <h1 className="hero-title leading-none">
-                        DIAGNÓSTICO<br />DE DOMÍNIO
+                        DIAGNÓSTICO<br /><span>COMPLETO</span>
                     </h1>
 
-                    <div className="max-w-3xl p-6 bg-gray-50 border-l-4 border-red-500 rounded-r-xl">
-                        <p className="text-xl text-gray-900 font-bold leading-relaxed">
+                    <div className="max-w-3xl p-6 bg-gray-100 border-l-4 border-red-600">
+                        <p className="text-xl text-black font-bold leading-relaxed">
                             "{diagnosis.sentenca}"
                         </p>
                     </div>
                 </header>
 
-                {/* POSICIONAMENTO ATUAL */}
+                {/* POSICIONAMENTO */}
                 <div className="h-px bg-gray-200"></div>
 
                 <section className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-4">
                         <span className="micro-label">POSICIONAMENTO ATUAL</span>
                         <div
-                            className="text-4xl font-extrabold tracking-tight"
+                            className="text-5xl font-extrabold tracking-tighter"
                             style={{ color: getPositionColor(diagnosis.posicionamento) }}
                         >
                             {getPositionLabel(diagnosis.posicionamento)}
                         </div>
                         {diagnosis.modo_falha && (
-                            <div className="inline-block tech-label" style={{ background: '#FEF3C7', color: '#B45309' }}>
+                            <div className="inline-block tech-label" style={{ background: '#D97706' }}>
                                 MODO: {diagnosis.modo_falha.toUpperCase().replace('_', ' ')}
                             </div>
                         )}
                     </div>
                     <div className="space-y-4">
                         <span className="micro-label">AÇÃO DE MAIOR ALAVANCAGEM</span>
-                        <p className="text-lg text-gray-900 font-medium leading-relaxed">
+                        <p className="text-lg text-black font-medium leading-relaxed">
                             {diagnosis.acao_alavancagem}
                         </p>
                     </div>
                 </section>
 
-                {/* PECADO CAPITAL & CONFLITO */}
+                {/* PECADO & CONFLITO */}
                 <div className="h-px bg-gray-200"></div>
 
-                <section className="grid md:grid-cols-2 gap-8">
-                    <div className="card-tech space-y-4 border-l-4 border-l-red-500">
-                        <span className="micro-label" style={{ color: '#B91C1C' }}>PECADO CAPITAL</span>
-                        <p className="text-gray-700 leading-relaxed">{diagnosis.pecado_capital}</p>
+                <section className="grid md:grid-cols-2 gap-6">
+                    <div className="card-tech border-l-4 border-l-red-600 space-y-3">
+                        <span className="micro-label text-red-600">PECADO CAPITAL</span>
+                        <p className="text-gray-800 leading-relaxed">{diagnosis.pecado_capital}</p>
                     </div>
-                    <div className="card-tech space-y-4 border-l-4 border-l-amber-500">
-                        <span className="micro-label" style={{ color: '#B45309' }}>CONFLITO OCULTO</span>
-                        <p className="text-gray-700 leading-relaxed">{diagnosis.conflito_oculto}</p>
+                    <div className="card-tech border-l-4 border-l-amber-500 space-y-3">
+                        <span className="micro-label text-amber-600">CONFLITO OCULTO</span>
+                        <p className="text-gray-800 leading-relaxed">{diagnosis.conflito_oculto}</p>
                     </div>
                 </section>
 
                 {/* DISSECAÇÃO */}
                 <div className="h-px bg-gray-200"></div>
 
-                <section className="space-y-8">
-                    <h2 className="section-title">DISSECAÇÃO DO PERFIL</h2>
+                <section className="space-y-6">
+                    <h2 className="section-title">DISSECAÇÃO</h2>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {dissecacaoItems.map((item) => (
-                            <div key={item.key} className="card-tech space-y-4">
-                                <div className="flex justify-between items-start">
-                                    <h3 className="font-bold text-gray-900">{item.label}</h3>
+                            <div key={item.key} className="card-tech space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <h3 className="font-bold text-black text-sm">{item.label}</h3>
                                     <span
-                                        className="text-xs font-bold px-3 py-1 rounded-full"
+                                        className="text-xs font-bold px-3 py-1"
                                         style={{
-                                            backgroundColor: getStatusColor(item.status) + '20',
-                                            color: getStatusColor(item.status)
+                                            backgroundColor: getStatusColor(item.status),
+                                            color: 'white'
                                         }}
                                     >
                                         {getStatusLabel(item.status)}
@@ -144,9 +164,9 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                 {/* FOOTER */}
                 <div className="h-px bg-gray-200"></div>
 
-                <footer className="flex flex-col md:flex-row gap-6 justify-center items-center py-8">
+                <footer className="flex flex-col md:flex-row gap-4 justify-center items-center py-8">
                     <button onClick={onNext} className="btn-neurelic min-w-[280px]">
-                        EXECUTAR PLANO DE {plan.length} DIAS
+                        VER PLANO DE {plan.length} DIAS
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                     </button>
 
@@ -156,7 +176,7 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                 </footer>
             </div>
 
-            <div className="h-24 md:h-32"></div>
+            <div className="h-16 md:h-24"></div>
         </div>
     );
 };
