@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { AnalysisResult } from '../services/aiService';
+import { InstagramProfileData } from '../services/instagramService';
 
 interface DiagnosisScreenProps {
     handle: string;
     result: AnalysisResult | null;
+    rawScrapedData?: InstagramProfileData | null;
     onReset: () => void;
     onNext: () => void;
 }
@@ -37,11 +39,11 @@ const getPositionColor = (pos: string) => {
     return '#DC2626';
 };
 
-export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result, onReset, onNext }) => {
+export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result, rawScrapedData, onReset, onNext }) => {
     const [showDebug, setShowDebug] = useState(true);
 
     if (!result) return null;
-    const { leitura_perfil, diagnosis, plan } = result;
+    const { diagnosis, plan } = result;
 
     const dissecacaoItems = [
         { key: 'bio', label: 'BIO', ...diagnosis.dissecacao.bio },
@@ -58,11 +60,11 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
 
             <div className="container-neurelic space-y-12 reveal">
 
-                {/* DEBUG: LEITURA DO PERFIL (PROVISÓRIO) */}
-                {showDebug && leitura_perfil && (
+                {/* DEBUG: DADOS RAW DO INSTAGRAM (PROVISÓRIO) */}
+                {showDebug && rawScrapedData && (
                     <section className="space-y-4">
                         <div className="flex justify-between items-center">
-                            <span className="micro-label text-green-600">DEBUG: O QUE A IA LEU (PROVISÓRIO)</span>
+                            <span className="micro-label text-green-600">DEBUG: DADOS RAW DO INSTAGRAM (SCRAPING REAL)</span>
                             <button
                                 onClick={() => setShowDebug(false)}
                                 className="text-xs font-mono text-gray-400 hover:text-red-600"
@@ -71,8 +73,13 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                             </button>
                         </div>
                         <div className="debug-section custom-scrollbar">
-                            <pre>{JSON.stringify(leitura_perfil, null, 2)}</pre>
+                            <pre>{JSON.stringify(rawScrapedData, null, 2)}</pre>
                         </div>
+                        {rawScrapedData.error && (
+                            <div className="p-4 bg-red-50 border-2 border-red-500 text-red-700 font-mono text-sm">
+                                ⚠️ ERRO: {rawScrapedData.error}
+                            </div>
+                        )}
                     </section>
                 )}
 
