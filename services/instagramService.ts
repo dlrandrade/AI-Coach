@@ -1,10 +1,8 @@
 // Instagram Profile Scraper Service
-// Uses RapidAPI's Instagram Scraper API
+// Uses RapidAPI's Instagram Scraper v21
 
-// NOTE: Replace with your own RapidAPI key
-// Get one free at: https://rapidapi.com/arraybobo/api/instagram-scraper-2022
 const RAPIDAPI_KEY = "009bc562d8mshe1370b6cd5321c9p1683dejsne9fed0c163df";
-const RAPIDAPI_HOST = "instagram-scraper-api2.p.rapidapi.com";
+const RAPIDAPI_HOST = "instagram-scraper-v21.p.rapidapi.com";
 
 export interface InstagramProfileData {
     username: string;
@@ -31,29 +29,33 @@ export interface InstagramProfileData {
 export const scrapeInstagramProfile = async (username: string): Promise<InstagramProfileData> => {
     const cleanUsername = username.replace('@', '').trim().toLowerCase();
 
-    // API key is configured - proceed with real scraping
-
     try {
-        // Fetch profile info
-        const profileResponse = await fetch(
-            `https://${RAPIDAPI_HOST}/v1/info?username_or_id_or_url=${cleanUsername}`,
+        // Step 1: Get user info by username
+        console.log('[Scraper] Fetching user info for:', cleanUsername);
+        const userInfoResponse = await fetch(
+            `https://${RAPIDAPI_HOST}/api/get-user-info-by-username`,
             {
-                method: 'GET',
+                method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'x-rapidapi-key': RAPIDAPI_KEY,
                     'x-rapidapi-host': RAPIDAPI_HOST
-                }
+                },
+                body: JSON.stringify({ username: cleanUsername })
             }
         );
 
-        if (!profileResponse.ok) {
-            throw new Error(`Profile fetch failed: ${profileResponse.status}`);
+        if (!userInfoResponse.ok) {
+            throw new Error(`User info fetch failed: ${userInfoResponse.status}`);
         }
 
-        const profileData = await profileResponse.json();
-        const user = profileData.data;
+        const userInfoData = await userInfoResponse.json();
+        console.log('[Scraper] User info response:', userInfoData);
 
-        if (!user) {
+        // Extract user data from response
+        const user = userInfoData?.data?.user || userInfoData?.user || userInfoData;
+
+        if (!user || !user.id) {
             return {
                 username: cleanUsername,
                 fullName: null,
@@ -68,54 +70,79 @@ export const scrapeInstagramProfile = async (username: string): Promise<Instagra
                 highlightNames: [],
                 recentPosts: [],
                 scrapedAt: new Date().toISOString(),
-                error: "Perfil não encontrado ou privado"
+                error: "Perfil não encontrado ou resposta inválida"
             };
         }
 
-        // Fetch recent posts
+        const userId = user.id || user.pk;
+
+        // Step 2: Get recent posts
         let recentPosts: InstagramProfileData['recentPosts'] = [];
         try {
+            console.log('[Scraper] Fetching posts for user_id:', userId);
             const postsResponse = await fetch(
-                `https://${RAPIDAPI_HOST}/v1.2/posts?username_or_id_or_url=${cleanUsername}`,
+                `https://${RAPIDAPI_HOST}/api/get-user-posts`,
                 {
-                    method: 'GET',
+                    method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         'x-rapidapi-key': RAPIDAPI_KEY,
                         'x-rapidapi-host': RAPIDAPI_HOST
-                    }
+                    },
+                    body: JSON.stringify({ user_id: userId })
                 }
             );
 
             if (postsResponse.ok) {
                 const postsData = await postsResponse.json();
-                const posts = postsData.data?.items || [];
+                console.log('[Scraper] Posts response:', postsData);
+                const posts = postsData?.data?.items || postsData?.items || [];
 
                 recentPosts = posts.slice(0, 9).map((post: any) => ({
-                    caption: (post.caption?.text || '').slice(0, 200),
-                    likesCount: post.like_count || 0,
-                    commentsCount: post.comment_count || 0,
-                    isVideo: post.media_type === 2
+                    caption: (post.caption?.text || post.caption || '').slice(0, 200),
+                    likesCount: post.like_count || post.likes_count || 0,
+                    commentsCount: post.comment_count || post.comments_count || 0,
+                    isVideo: post.media_type === 2 || post.is_video || false
                 }));
             }
         } catch (e) {
-            console.warn("Could not fetch posts:", e);
+            console.warn("[Scraper] Could not fetch posts:", e);
         }
 
-        // Extract highlight names if available
-        const highlightNames: string[] = [];
-        if (user.highlight_reel_count > 0) {
-            // Note: Would need separate API call for highlight details
-            highlightNames.push(`${user.highlight_reel_count} destaques encontrados`);
+        // Step 3: Get highlights (if available)
+        let highlightNames: string[] = [];
+        try {
+            const highlightsResponse = await fetch(
+                `https://${RAPIDAPI_HOST}/api/get-user-highlights`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-rapidapi-key': RAPIDAPI_KEY,
+                        'x-rapidapi-host': RAPIDAPI_HOST
+                    },
+                    body: JSON.stringify({ user_id: userId })
+                }
+            );
+
+            if (highlightsResponse.ok) {
+                const highlightsData = await highlightsResponse.json();
+                console.log('[Scraper] Highlights response:', highlightsData);
+                const highlights = highlightsData?.data?.items || highlightsData?.items || [];
+                highlightNames = highlights.slice(0, 10).map((h: any) => h.title || h.name || 'Destaque');
+            }
+        } catch (e) {
+            console.warn("[Scraper] Could not fetch highlights:", e);
         }
 
         return {
             username: user.username || cleanUsername,
             fullName: user.full_name || null,
-            biography: user.biography || null,
-            externalUrl: user.external_url || null,
-            followersCount: user.follower_count || null,
-            followingCount: user.following_count || null,
-            postsCount: user.media_count || null,
+            biography: user.biography || user.bio || null,
+            externalUrl: user.external_url || user.bio_links?.[0]?.url || null,
+            followersCount: user.follower_count || user.edge_followed_by?.count || null,
+            followingCount: user.following_count || user.edge_follow?.count || null,
+            postsCount: user.media_count || user.edge_owner_to_timeline_media?.count || null,
             isVerified: user.is_verified || false,
             isPrivate: user.is_private || false,
             profilePicUrl: user.profile_pic_url_hd || user.profile_pic_url || null,
@@ -126,7 +153,7 @@ export const scrapeInstagramProfile = async (username: string): Promise<Instagra
         };
 
     } catch (error) {
-        console.error("Instagram scraping error:", error);
+        console.error("[Scraper] Error:", error);
         return {
             username: cleanUsername,
             fullName: null,
@@ -144,30 +171,6 @@ export const scrapeInstagramProfile = async (username: string): Promise<Instagra
             error: `Erro ao acessar perfil: ${error instanceof Error ? error.message : 'Desconhecido'}`
         };
     }
-};
-
-// Simulation mode when API key is not configured
-const simulateProfileData = (username: string): InstagramProfileData => {
-    return {
-        username,
-        fullName: `[SIMULAÇÃO] Usuário ${username}`,
-        biography: `[SIMULAÇÃO] Bio de @${username} não pôde ser lida. Configure sua API key do RapidAPI para leitura real.`,
-        externalUrl: null,
-        followersCount: Math.floor(Math.random() * 10000) + 1000,
-        followingCount: Math.floor(Math.random() * 1000) + 100,
-        postsCount: Math.floor(Math.random() * 200) + 50,
-        isVerified: false,
-        isPrivate: false,
-        profilePicUrl: null,
-        highlightNames: ["[SIM] Sobre", "[SIM] Serviços", "[SIM] Depoimentos"],
-        recentPosts: [
-            { caption: "[SIM] Post genérico sobre o nicho sem posicionamento claro", likesCount: 45, commentsCount: 3, isVideo: false },
-            { caption: "[SIM] Conteúdo motivacional sem profundidade", likesCount: 78, commentsCount: 5, isVideo: false },
-            { caption: "[SIM] Dicas básicas que qualquer um dá", likesCount: 32, commentsCount: 2, isVideo: true },
-        ],
-        scrapedAt: new Date().toISOString(),
-        error: "API key não configurada. Usando dados simulados."
-    };
 };
 
 // Helper to format scraped data for AI prompt
