@@ -31,9 +31,10 @@ export const scrapeInstagramProfile = async (username: string): Promise<Instagra
 
     try {
         // Step 1: Get user info by username
+        // Endpoint: POST /api/user-information with body {"username": "xxx"}
         console.log('[Scraper] Fetching user info for:', cleanUsername);
         const userInfoResponse = await fetch(
-            `https://${RAPIDAPI_HOST}/api/get-user-info-by-username`,
+            `https://${RAPIDAPI_HOST}/api/user-information`,
             {
                 method: 'POST',
                 headers: {
@@ -45,17 +46,33 @@ export const scrapeInstagramProfile = async (username: string): Promise<Instagra
             }
         );
 
-        if (!userInfoResponse.ok) {
-            throw new Error(`User info fetch failed: ${userInfoResponse.status}`);
-        }
-
         const userInfoData = await userInfoResponse.json();
         console.log('[Scraper] User info response:', userInfoData);
 
-        // Extract user data from response
-        const user = userInfoData?.data?.user || userInfoData?.user || userInfoData;
+        // Check for API errors
+        if (userInfoData.status === 'fail' || userInfoData.message) {
+            return {
+                username: cleanUsername,
+                fullName: null,
+                biography: null,
+                externalUrl: null,
+                followersCount: null,
+                followingCount: null,
+                postsCount: null,
+                isVerified: false,
+                isPrivate: false,
+                profilePicUrl: null,
+                highlightNames: [],
+                recentPosts: [],
+                scrapedAt: new Date().toISOString(),
+                error: `API Error: ${userInfoData.message || 'Unknown error'}`
+            };
+        }
 
-        if (!user || !user.id) {
+        // Extract user data - the structure may vary
+        const user = userInfoData?.data?.user || userInfoData?.user || userInfoData?.data || userInfoData;
+
+        if (!user || (!user.username && !user.full_name)) {
             return {
                 username: cleanUsername,
                 fullName: null,
@@ -74,12 +91,11 @@ export const scrapeInstagramProfile = async (username: string): Promise<Instagra
             };
         }
 
-        const userId = user.id || user.pk;
-
         // Step 2: Get recent posts
+        // Endpoint: POST /api/get-user-posts with body {"username": "xxx"}
         let recentPosts: InstagramProfileData['recentPosts'] = [];
         try {
-            console.log('[Scraper] Fetching posts for user_id:', userId);
+            console.log('[Scraper] Fetching posts...');
             const postsResponse = await fetch(
                 `https://${RAPIDAPI_HOST}/api/get-user-posts`,
                 {
@@ -89,50 +105,65 @@ export const scrapeInstagramProfile = async (username: string): Promise<Instagra
                         'x-rapidapi-key': RAPIDAPI_KEY,
                         'x-rapidapi-host': RAPIDAPI_HOST
                     },
-                    body: JSON.stringify({ user_id: userId })
+                    body: JSON.stringify({ username: cleanUsername })
                 }
             );
 
             if (postsResponse.ok) {
                 const postsData = await postsResponse.json();
                 console.log('[Scraper] Posts response:', postsData);
-                const posts = postsData?.data?.items || postsData?.items || [];
+
+                // Extract posts array from various possible structures
+                const posts = postsData?.data?.items ||
+                    postsData?.items ||
+                    postsData?.data?.edges?.map((e: any) => e.node) ||
+                    postsData?.edges?.map((e: any) => e.node) ||
+                    [];
 
                 recentPosts = posts.slice(0, 9).map((post: any) => ({
-                    caption: (post.caption?.text || post.caption || '').slice(0, 200),
-                    likesCount: post.like_count || post.likes_count || 0,
-                    commentsCount: post.comment_count || post.comments_count || 0,
-                    isVideo: post.media_type === 2 || post.is_video || false
+                    caption: (post.caption?.text || post.edge_media_to_caption?.edges?.[0]?.node?.text || post.caption || '').slice(0, 200),
+                    likesCount: post.like_count || post.edge_liked_by?.count || post.likes_count || 0,
+                    commentsCount: post.comment_count || post.edge_media_to_comment?.count || post.comments_count || 0,
+                    isVideo: post.media_type === 2 || post.is_video || post.__typename === 'GraphVideo' || false
                 }));
             }
         } catch (e) {
             console.warn("[Scraper] Could not fetch posts:", e);
         }
 
-        // Step 3: Get highlights (if available)
+        // Step 3: Get highlights
+        // Endpoint: POST /api/get-user-highlights with body {"user_id": "xxx"}
+        // We need to get user_id first from the profile data
         let highlightNames: string[] = [];
-        try {
-            const highlightsResponse = await fetch(
-                `https://${RAPIDAPI_HOST}/api/get-user-highlights`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-rapidapi-key': RAPIDAPI_KEY,
-                        'x-rapidapi-host': RAPIDAPI_HOST
-                    },
-                    body: JSON.stringify({ user_id: userId })
-                }
-            );
+        const userId = user.id || user.pk || user.user_id;
+        if (userId) {
+            try {
+                console.log('[Scraper] Fetching highlights for user_id:', userId);
+                const highlightsResponse = await fetch(
+                    `https://${RAPIDAPI_HOST}/api/get-user-highlights`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-rapidapi-key': RAPIDAPI_KEY,
+                            'x-rapidapi-host': RAPIDAPI_HOST
+                        },
+                        body: JSON.stringify({ user_id: String(userId) })
+                    }
+                );
 
-            if (highlightsResponse.ok) {
-                const highlightsData = await highlightsResponse.json();
-                console.log('[Scraper] Highlights response:', highlightsData);
-                const highlights = highlightsData?.data?.items || highlightsData?.items || [];
-                highlightNames = highlights.slice(0, 10).map((h: any) => h.title || h.name || 'Destaque');
+                if (highlightsResponse.ok) {
+                    const highlightsData = await highlightsResponse.json();
+                    console.log('[Scraper] Highlights response:', highlightsData);
+                    const highlights = highlightsData?.data?.items ||
+                        highlightsData?.items ||
+                        highlightsData?.data?.tray?.edges?.map((e: any) => e.node) ||
+                        [];
+                    highlightNames = highlights.slice(0, 10).map((h: any) => h.title || h.name || 'Destaque');
+                }
+            } catch (e) {
+                console.warn("[Scraper] Could not fetch highlights:", e);
             }
-        } catch (e) {
-            console.warn("[Scraper] Could not fetch highlights:", e);
         }
 
         return {
