@@ -35,11 +35,11 @@ OBJETIVO ATIVO: ${OBJECTIVE_LABELS[objective]}
 PERGUNTA DE JULGAMENTO: ${OBJECTIVE_QUESTIONS[objective]}
 ==================================================
 
-INSTRUÇÕES DE LEITURA DO PERFIL:
-1. Acesse mentalmente o perfil @[handle] no Instagram
-2. Leia: bio completa, últimos 9 posts, stories recentes, destaques
-3. Registre exatamente o que encontrou no campo "leitura_perfil"
-4. Baseie TODA análise apenas no que foi lido
+INSTRUÇÕES:
+- Você receberá DADOS REAIS do perfil (bio, posts, métricas)
+- Use APENAS os dados fornecidos para análise
+- NÃO invente dados que não foram fornecidos
+- Se algum dado estiver ausente, registre como "não disponível"
 
 ==================================================
 FORMATO DE RESPOSTA (JSON)
@@ -186,8 +186,17 @@ export interface AnalysisResult {
   plan: PlanDay[];
 }
 
-export const analyzeProfile = async (handle: string, planDays: 7 | 30 = 7, objective: number = 1): Promise<AnalysisResult> => {
+export const analyzeProfile = async (
+  handle: string,
+  planDays: 7 | 30 = 7,
+  objective: number = 1,
+  profileData?: string
+): Promise<AnalysisResult> => {
   try {
+    const profileContext = profileData
+      ? `\n\n=== DADOS DO PERFIL (LIDOS EM TEMPO REAL) ===\n${profileData}\n=== FIM DOS DADOS ===\n`
+      : '\n[AVISO: Dados do perfil não disponíveis.]\n';
+
     const response = await fetch(OPENROUTER_BASE_URL, {
       method: 'POST',
       headers: {
@@ -202,16 +211,15 @@ export const analyzeProfile = async (handle: string, planDays: 7 | 30 = 7, objec
           { role: 'system', content: SYSTEM_PROMPT(planDays, objective) },
           {
             role: 'user', content: `EXECUTAR ANÁLISE COMPLETA.
-          
+
 ALVO: @${handle}
 OBJETIVO PRIMÁRIO: ${OBJECTIVE_LABELS[objective]}
 PLANO: ${planDays} dias
-
+${profileContext}
 INSTRUÇÕES:
-1. Leia o perfil @${handle} no Instagram
-2. Registre tudo que encontrar em leitura_perfil
-3. Diagnostique com base no objetivo ${OBJECTIVE_LABELS[objective]}
-4. Gere plano de ${planDays} dias com prompts viscerais
+1. Use os DADOS DO PERFIL acima para preencher leitura_perfil
+2. Diagnostique com base no objetivo ${OBJECTIVE_LABELS[objective]}
+3. Gere plano de ${planDays} dias com prompts viscerais
 
 ZERO piedade. ZERO suavização.` }
         ],

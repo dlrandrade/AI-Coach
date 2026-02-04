@@ -187,7 +187,7 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
           </div>
 
           <div className="min-h-[100px] space-y-4">
-            <p className={`text-2xl leading-relaxed transition-all duration-300 ${isLuzziaMessage ? 'text-black font-bold italic' : 'text-gray-500'}`}>
+            <p className={`text-2xl leading-relaxed transition-all duration-300 ${isLuzziaMessage ? 'text-black font-bold' : 'text-gray-500'}`}>
               {currentMessage}
             </p>
             {isLuzziaMessage && (
@@ -258,8 +258,8 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
                   type="button"
                   onClick={() => setSelectedObjective(obj.id)}
                   className={`p-4 border-2 transition-all text-left flex justify-between items-center ${selectedObjective === obj.id
-                      ? 'border-black bg-black text-white'
-                      : 'border-gray-200 hover:border-black'
+                    ? 'border-black bg-black text-white'
+                    : 'border-gray-200 hover:border-black'
                     }`}
                 >
                   <div>
@@ -271,8 +271,8 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
                     </p>
                   </div>
                   <div className={`w-4 h-4 border-2 flex items-center justify-center ${selectedObjective === obj.id
-                      ? 'border-white bg-white'
-                      : 'border-gray-400'
+                    ? 'border-white bg-white'
+                    : 'border-gray-400'
                     }`}>
                     {selectedObjective === obj.id && (
                       <div className="w-2 h-2 bg-black"></div>
