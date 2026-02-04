@@ -2,12 +2,11 @@
 @import "tailwindcss";
 
 /* ============================================
-   NEURELIC-008 — DESIGN SYSTEM v4.0
-   Clean, minimal, lots of breathing room
+   NEURELIC-008 — DESIGN SYSTEM v4.1
+   With glitch effects
    ============================================ */
 
 :root {
-  /* CORES */
   --white: #FFFFFF;
   --gray-50: #FAFAFA;
   --gray-100: #F5F5F5;
@@ -26,16 +25,13 @@
 
   --orange-action: #EA580C;
 
-  /* TIPOGRAFIA */
   --font-primary: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* DESIGN TOKENS */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
 
-  /* GENEROUS SPACING */
   --space-xs: 8px;
   --space-sm: 16px;
   --space-md: 24px;
@@ -45,12 +41,10 @@
   --space-3xl: 96px;
   --space-4xl: 128px;
 
-  /* BUTTON */
   --btn-height: 52px;
   --btn-min-width: 160px;
 }
 
-/* BASE */
 * {
   margin: 0;
   padding: 0;
@@ -66,14 +60,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* LAYOUT */
 .container-neurelic {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 var(--space-lg);
 }
 
-/* TIPOGRAFIA */
 .hero-title {
   font-family: var(--font-primary);
   font-weight: 800;
@@ -101,7 +93,13 @@ body {
   color: var(--gray-500);
 }
 
-/* === BOTÕES === */
+.credit-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--gray-400);
+}
+
 .btn-neurelic {
   height: var(--btn-height);
   min-width: var(--btn-min-width);
@@ -156,7 +154,6 @@ body {
   background: var(--green-soft);
 }
 
-/* INPUT */
 .input-neurelic {
   width: 100%;
   height: 60px;
@@ -180,7 +177,6 @@ body {
   font-family: var(--font-primary);
 }
 
-/* CARD - NO SHADOW, ONLY BORDER */
 .card-tech {
   background: var(--white);
   border: 1px solid var(--gray-200);
@@ -188,14 +184,6 @@ body {
   padding: var(--space-lg);
 }
 
-/* CARD FLAT - For loading state */
-.card-flat {
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl);
-}
-
-/* SCORE BAR */
 .score-track {
   width: 100%;
   height: 8px;
@@ -211,7 +199,6 @@ body {
   transition: width 1s ease-out;
 }
 
-/* LABEL */
 .tech-label {
   background: var(--gray-100);
   color: var(--gray-600);
@@ -224,16 +211,6 @@ body {
   letter-spacing: 0.1em;
 }
 
-/* UTILS */
-.text-accent {
-  color: var(--green-core);
-}
-
-.text-dim {
-  color: var(--gray-500);
-}
-
-/* ANIMATION */
 .reveal {
   animation: reveal 0.4s ease-out forwards;
   opacity: 0;
@@ -247,7 +224,175 @@ body {
   }
 }
 
-/* SCROLLBAR */
+/* === GLITCH EFFECTS === */
+.glitch-container {
+  position: relative;
+}
+
+.glitch-active {
+  animation: glitch-skew 2s infinite linear alternate-reverse;
+}
+
+.glitch-active::before,
+.glitch-active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit;
+  opacity: 0.8;
+}
+
+.glitch-active::before {
+  animation: glitch-1 0.3s infinite linear alternate-reverse;
+}
+
+.glitch-active::after {
+  animation: glitch-2 0.3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-skew {
+  0% {
+    transform: skew(0deg);
+  }
+
+  20% {
+    transform: skew(-0.5deg);
+  }
+
+  40% {
+    transform: skew(0.5deg);
+  }
+
+  60% {
+    transform: skew(-0.3deg);
+  }
+
+  80% {
+    transform: skew(0.3deg);
+  }
+
+  100% {
+    transform: skew(0deg);
+  }
+}
+
+@keyframes glitch-1 {
+  0% {
+    clip-path: inset(20% 0 60% 0);
+    transform: translate(-2px, 0);
+  }
+
+  20% {
+    clip-path: inset(80% 0 5% 0);
+    transform: translate(2px, 0);
+  }
+
+  40% {
+    clip-path: inset(50% 0 30% 0);
+    transform: translate(-1px, 0);
+  }
+
+  60% {
+    clip-path: inset(10% 0 70% 0);
+    transform: translate(1px, 0);
+  }
+
+  80% {
+    clip-path: inset(40% 0 40% 0);
+    transform: translate(-2px, 0);
+  }
+
+  100% {
+    clip-path: inset(70% 0 10% 0);
+    transform: translate(2px, 0);
+  }
+}
+
+@keyframes glitch-2 {
+  0% {
+    clip-path: inset(60% 0 20% 0);
+    transform: translate(2px, 0);
+    opacity: 0.5;
+  }
+
+  25% {
+    clip-path: inset(10% 0 70% 0);
+    transform: translate(-2px, 0);
+    opacity: 0.8;
+  }
+
+  50% {
+    clip-path: inset(40% 0 40% 0);
+    transform: translate(1px, 0);
+    opacity: 0.3;
+  }
+
+  75% {
+    clip-path: inset(80% 0 5% 0);
+    transform: translate(-1px, 0);
+    opacity: 0.7;
+  }
+
+  100% {
+    clip-path: inset(30% 0 50% 0);
+    transform: translate(2px, 0);
+    opacity: 0.5;
+  }
+}
+
+.glitch-line {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.8), transparent);
+  animation: scan-line 3s infinite linear;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes scan-line {
+  0% {
+    top: -2px;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 100vh;
+    opacity: 0;
+  }
+}
+
+.glitch-flicker {
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
@@ -262,7 +407,6 @@ body {
   border-radius: 4px;
 }
 
-/* PRINT */
 @media print {
   .no-print {
     display: none !important;

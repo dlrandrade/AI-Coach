@@ -12,15 +12,15 @@ function App() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isPlanLoading, setIsPlanLoading] = useState(false);
 
-  const handleAnalyze = async (inputHandle: string, planDays: 7 | 30) => {
+  const handleAnalyze = async (inputHandle: string, planDays: 7 | 30, objective: number) => {
     setHandle(inputHandle);
     setScreen('LOADING');
 
     try {
       // Simulate analysis time + API call
-      const minDelay = new Promise(resolve => setTimeout(resolve, 8000)); // Increased time for LuzzIA observations
+      const minDelay = new Promise(resolve => setTimeout(resolve, 10000));
       const [analysisResult] = await Promise.all([
-        analyzeProfile(inputHandle, planDays),
+        analyzeProfile(inputHandle, planDays, objective),
         minDelay
       ]);
       setResult(analysisResult);
@@ -35,10 +35,9 @@ function App() {
     setScreen('PLAN');
     setIsPlanLoading(true);
 
-    // Simulate "Writing Plan" delay for realism
     setTimeout(() => {
       setIsPlanLoading(false);
-    }, 4000);
+    }, 3000);
   };
 
   const handleReset = () => {

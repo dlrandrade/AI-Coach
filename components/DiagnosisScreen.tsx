@@ -9,15 +9,15 @@ interface DiagnosisScreenProps {
 }
 
 const getStatusColor = (status: string) => {
-    if (status === 'funcional') return '#059669';
+    if (status === 'alavanca') return '#059669';
     if (status === 'neutro') return '#CA8A04';
     return '#EA580C';
 };
 
 const getStatusLabel = (status: string) => {
-    if (status === 'funcional') return 'FUNCIONAL';
+    if (status === 'alavanca') return 'ALAVANCA';
     if (status === 'neutro') return 'NEUTRO';
-    return 'PREJUDICIAL';
+    return 'SABOTADOR';
 };
 
 const getPositionLabel = (pos: string) => {
@@ -59,7 +59,7 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                 {/* HEADER */}
                 <header className="space-y-8">
                     <div className="flex flex-wrap items-center gap-4">
-                        <span className="tech-label" style={{ background: '#FEE2E2', color: '#B91C1C' }}>JULGAMENTO</span>
+                        <span className="tech-label" style={{ background: '#DCFCE7', color: '#166534' }}>{diagnosis.objetivo_ativo}</span>
                         <span className="micro-label">ALVO: @{handle.toUpperCase()}</span>
                     </div>
 
@@ -100,7 +100,7 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                     </div>
                 </section>
 
-                {/* PECADO CAPITAL & FERIDA */}
+                {/* PECADO CAPITAL & CONFLITO */}
                 <div className="h-px bg-gray-200"></div>
 
                 <section className="grid md:grid-cols-2 gap-8">
@@ -109,8 +109,8 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                         <p className="text-gray-700 leading-relaxed">{diagnosis.pecado_capital}</p>
                     </div>
                     <div className="card-tech space-y-4 border-l-4 border-l-amber-500">
-                        <span className="micro-label" style={{ color: '#B45309' }}>FERIDA DO AVATAR</span>
-                        <p className="text-gray-700 leading-relaxed">{diagnosis.ferida_avatar}</p>
+                        <span className="micro-label" style={{ color: '#B45309' }}>CONFLITO OCULTO</span>
+                        <p className="text-gray-700 leading-relaxed">{diagnosis.conflito_oculto}</p>
                     </div>
                 </section>
 
