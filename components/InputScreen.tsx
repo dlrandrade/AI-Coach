@@ -251,31 +251,31 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
           {/* Objective Selection */}
           <div className="space-y-3">
             <label className="micro-label block">OBJETIVO PRIMÁRIO <span className="text-red-600">*</span></label>
-            <div className="grid gap-2">
+            <div className="grid gap-3">
               {OBJECTIVES.map((obj) => (
                 <button
                   key={obj.id}
                   type="button"
                   onClick={() => setSelectedObjective(obj.id)}
-                  className={`p-4 border-2 transition-all text-left flex justify-between items-center ${selectedObjective === obj.id
+                  className={`p-4 min-h-[56px] border-2 transition-all text-left flex justify-between items-center active:scale-[0.98] ${selectedObjective === obj.id
                     ? 'border-black bg-black text-white'
                     : 'border-gray-200 hover:border-black'
                     }`}
                 >
-                  <div>
-                    <span className={`font-bold text-sm ${selectedObjective === obj.id ? 'text-white' : 'text-black'}`}>
+                  <div className="flex-1 min-w-0 pr-3">
+                    <span className={`font-bold text-sm block ${selectedObjective === obj.id ? 'text-white' : 'text-black'}`}>
                       {obj.label}
                     </span>
-                    <p className={`text-xs mt-0.5 ${selectedObjective === obj.id ? 'text-gray-300' : 'text-gray-500'}`}>
+                    <p className={`text-xs mt-1 leading-snug ${selectedObjective === obj.id ? 'text-gray-300' : 'text-gray-500'}`}>
                       {obj.desc}
                     </p>
                   </div>
-                  <div className={`w-4 h-4 border-2 flex items-center justify-center ${selectedObjective === obj.id
+                  <div className={`w-5 h-5 flex-shrink-0 border-2 flex items-center justify-center ${selectedObjective === obj.id
                     ? 'border-white bg-white'
                     : 'border-gray-400'
                     }`}>
                     {selectedObjective === obj.id && (
-                      <div className="w-2 h-2 bg-black"></div>
+                      <div className="w-2.5 h-2.5 bg-black"></div>
                     )}
                   </div>
                 </button>
@@ -290,14 +290,14 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
               <button
                 type="button"
                 onClick={() => setPlanDays(7)}
-                className={`flex-1 py-4 text-sm font-bold transition-all ${planDays === 7 ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
+                className={`flex-1 py-4 min-h-[56px] text-sm font-bold transition-all active:scale-[0.98] ${planDays === 7 ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
               >
                 7 DIAS
               </button>
               <button
                 type="button"
                 onClick={() => setPlanDays(30)}
-                className={`flex-1 py-4 text-sm font-bold transition-all border-l-2 border-black ${planDays === 30 ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
+                className={`flex-1 py-4 min-h-[56px] text-sm font-bold transition-all border-l-2 border-black active:scale-[0.98] ${planDays === 30 ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'}`}
               >
                 30 DIAS
               </button>

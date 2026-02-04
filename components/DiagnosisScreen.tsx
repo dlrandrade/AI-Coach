@@ -168,22 +168,28 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
                     </div>
                 </section>
 
-                {/* FOOTER */}
+                {/* FOOTER - Thumb zone optimized */}
                 <div className="h-px bg-gray-200"></div>
 
-                <footer className="flex flex-col md:flex-row gap-4 justify-center items-center py-8">
-                    <button onClick={onNext} className="btn-neurelic min-w-[280px]">
+                <footer className="flex flex-col gap-4 justify-center items-stretch py-8 px-4 md:px-0 md:flex-row md:items-center">
+                    <button
+                        onClick={onNext}
+                        className="btn-neurelic w-full md:w-auto md:min-w-[280px] min-h-[56px] active:scale-[0.98]"
+                    >
                         VER PLANO DE {plan.length} DIAS
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                     </button>
 
-                    <button onClick={onReset} className="btn-outline">
+                    <button
+                        onClick={onReset}
+                        className="btn-outline w-full md:w-auto min-h-[56px] active:scale-[0.98]"
+                    >
                         DESCARTAR
                     </button>
                 </footer>
             </div>
 
-            <div className="h-16 md:h-24"></div>
+            <div className="h-16 md:h-24 pb-safe"></div>
         </div>
     );
 };
