@@ -91,44 +91,28 @@ export const scrapeInstagramProfile = async (username: string): Promise<Instagra
             };
         }
 
-        // Step 2: Get recent posts
-        // Endpoint: POST /api/get-user-posts with body {"username": "xxx"}
+        // Step 2: Extract recent posts from user info (they're already included!)
+        // Posts are in edge_owner_to_timeline_media.edges
         let recentPosts: InstagramProfileData['recentPosts'] = [];
         try {
-            console.log('[Scraper] Fetching posts...');
-            const postsResponse = await fetch(
-                `https://${RAPIDAPI_HOST}/api/get-user-posts`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-rapidapi-key': RAPIDAPI_KEY,
-                        'x-rapidapi-host': RAPIDAPI_HOST
-                    },
-                    body: JSON.stringify({ username: cleanUsername })
-                }
-            );
+            const postsEdges = user.edge_owner_to_timeline_media?.edges || [];
+            console.log('[Scraper] Found posts in user info:', postsEdges.length);
 
-            if (postsResponse.ok) {
-                const postsData = await postsResponse.json();
-                console.log('[Scraper] Posts response:', postsData);
-
-                // Extract posts array from various possible structures
-                const posts = postsData?.data?.items ||
-                    postsData?.items ||
-                    postsData?.data?.edges?.map((e: any) => e.node) ||
-                    postsData?.edges?.map((e: any) => e.node) ||
-                    [];
-
-                recentPosts = posts.slice(0, 9).map((post: any) => ({
-                    caption: (post.caption?.text || post.edge_media_to_caption?.edges?.[0]?.node?.text || post.caption || '').slice(0, 200),
-                    likesCount: post.like_count || post.edge_liked_by?.count || post.likes_count || 0,
-                    commentsCount: post.comment_count || post.edge_media_to_comment?.count || post.comments_count || 0,
-                    isVideo: post.media_type === 2 || post.is_video || post.__typename === 'GraphVideo' || false
-                }));
-            }
+            recentPosts = postsEdges.slice(0, 9).map((edge: any) => {
+                const post = edge.node || edge;
+                const caption = post.edge_media_to_caption?.edges?.[0]?.node?.text ||
+                    post.caption?.text ||
+                    post.caption ||
+                    '';
+                return {
+                    caption: caption.slice(0, 300),
+                    likesCount: post.edge_liked_by?.count || post.like_count || 0,
+                    commentsCount: post.edge_media_to_comment?.count || post.comment_count || 0,
+                    isVideo: post.__typename === 'GraphVideo' || post.is_video || post.media_type === 2
+                };
+            });
         } catch (e) {
-            console.warn("[Scraper] Could not fetch posts:", e);
+            console.warn("[Scraper] Could not extract posts:", e);
         }
 
         // Step 3: Get highlights
