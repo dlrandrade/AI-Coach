@@ -3,7 +3,7 @@
 
 // NOTE: Replace with your own RapidAPI key
 // Get one free at: https://rapidapi.com/arraybobo/api/instagram-scraper-2022
-const RAPIDAPI_KEY = "YOUR_RAPIDAPI_KEY_HERE"; // TODO: User needs to add their key
+const RAPIDAPI_KEY = "009bc562d8mshe1370b6cd5321c9p1683dejsne9fed0c163df";
 const RAPIDAPI_HOST = "instagram-scraper-api2.p.rapidapi.com";
 
 export interface InstagramProfileData {
@@ -31,11 +31,7 @@ export interface InstagramProfileData {
 export const scrapeInstagramProfile = async (username: string): Promise<InstagramProfileData> => {
     const cleanUsername = username.replace('@', '').trim().toLowerCase();
 
-    // Check if API key is configured
-    if (RAPIDAPI_KEY === "YOUR_RAPIDAPI_KEY_HERE") {
-        console.warn("RapidAPI key not configured. Using simulation mode.");
-        return simulateProfileData(cleanUsername);
-    }
+    // API key is configured - proceed with real scraping
 
     try {
         // Fetch profile info
