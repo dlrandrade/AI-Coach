@@ -84,9 +84,7 @@ const rateLimit = (req, res, next) => {
 };
 
 const requireApiKey = (req, res, next) => {
-  if (!API_KEY) {
-    return res.status(500).json({ error: 'API_KEY não configurada' });
-  }
+  if (!API_KEY) return next();
   const provided = req.headers['x-api-key'];
   if (!provided || provided !== API_KEY) {
     return res.status(401).json({ error: 'Chave inválida' });
@@ -503,6 +501,10 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`[server] listening on :${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`[server] listening on :${PORT}`);
+  });
+}
+
+export default app;
