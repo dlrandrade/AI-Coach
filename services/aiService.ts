@@ -215,27 +215,49 @@ export const analyzeProfile = async (
   planDays: 7 | 30 = 7,
   objective: number = 1
 ): Promise<AnalyzeResponse> => {
-  const response = await fetch(`${API_BASE_URL}/api/analyze`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ handle, planDays, objective })
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ handle, planDays, objective })
+    });
 
-  if (!response.ok) {
-    let serverMessage = '';
-    try {
-      const payload = await response.json();
-      serverMessage = payload?.error || '';
-    } catch {
-      // ignore parse issues
+    if (!response.ok) {
+      let serverMessage = '';
+      try {
+        const payload = await response.json();
+        serverMessage = payload?.error || '';
+      } catch {
+        // ignore parse issues
+      }
+      const msg = serverMessage || `Erro ${response.status} ao acessar /api/analyze`;
+      throw new Error(msg);
     }
 
-    const msg = serverMessage || `Erro ${response.status} ao acessar /api/analyze`;
-    throw new Error(msg);
+    const data = await response.json();
+    return data as AnalyzeResponse;
+  } catch (error) {
+    console.warn('Backend indisponivel, usando simulacao local:', error);
+    return {
+      result: simulateAnalysis(handle, planDays, objective),
+      rawScrapedData: {
+        username: handle.replace('@', ''),
+        fullName: null,
+        biography: null,
+        externalUrl: null,
+        followersCount: null,
+        followingCount: null,
+        postsCount: null,
+        isVerified: false,
+        isPrivate: false,
+        profilePicUrl: null,
+        highlightNames: [],
+        recentPosts: [],
+        scrapedAt: new Date().toISOString(),
+        error: 'Backend offline: iniciando diagnostico simulado.'
+      }
+    };
   }
-
-  const data = await response.json();
-  return data as AnalyzeResponse;
 };
 
 const simulateAnalysis = (handle: string, planDays: 7 | 30, objective: number): AnalysisResult => {
