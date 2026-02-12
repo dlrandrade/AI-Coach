@@ -1,9 +1,15 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { UsageInfo } from '../services/aiService';
 
 interface InputScreenProps {
   onAnalyze: (handle: string, planDays: 7 | 30, objective: number) => void;
   isLoading: boolean;
   errorMessage?: string;
+  showPaywall?: boolean;
+  usageInfo?: UsageInfo | null;
+  clientId?: string;
+  onClosePaywall?: () => void;
+  onRefreshUsage?: () => void;
 }
 
 const OBJECTIVES = [
@@ -48,7 +54,21 @@ const ONBOARDING_STEPS = [
   { title: "EXECUTE O PLANO", desc: "Receba ações diárias com prompts executáveis em qualquer IA." },
 ];
 
-export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading, errorMessage }) => {
+export const InputScreen: React.FC<InputScreenProps> = ({
+  onAnalyze,
+  isLoading,
+  errorMessage,
+  showPaywall = false,
+  usageInfo = null,
+  clientId = '',
+  onClosePaywall,
+  onRefreshUsage
+}) => {
+  const checkoutUrls: Record<3 | 10 | 30, string> = {
+    3: import.meta.env.VITE_CHECKOUT_URL_3 || '',
+    10: import.meta.env.VITE_CHECKOUT_URL_10 || '',
+    30: import.meta.env.VITE_CHECKOUT_URL_30 || ''
+  };
   const [handle, setHandle] = useState('');
   const [planDays, setPlanDays] = useState<7 | 30>(7);
   const [selectedObjective, setSelectedObjective] = useState<number | null>(null);
@@ -333,6 +353,45 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading, 
           </a>
         </footer>
       </div>
+
+      {showPaywall && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white border-2 border-black p-6 space-y-5">
+            <div className="flex justify-between items-start gap-4">
+              <h2 className="text-xl font-extrabold text-black">LIMITE DE DIAGNÓSTICOS ATINGIDO</h2>
+              <button type="button" onClick={onClosePaywall} className="text-sm font-bold">FECHAR</button>
+            </div>
+            <p className="text-sm text-gray-700">
+              Você já usou o diagnóstico gratuito. Escolha um pacote para continuar.
+            </p>
+            <div className="text-xs font-mono text-gray-600">
+              Cliente: {clientId || 'não identificado'}<br />
+              Créditos restantes: {usageInfo?.creditsRemaining ?? 0}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[3, 10, 30].map((amount) => {
+                const href = checkoutUrls[amount as 3 | 10 | 30];
+                return href ? (
+                  <a key={amount} href={href} target="_blank" rel="noreferrer" className="btn-neurelic justify-center min-h-[56px]">
+                    {amount} DIAGNÓSTICOS
+                  </a>
+                ) : (
+                  <div key={amount} className="border-2 border-gray-300 p-3 text-center text-xs text-gray-500">
+                    {amount} DIAGNÓSTICOS<br />checkout não configurado
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="flex gap-3">
+              <button type="button" onClick={onRefreshUsage} className="btn-outline h-12 flex-1">
+                JÁ PAGUEI, ATUALIZAR ACESSO
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

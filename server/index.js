@@ -15,6 +15,7 @@ app.use((req, res, next) => {
 
 const DEBUG = process.env.DEBUG === 'true';
 const API_KEY = process.env.API_KEY || '';
+const ADMIN_API_KEY = process.env.ADMIN_API_KEY || '';
 const CORS_ORIGINS = (process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || '')
   .split(',')
   .map((origin) => origin.trim())
@@ -35,14 +36,24 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Vary', 'Origin');
   }
-  res.header('Access-Control-Allow-Headers', 'Content-Type, X-API-KEY');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, X-API-KEY, X-CLIENT-ID');
   res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   if (req.method === 'OPTIONS') return res.sendStatus(204);
   return next();
 });
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'openai/gpt-oss-120b:free';
+const DEFAULT_MODELS = [
+  'openai/gpt-oss-120b:free',
+  'arcee-ai/trinity-large-preview:free',
+  'tngtech/deepseek-r1t2-chimera:free',
+  'nvidia/nemotron-3-nano-30b-a3b:free',
+  'stepfun/step-3.5-flash:free'
+];
+const OPENROUTER_MODELS = (process.env.OPENROUTER_MODELS || DEFAULT_MODELS.join(','))
+  .split(',')
+  .map((model) => model.trim())
+  .filter(Boolean);
 const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1/chat/completions';
 
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
@@ -53,6 +64,10 @@ const PORT = process.env.PORT || 8787;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 12;
 const rateBuckets = new Map();
+const usageBuckets = new Map();
+let modelCursor = 0;
+
+const PACKAGE_OPTIONS = [3, 10, 30];
 
 const getClientKey = (req) => {
   const forwarded = req.headers['x-forwarded-for'];
@@ -60,6 +75,57 @@ const getClientKey = (req) => {
     return forwarded.split(',')[0].trim();
   }
   return req.ip || 'unknown';
+};
+
+const getClientId = (req) => {
+  const provided = String(req.headers['x-client-id'] || '').trim();
+  if (provided && /^[a-zA-Z0-9._-]{6,80}$/.test(provided)) {
+    return provided;
+  }
+  return `ip:${getClientKey(req)}`;
+};
+
+const getUsageState = (clientId) => {
+  const existing = usageBuckets.get(clientId);
+  if (existing) return existing;
+  const state = { freeUsed: false, credits: 0, totalUsed: 0 };
+  usageBuckets.set(clientId, state);
+  return state;
+};
+
+const buildUsagePayload = (state) => ({
+  freeUsed: state.freeUsed,
+  creditsRemaining: state.credits,
+  totalUsed: state.totalUsed,
+  packages: PACKAGE_OPTIONS
+});
+
+const checkDiagnosisQuota = (clientId) => {
+  const state = getUsageState(clientId);
+  if (!state.freeUsed) {
+    return { ok: true, usage: buildUsagePayload(state), source: 'free' };
+  }
+  if (state.credits > 0) {
+    return { ok: true, usage: buildUsagePayload(state), source: 'credit' };
+  }
+  return { ok: false, usage: buildUsagePayload(state), source: 'blocked' };
+};
+
+const grantCredits = (clientId, amount) => {
+  const state = getUsageState(clientId);
+  state.credits += amount;
+  return buildUsagePayload(state);
+};
+
+const consumeAfterSuccess = (clientId, source) => {
+  const state = getUsageState(clientId);
+  if (source === 'free' && !state.freeUsed) {
+    state.freeUsed = true;
+  } else if (source === 'credit' && state.credits > 0) {
+    state.credits -= 1;
+  }
+  state.totalUsed += 1;
+  return buildUsagePayload(state);
 };
 
 const rateLimit = (req, res, next) => {
@@ -88,6 +154,17 @@ const requireApiKey = (req, res, next) => {
   const provided = req.headers['x-api-key'];
   if (!provided || provided !== API_KEY) {
     return res.status(401).json({ error: 'Chave inválida' });
+  }
+  return next();
+};
+
+const requireAdminApiKey = (req, res, next) => {
+  if (!ADMIN_API_KEY) {
+    return res.status(500).json({ error: 'ADMIN_API_KEY não configurada' });
+  }
+  const provided = req.headers['x-api-key'];
+  if (!provided || provided !== ADMIN_API_KEY) {
+    return res.status(401).json({ error: 'Chave admin inválida' });
   }
   return next();
 };
@@ -436,49 +513,80 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
   if (!OPENROUTER_API_KEY) {
     throw new Error('OPENROUTER_API_KEY não configurada');
   }
+  if (OPENROUTER_MODELS.length === 0) {
+    throw new Error('OPENROUTER_MODELS vazio');
+  }
 
   const profileContext = profileData
     ? `\n\n=== DADOS DO PERFIL (LIDOS EM TEMPO REAL) ===\n${profileData}\n=== FIM DOS DADOS ===\n`
     : '\n[AVISO: Dados do perfil não disponíveis.]\n';
+  const orderedModels = OPENROUTER_MODELS.map((_, i) => OPENROUTER_MODELS[(modelCursor + i) % OPENROUTER_MODELS.length]);
+  const errors = [];
 
-  const response = await fetchWithTimeout(OPENROUTER_BASE_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'http://localhost',
-      'X-Title': 'LuzzIA Engine v2.1'
-    },
-    body: JSON.stringify({
-      model: OPENROUTER_MODEL,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT(planDays, objective) },
-        {
-          role: 'user',
-          content: `EXECUTAR ANÁLISE COMPLETA.\n\nALVO: @${handle}\nOBJETIVO PRIMÁRIO: ${OBJECTIVE_LABELS[objective]}\nPLANO: ${planDays} dias\n${profileContext}\nINSTRUÇÕES:\n1. Use os DADOS DO PERFIL acima para preencher leitura_perfil\n2. Diagnostique com base no objetivo ${OBJECTIVE_LABELS[objective]}\n3. Gere plano de ${planDays} dias com prompts viscerais\n\nZERO piedade. ZERO suavização.`
-        }
-      ],
-      temperature: 0.85,
-      max_tokens: 10000
-    })
-  }, 20000);
+  for (const model of orderedModels) {
+    try {
+      const response = await fetchWithTimeout(OPENROUTER_BASE_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'http://localhost',
+          'X-Title': 'LuzzIA Engine v2.1'
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT(planDays, objective) },
+            {
+              role: 'user',
+              content: `EXECUTAR ANÁLISE COMPLETA.\n\nALVO: @${handle}\nOBJETIVO PRIMÁRIO: ${OBJECTIVE_LABELS[objective]}\nPLANO: ${planDays} dias\n${profileContext}\nINSTRUÇÕES:\n1. Use os DADOS DO PERFIL acima para preencher leitura_perfil\n2. Diagnostique com base no objetivo ${OBJECTIVE_LABELS[objective]}\n3. Gere plano de ${planDays} dias com prompts viscerais\n\nZERO piedade. ZERO suavização.`
+            }
+          ],
+          temperature: 0.85,
+          max_tokens: 10000
+        })
+      }, 20000);
 
-  if (!response.ok) {
-    throw new Error(`OpenRouter error: ${response.status}`);
+      if (!response.ok) {
+        errors.push(`${model}: HTTP ${response.status}`);
+        continue;
+      }
+
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content || '';
+      const jsonString = content.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(jsonString);
+      modelCursor = (OPENROUTER_MODELS.indexOf(model) + 1) % OPENROUTER_MODELS.length;
+      return { parsed, modelUsed: model };
+    } catch (error) {
+      errors.push(`${model}: ${error instanceof Error ? error.message : 'erro'}`);
+    }
   }
 
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content || '';
-  const jsonString = content.replace(/```json|```/g, '').trim();
-  try {
-    return JSON.parse(jsonString);
-  } catch (error) {
-    throw new Error('Resposta inválida do modelo');
-  }
+  throw new Error(`Falha em todos os modelos OpenRouter: ${errors.join(' | ')}`);
 };
 
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true });
+  res.json({ ok: true, models: OPENROUTER_MODELS });
+});
+
+app.get('/api/usage', rateLimit, requireApiKey, (req, res) => {
+  const clientId = getClientId(req);
+  const usage = buildUsagePayload(getUsageState(clientId));
+  return res.json({ clientId, usage });
+});
+
+app.post('/api/grant-credits', requireAdminApiKey, (req, res) => {
+  const clientId = String(req.body?.clientId || '').trim();
+  const amount = Number(req.body?.amount);
+  if (!clientId) {
+    return res.status(400).json({ error: 'clientId obrigatório' });
+  }
+  if (!Number.isInteger(amount) || !PACKAGE_OPTIONS.includes(amount)) {
+    return res.status(400).json({ error: 'amount inválido. Use 3, 10 ou 30' });
+  }
+  const usage = grantCredits(clientId, amount);
+  return res.json({ clientId, usage });
 });
 
 app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
@@ -487,13 +595,30 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
     return res.status(400).json({ error: validation.error });
   }
   const { handle, planDays, objective } = validation;
+  const clientId = getClientId(req);
+  const quota = checkDiagnosisQuota(clientId);
+  if (!quota.ok) {
+    return res.status(402).json({
+      error: 'QUOTA_EXCEEDED',
+      message: 'Créditos esgotados. Escolha um pacote para continuar.',
+      clientId,
+      usage: quota.usage
+    });
+  }
 
   try {
     const rawScrapedData = await scrapeInstagramProfile(handle);
     const formattedProfile = formatProfileForAI(rawScrapedData);
-    const result = await analyzeProfile(handle, planDays, objective, formattedProfile);
+    const { parsed, modelUsed } = await analyzeProfile(handle, planDays, objective, formattedProfile);
+    const usage = consumeAfterSuccess(clientId, quota.source);
 
-    return res.json({ result, rawScrapedData: DEBUG ? rawScrapedData : null });
+    return res.json({
+      result: parsed,
+      rawScrapedData: DEBUG ? rawScrapedData : null,
+      clientId,
+      usage,
+      meta: { modelUsed }
+    });
   } catch (error) {
     return res.status(500).json({
       error: error instanceof Error ? error.message : 'Erro desconhecido'

@@ -16,6 +16,7 @@ This app has a Vite frontend and a small Node server that proxies the AI + Insta
    - `OPENROUTER_API_KEY`
    - `RAPIDAPI_KEY`
    - `API_KEY` (optional shared secret between frontend and server)
+   - `ADMIN_API_KEY` (required to grant paid credits manually)
 3. Start the server:
    `npm run server`
 4. Start the frontend:
@@ -25,6 +26,39 @@ The frontend expects `VITE_API_BASE_URL` (default is `http://localhost:8787`) to
 If you run the frontend on a different origin, set `CORS_ORIGINS` in `.env`.
 If `API_KEY` is set, frontend `VITE_API_KEY` must match it.
 For debug data on the UI, set `VITE_DEBUG=true` (server-side raw data still requires `DEBUG=true`).
+For production behavior, keep `VITE_ALLOW_SIMULATION_FALLBACK=false`.
+
+### OpenRouter model rotation (anti-limit)
+
+Configure all 5 models in `OPENROUTER_MODELS` (comma-separated):
+
+- `openai/gpt-oss-120b:free`
+- `arcee-ai/trinity-large-preview:free`
+- `tngtech/deepseek-r1t2-chimera:free`
+- `nvidia/nemotron-3-nano-30b-a3b:free`
+- `stepfun/step-3.5-flash:free`
+
+The backend automatically rotates/fallbacks across this list when one model fails or hits limits.
+
+### Credit packages (1 free, then paid)
+
+- First diagnosis is free.
+- After that, user needs credits (3, 10 or 30).
+- Frontend paywall reads:
+  - `VITE_CHECKOUT_URL_3`
+  - `VITE_CHECKOUT_URL_10`
+  - `VITE_CHECKOUT_URL_30`
+
+After payment, grant credits using admin endpoint:
+
+```bash
+curl -X POST http://localhost:8787/api/grant-credits \
+  -H "Content-Type: application/json" \
+  -H "X-API-KEY: $ADMIN_API_KEY" \
+  -d '{"clientId":"cli_xxx","amount":10}'
+```
+
+The user can click `JÁ PAGUEI, ATUALIZAR ACESSO` to refresh credits.
 
 ## Vercel (frontend + API)
 
@@ -33,10 +67,11 @@ This repo includes serverless handlers in `api/` and deployment config in `verce
 Set these environment variables in Vercel:
 - `OPENROUTER_API_KEY`
 - `RAPIDAPI_KEY`
-- `OPENROUTER_MODEL` (optional)
+- `OPENROUTER_MODELS` (recommended)
 - `OPENROUTER_BASE_URL` (optional)
 - `RAPIDAPI_HOST` (optional)
 - `CORS_ORIGINS` (optional; comma-separated)
 - `API_KEY` (optional)
+- `ADMIN_API_KEY` (required for credit grants)
 
 In production, keep `VITE_API_BASE_URL` empty so frontend calls `/api/analyze` on the same domain.

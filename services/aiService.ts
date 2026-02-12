@@ -1,4 +1,6 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:8787' : '');
+const API_KEY = import.meta.env.VITE_API_KEY || '';
+const ENABLE_SIMULATION_FALLBACK = import.meta.env.VITE_ALLOW_SIMULATION_FALLBACK === 'true';
 
 const OBJECTIVE_LABELS: Record<number, string> = {
   1: "AUTORIDADE",
@@ -208,7 +210,48 @@ export interface InstagramProfileData {
 export interface AnalyzeResponse {
   result: AnalysisResult;
   rawScrapedData?: InstagramProfileData | null;
+  clientId?: string;
+  usage?: UsageInfo;
+  meta?: {
+    modelUsed?: string;
+  };
 }
+
+export interface UsageInfo {
+  freeUsed: boolean;
+  creditsRemaining: number;
+  totalUsed: number;
+  packages: number[];
+}
+
+export interface UsageResponse {
+  clientId: string;
+  usage: UsageInfo;
+}
+
+export class ApiError extends Error {
+  status: number;
+  code: string;
+  usage?: UsageInfo;
+  clientId?: string;
+
+  constructor(message: string, status: number, code = 'API_ERROR', usage?: UsageInfo, clientId?: string) {
+    super(message);
+    this.status = status;
+    this.code = code;
+    this.usage = usage;
+    this.clientId = clientId;
+  }
+}
+
+const getClientId = () => {
+  const key = 'luzzia_client_id';
+  const existing = localStorage.getItem(key);
+  if (existing) return existing;
+  const created = `cli_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+  localStorage.setItem(key, created);
+  return created;
+};
 
 export const analyzeProfile = async (
   handle: string,
@@ -216,27 +259,36 @@ export const analyzeProfile = async (
   objective: number = 1
 ): Promise<AnalyzeResponse> => {
   try {
+    const clientId = getClientId();
     const response = await fetch(`${API_BASE_URL}/api/analyze`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CLIENT-ID': clientId,
+        ...(API_KEY ? { 'X-API-KEY': API_KEY } : {})
+      },
       body: JSON.stringify({ handle, planDays, objective })
     });
 
     if (!response.ok) {
-      let serverMessage = '';
+      let payload: any = null;
       try {
-        const payload = await response.json();
-        serverMessage = payload?.error || '';
+        payload = await response.json();
       } catch {
         // ignore parse issues
       }
-      const msg = serverMessage || `Erro ${response.status} ao acessar /api/analyze`;
-      throw new Error(msg);
+      const code = payload?.error || 'API_ERROR';
+      const msg = payload?.message || payload?.error || `Erro ${response.status} ao acessar /api/analyze`;
+      throw new ApiError(msg, response.status, code, payload?.usage, payload?.clientId);
     }
 
     const data = await response.json();
     return data as AnalyzeResponse;
   } catch (error) {
+    if (error instanceof ApiError) throw error;
+    if (!ENABLE_SIMULATION_FALLBACK) {
+      throw new ApiError('Backend indisponível. Tente novamente em instantes.', 503, 'BACKEND_UNAVAILABLE');
+    }
     console.warn('Backend indisponivel, usando simulacao local:', error);
     return {
       result: simulateAnalysis(handle, planDays, objective),
@@ -255,9 +307,30 @@ export const analyzeProfile = async (
         recentPosts: [],
         scrapedAt: new Date().toISOString(),
         error: 'Backend offline: iniciando diagnostico simulado.'
+      },
+      clientId: getClientId(),
+      usage: {
+        freeUsed: false,
+        creditsRemaining: 0,
+        totalUsed: 0,
+        packages: [3, 10, 30]
       }
     };
   }
+};
+
+export const getUsage = async (): Promise<UsageResponse> => {
+  const clientId = getClientId();
+  const response = await fetch(`${API_BASE_URL}/api/usage`, {
+    headers: {
+      'X-CLIENT-ID': clientId,
+      ...(API_KEY ? { 'X-API-KEY': API_KEY } : {})
+    }
+  });
+  if (!response.ok) {
+    throw new ApiError(`Erro ${response.status} ao consultar uso`, response.status);
+  }
+  return response.json();
 };
 
 const simulateAnalysis = (handle: string, planDays: 7 | 30, objective: number): AnalysisResult => {
