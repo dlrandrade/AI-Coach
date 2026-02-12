@@ -56,7 +56,7 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
   const [progress, setProgress] = useState(0);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLuzziaMessage, setIsLuzziaMessage] = useState(false);
-  const [glitchCount, setGlitchCount] = useState(0);
+  const glitchCountRef = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Check for first visit
@@ -83,6 +83,7 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
   // Loading state management with punctual glitch
   useEffect(() => {
     if (isLoading) {
+      glitchCountRef.current = 0;
       let msgIndex = 0;
       const msgInterval = setInterval(() => {
         const msg = allMessages[msgIndex % allMessages.length];
@@ -99,12 +100,12 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
       const glitchTimes = [3000, 7000, 12000];
       const glitchTimeouts = glitchTimes.map((time, i) =>
         setTimeout(() => {
-          if (glitchCount < 3 && containerRef.current) {
+          if (glitchCountRef.current < 3 && containerRef.current) {
             containerRef.current.classList.add('glitch-trigger');
             setTimeout(() => {
               containerRef.current?.classList.remove('glitch-trigger');
             }, 150);
-            setGlitchCount(prev => prev + 1);
+            glitchCountRef.current += 1;
           }
         }, time)
       );
@@ -117,9 +118,9 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
     } else {
       setProgress(0);
       setCurrentMessage('');
-      setGlitchCount(0);
+      glitchCountRef.current = 0;
     }
-  }, [isLoading, allMessages, glitchCount]);
+  }, [isLoading, allMessages]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

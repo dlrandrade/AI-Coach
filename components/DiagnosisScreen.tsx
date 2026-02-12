@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { AnalysisResult } from '../services/aiService';
-import { InstagramProfileData } from '../services/instagramService';
+import { AnalysisResult, InstagramProfileData } from '../services/aiService';
 
 interface DiagnosisScreenProps {
     handle: string;
@@ -40,7 +39,8 @@ const getPositionColor = (pos: string) => {
 };
 
 export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result, rawScrapedData, onReset, onNext }) => {
-    const [showDebug, setShowDebug] = useState(true);
+    const isDebugEnabled = import.meta.env.DEV || import.meta.env.VITE_DEBUG === 'true';
+    const [showDebug, setShowDebug] = useState(isDebugEnabled);
 
     if (!result) return null;
     const { diagnosis, plan } = result;

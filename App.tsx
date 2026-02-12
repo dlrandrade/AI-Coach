@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { InputScreen } from './components/InputScreen';
 import { DiagnosisScreen } from './components/DiagnosisScreen';
 import { SevenDayPlanScreen } from './components/SevenDayPlanScreen';
-import { analyzeProfile, AnalysisResult } from './services/aiService';
-import { scrapeInstagramProfile, formatProfileForAI, InstagramProfileData } from './services/instagramService';
+import { analyzeProfile, AnalysisResult, AnalyzeResponse } from './services/aiService';
 
 type Screen = 'INPUT' | 'LOADING' | 'DIAGNOSIS' | 'PLAN';
 
@@ -11,7 +10,7 @@ function App() {
   const [screen, setScreen] = useState<Screen>('INPUT');
   const [handle, setHandle] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [rawScrapedData, setRawScrapedData] = useState<InstagramProfileData | null>(null);
+  const [rawScrapedData, setRawScrapedData] = useState<AnalyzeResponse['rawScrapedData'] | null>(null);
   const [isPlanLoading, setIsPlanLoading] = useState(false);
 
   const handleAnalyze = async (inputHandle: string, planDays: 7 | 30, objective: number) => {
@@ -19,23 +18,14 @@ function App() {
     setScreen('LOADING');
 
     try {
-      // Step 1: Scrape Instagram profile
-      console.log('[LuzzIA] Scraping Instagram profile...');
-      const profileData = await scrapeInstagramProfile(inputHandle);
-      setRawScrapedData(profileData); // Save raw data for debug display
-      console.log('[LuzzIA] RAW Profile Data:', JSON.stringify(profileData, null, 2));
-
-      const formattedProfile = formatProfileForAI(profileData);
-      console.log('[LuzzIA] Formatted for AI:', formattedProfile);
-
-      // Step 2: Analyze with AI (passing real profile data)
       const minDelay = new Promise(resolve => setTimeout(resolve, 8000));
-      const [analysisResult] = await Promise.all([
-        analyzeProfile(inputHandle, planDays, objective, formattedProfile),
+      const [response] = await Promise.all([
+        analyzeProfile(inputHandle, planDays, objective),
         minDelay
       ]);
 
-      setResult(analysisResult);
+      setResult(response.result);
+      setRawScrapedData(response.rawScrapedData || null);
       setScreen('DIAGNOSIS');
     } catch (e) {
       console.error('[LuzzIA] Error:', e);

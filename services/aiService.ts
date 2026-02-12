@@ -1,7 +1,5 @@
-// OpenRouter Configuration
-const OPENROUTER_API_KEY = "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";
-const OPENROUTER_MODEL = "openai/gpt-oss-120b:free";
-const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const API_KEY = import.meta.env.VITE_API_KEY || '';
 
 const OBJECTIVE_LABELS: Record<number, string> = {
   1: "AUTORIDADE",
@@ -186,58 +184,54 @@ export interface AnalysisResult {
   plan: PlanDay[];
 }
 
+export interface InstagramProfileData {
+  username: string;
+  fullName: string | null;
+  biography: string | null;
+  externalUrl: string | null;
+  followersCount: number | null;
+  followingCount: number | null;
+  postsCount: number | null;
+  isVerified: boolean;
+  isPrivate: boolean;
+  profilePicUrl: string | null;
+  highlightNames: string[];
+  recentPosts: {
+    caption: string;
+    likesCount: number;
+    commentsCount: number;
+    isVideo: boolean;
+  }[];
+  scrapedAt: string;
+  error: string | null;
+}
+
+export interface AnalyzeResponse {
+  result: AnalysisResult;
+  rawScrapedData?: InstagramProfileData | null;
+}
+
 export const analyzeProfile = async (
   handle: string,
   planDays: 7 | 30 = 7,
-  objective: number = 1,
-  profileData?: string
-): Promise<AnalysisResult> => {
+  objective: number = 1
+): Promise<AnalyzeResponse> => {
   try {
-    const profileContext = profileData
-      ? `\n\n=== DADOS DO PERFIL (LIDOS EM TEMPO REAL) ===\n${profileData}\n=== FIM DOS DADOS ===\n`
-      : '\n[AVISO: Dados do perfil não disponíveis.]\n';
-
-    const response = await fetch(OPENROUTER_BASE_URL, {
+    const response = await fetch(`${API_BASE_URL}/api/analyze`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'LuzzIA Engine v2.1'
+        ...(API_KEY ? { 'X-API-KEY': API_KEY } : {})
       },
-      body: JSON.stringify({
-        model: OPENROUTER_MODEL,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT(planDays, objective) },
-          {
-            role: 'user', content: `EXECUTAR ANÁLISE COMPLETA.
-
-ALVO: @${handle}
-OBJETIVO PRIMÁRIO: ${OBJECTIVE_LABELS[objective]}
-PLANO: ${planDays} dias
-${profileContext}
-INSTRUÇÕES:
-1. Use os DADOS DO PERFIL acima para preencher leitura_perfil
-2. Diagnostique com base no objetivo ${OBJECTIVE_LABELS[objective]}
-3. Gere plano de ${planDays} dias com prompts viscerais
-
-ZERO piedade. ZERO suavização.` }
-        ],
-        temperature: 0.85,
-        max_tokens: 10000
-      })
+      body: JSON.stringify({ handle, planDays, objective })
     });
 
     if (!response.ok) throw new Error('API Error');
-
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
-    const jsonString = content.replace(/```json|```/g, '').trim();
-    return JSON.parse(jsonString) as AnalysisResult;
-
+    return data as AnalyzeResponse;
   } catch (error) {
     console.error('AI Error:', error);
-    return simulateAnalysis(handle, planDays, objective);
+    return { result: simulateAnalysis(handle, planDays, objective), rawScrapedData: null };
   }
 };
 

@@ -47,13 +47,15 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
     const downloadPDF = () => {
         const content = generatePDFContent();
-        const blob = new Blob([content], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `plano-dominio-${handle}-${plan.length}dias.html`;
-        link.click();
-        URL.revokeObjectURL(url);
+        const printWindow = window.open('', '_blank', 'width=1024,height=768');
+        if (!printWindow) return;
+
+        printWindow.document.write(content);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+        }, 300);
     };
 
     const generatePDFContent = () => {
@@ -270,7 +272,7 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
                     <div className="flex gap-3">
                         <button onClick={downloadPDF} className="btn-outline h-12">
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                            BAIXAR
+                            BAIXAR PDF
                         </button>
                         <button onClick={onReset} className="btn-neurelic h-12">
                             REINICIAR

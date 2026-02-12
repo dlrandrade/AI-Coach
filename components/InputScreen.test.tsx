@@ -1,29 +1,36 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { InputScreen } from './InputScreen';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 describe('InputScreen', () => {
+    beforeEach(() => {
+        localStorage.setItem('luzzia_visited_v2', 'true');
+    });
+
     it('renders the branding correctly', () => {
-        render(<InputScreen onAnalyze={() => { }} />);
-        expect(screen.getByText('AI COACH')).toBeInTheDocument();
+        render(<InputScreen onAnalyze={() => { }} isLoading={false} />);
+        expect(screen.getByText('LUZZIA')).toBeInTheDocument();
+        expect(screen.getByText('ENGINE v2.1')).toBeInTheDocument();
     });
 
     it('updates input value on typing', () => {
-        render(<InputScreen onAnalyze={() => { }} />);
-        const input = screen.getByPlaceholderText('seu_perfil');
+        render(<InputScreen onAnalyze={() => { }} isLoading={false} />);
+        const input = screen.getByPlaceholderText('@usuario');
         fireEvent.change(input, { target: { value: 'test_user' } });
         expect(input).toHaveValue('test_user');
     });
 
     it('calls onAnalyze when form is submitted', () => {
         const mockAnalyze = vi.fn();
-        render(<InputScreen onAnalyze={mockAnalyze} />);
-        const input = screen.getByPlaceholderText('seu_perfil');
-        const button = screen.getByRole('button');
+        render(<InputScreen onAnalyze={mockAnalyze} isLoading={false} />);
+        const input = screen.getByPlaceholderText('@usuario');
+        const objectiveButton = screen.getByText('DOMINAR TERRITÓRIO');
+        const submitButton = screen.getByRole('button', { name: 'INICIAR DIAGNÓSTICO' });
 
         fireEvent.change(input, { target: { value: 'test_user' } });
-        fireEvent.click(button);
+        fireEvent.click(objectiveButton);
+        fireEvent.click(submitButton);
 
-        expect(mockAnalyze).toHaveBeenCalledWith('test_user');
+        expect(mockAnalyze).toHaveBeenCalledWith('test_user', 7, 1);
     });
 });
