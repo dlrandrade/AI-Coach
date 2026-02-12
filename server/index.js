@@ -65,6 +65,8 @@ const OPENROUTER_MODELS = (process.env.OPENROUTER_MODELS || DEFAULT_MODELS.join(
   .map((model) => model.trim())
   .filter(Boolean);
 const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1/chat/completions';
+const OPENROUTER_HTTP_REFERER = process.env.OPENROUTER_HTTP_REFERER || 'http://localhost';
+const OPENROUTER_APP_TITLE = process.env.OPENROUTER_APP_TITLE || 'LuzzIA Engine v2.1';
 
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || 'instagram-scraper-v21.p.rapidapi.com';
@@ -540,8 +542,8 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
         headers: {
           'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'http://localhost',
-          'X-Title': 'LuzzIA Engine v2.1'
+          'HTTP-Referer': OPENROUTER_HTTP_REFERER,
+          'X-Title': OPENROUTER_APP_TITLE
         },
         body: JSON.stringify({
           model,

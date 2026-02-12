@@ -70,6 +70,8 @@ Set these environment variables in Vercel:
 - `RAPIDAPI_KEY`
 - `OPENROUTER_MODELS` (recommended)
 - `OPENROUTER_BASE_URL` (optional)
+- `OPENROUTER_HTTP_REFERER` (recommended; your production domain)
+- `OPENROUTER_APP_TITLE` (recommended; app name shown in OpenRouter logs)
 - `RAPIDAPI_HOST` (optional)
 - `CORS_ORIGINS` (optional; comma-separated)
 - `API_KEY` (optional)
