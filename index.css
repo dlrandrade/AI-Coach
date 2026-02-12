@@ -1,0 +1,513 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+/* ============================================
+   NEURELIC-010 — BRUTALIST DESIGN SYSTEM
+   Sharp corners, high contrast, visceral
+   ============================================ */
+
+:root {
+  --white: #FFFFFF;
+  --gray-50: #FAFAFA;
+  --gray-100: #F5F5F5;
+  --gray-200: #E5E5E5;
+  --gray-300: #D4D4D4;
+  --gray-400: #A3A3A3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  --black: #000000;
+
+  --green-core: #059669;
+  --green-light: #10B981;
+  --green-soft: #D1FAE5;
+
+  --red-core: #DC2626;
+  --orange-core: #EA580C;
+  --amber-core: #D97706;
+
+  --font-primary: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* SHARP CORNERS */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+  --space-xl: 48px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+
+  /* MOBILE-FIRST: Touch-optimized sizes */
+  --btn-height: 56px;
+  --btn-min-width: 180px;
+  --touch-target-min: 48px;
+  /* iOS 44pt / Android 48dp standard */
+  --touch-spacing: 12px;
+  /* Gap between touch targets */
+
+  /* Safe areas for notch devices */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--white);
+  color: var(--gray-800);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CONTAINER */
+.container-neurelic {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+  padding-left: max(var(--space-lg), var(--safe-area-left));
+  padding-right: max(var(--space-lg), var(--safe-area-right));
+}
+
+/* MOBILE: Smaller padding on phones */
+@media (max-width: 640px) {
+  .container-neurelic {
+    padding: 0 var(--space-sm);
+    padding-left: max(var(--space-sm), var(--safe-area-left));
+    padding-right: max(var(--space-sm), var(--safe-area-right));
+  }
+}
+
+/* TYPOGRAPHY - BRUTALIST */
+.hero-title {
+  font-family: var(--font-primary);
+  font-weight: 800;
+  font-size: clamp(40px, 7vw, 72px);
+  text-transform: uppercase;
+  color: var(--black);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.hero-title span {
+  color: var(--green-core);
+}
+
+.section-title {
+  font-weight: 800;
+  font-size: clamp(24px, 3vw, 32px);
+  color: var(--black);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.micro-label {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.credit-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--gray-400);
+}
+
+/* BUTTONS - BRUTALIST */
+.btn-neurelic {
+  height: var(--btn-height);
+  min-width: var(--btn-min-width);
+  padding: 0 var(--space-lg);
+  background-color: var(--black);
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 3px solid var(--black);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.btn-neurelic:hover {
+  background-color: var(--green-core);
+  border-color: var(--green-core);
+}
+
+.btn-neurelic:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  height: var(--btn-height);
+  min-width: var(--btn-min-width);
+  padding: 0 var(--space-lg);
+  background: transparent;
+  color: var(--black);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 3px solid var(--black);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.btn-outline:hover {
+  background: var(--black);
+  color: white;
+}
+
+/* INPUT - BRUTALIST */
+.input-neurelic {
+  width: 100%;
+  height: 64px;
+  background: var(--white);
+  border: 3px solid var(--black);
+  color: var(--black);
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 500;
+  padding: 0 var(--space-md);
+  transition: all 0.15s ease;
+}
+
+.input-neurelic:focus {
+  outline: none;
+  border-color: var(--green-core);
+  box-shadow: 4px 4px 0 var(--green-core);
+}
+
+.input-neurelic::placeholder {
+  color: var(--gray-400);
+  font-family: var(--font-primary);
+}
+
+/* CARD - BRUTALIST */
+.card-tech {
+  background: var(--white);
+  border: 2px solid var(--black);
+  padding: var(--space-lg);
+}
+
+.card-elevated {
+  background: var(--white);
+  border: 3px solid var(--black);
+  box-shadow: 6px 6px 0 var(--black);
+}
+
+/* SCORE */
+.score-track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--gray-200);
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+  background-color: var(--green-core);
+  transition: width 1s ease-out;
+}
+
+/* TECH LABEL */
+.tech-label {
+  background: var(--black);
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 8px 14px;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* STATUS BADGES */
+.badge-alavanca {
+  background: var(--green-core);
+  color: white;
+}
+
+.badge-neutro {
+  background: var(--amber-core);
+  color: white;
+}
+
+.badge-sabotador {
+  background: var(--red-core);
+  color: white;
+}
+
+/* REVEAL ANIMATION */
+.reveal {
+  animation: reveal 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+@keyframes reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === GLITCH EFFECTS (PUNCTUAL) === */
+.glitch-trigger {
+  animation: glitch-burst 0.1s ease;
+}
+
+@keyframes glitch-burst {
+  0% {
+    transform: translate(0);
+    filter: none;
+  }
+
+  20% {
+    transform: translate(-2px, 1px);
+    filter: hue-rotate(90deg);
+  }
+
+  40% {
+    transform: translate(2px, -1px);
+    filter: hue-rotate(-90deg);
+  }
+
+  60% {
+    transform: translate(-1px, 2px);
+    filter: brightness(1.2);
+  }
+
+  80% {
+    transform: translate(1px, -2px);
+    filter: contrast(1.2);
+  }
+
+  100% {
+    transform: translate(0);
+    filter: none;
+  }
+}
+
+.scan-line {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--green-core), transparent);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+}
+
+.scan-line.active {
+  animation: scan 1.5s ease-out;
+}
+
+@keyframes scan {
+  0% {
+    top: 0;
+    opacity: 1;
+  }
+
+  100% {
+    top: 100vh;
+    opacity: 0;
+  }
+}
+
+/* DEBUG SECTION */
+.debug-section {
+  background: var(--gray-900);
+  color: var(--green-light);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: var(--space-md);
+  border: 2px solid var(--green-core);
+  overflow: auto;
+  max-height: 300px;
+}
+
+.debug-section pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--black);
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   MOBILE-FIRST RESPONSIVE ENHANCEMENTS
+   ============================================ */
+
+/* THUMB ZONE: Bottom-positioned primary actions */
+@media (max-width: 640px) {
+
+  /* Safe area padding for notch devices */
+  body {
+    padding-top: var(--safe-area-top);
+    padding-bottom: var(--safe-area-bottom);
+  }
+
+  /* Hero title scales down gracefully */
+  .hero-title {
+    font-size: clamp(32px, 10vw, 48px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  /* Touch-optimized buttons */
+  .btn-neurelic,
+  .btn-outline {
+    min-height: var(--touch-target-min);
+    padding: var(--space-sm) var(--space-md);
+    font-size: 14px;
+    width: 100%;
+    /* Active state for touch feedback */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-neurelic:active,
+  .btn-outline:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  /* Touch-optimized inputs */
+  .input-neurelic {
+    height: 56px;
+    /* Larger touch target */
+    font-size: 18px;
+    /* Readable on mobile */
+    padding: 0 var(--space-sm);
+    text-align: left;
+    /* Better for mobile */
+  }
+
+  /* Objective cards: larger touch targets */
+  .objective-card {
+    min-height: var(--touch-target-min);
+    padding: var(--space-sm);
+    margin-bottom: var(--touch-spacing);
+  }
+
+  /* Section titles */
+  .section-title {
+    font-size: clamp(18px, 5vw, 24px);
+  }
+
+  /* Cards spacing */
+  .card-tech,
+  .card-elevated {
+    padding: var(--space-sm);
+  }
+
+  /* Debug section on mobile */
+  .debug-section {
+    font-size: 10px;
+    max-height: 200px;
+  }
+}
+
+/* TABLET BREAKPOINT */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .container-neurelic {
+    padding: 0 var(--space-md);
+  }
+
+  .hero-title {
+    font-size: clamp(48px, 8vw, 64px);
+  }
+}
+
+/* Touch feedback for all interactive elements */
+button,
+[role="button"],
+a {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  touch-action: manipulation;
+  /* Removes 300ms delay */
+}
+
+/* Prevent zoom on double-tap */
+* {
+  touch-action: manipulation;
+}
+
+/* Smooth scrolling on iOS */
+html {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Prevent overscroll bounce effect looking weird */
+body {
+  overscroll-behavior: none;
+}
+
+/* Fix for iOS 100vh issue */
+.min-h-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  /* Dynamic viewport height */
+}
+
+/* Loading states should be obvious */
+.loading-pulse {
+  animation: mobile-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes mobile-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
