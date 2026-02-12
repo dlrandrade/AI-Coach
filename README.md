@@ -27,6 +27,7 @@ If you run the frontend on a different origin, set `CORS_ORIGINS` in `.env`.
 If `API_KEY` is set, frontend `VITE_API_KEY` must match it.
 For debug data on the UI, set `VITE_DEBUG=true` (server-side raw data still requires `DEBUG=true`).
 For production behavior, keep `VITE_ALLOW_SIMULATION_FALLBACK=false`.
+To temporarily unlock diagnosis limits during testing, set `QUOTA_ENABLED=false`.
 
 ### OpenRouter model rotation (anti-limit)
 

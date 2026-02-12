@@ -14,6 +14,7 @@ app.use((req, res, next) => {
 });
 
 const DEBUG = process.env.DEBUG === 'true';
+const QUOTA_ENABLED = process.env.QUOTA_ENABLED !== 'false';
 const API_KEY = process.env.API_KEY || '';
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || '';
 const CORS_ORIGINS = (process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || '')
@@ -576,7 +577,7 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
 };
 
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, models: OPENROUTER_MODELS });
+  res.json({ ok: true, models: OPENROUTER_MODELS, quotaEnabled: QUOTA_ENABLED });
 });
 
 app.get('/api/usage', rateLimit, requireApiKey, (req, res) => {
@@ -606,7 +607,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   const { handle, planDays, objective } = validation;
   const clientId = getClientId(req);
   const quota = checkDiagnosisQuota(clientId);
-  if (!quota.ok) {
+  if (QUOTA_ENABLED && !quota.ok) {
     return res.status(402).json({
       error: 'QUOTA_EXCEEDED',
       message: 'Créditos esgotados. Escolha um pacote para continuar.',
@@ -619,7 +620,9 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
     const rawScrapedData = await scrapeInstagramProfile(handle);
     const formattedProfile = formatProfileForAI(rawScrapedData);
     const { parsed, modelUsed } = await analyzeProfile(handle, planDays, objective, formattedProfile);
-    const usage = consumeAfterSuccess(clientId, quota.source);
+    const usage = QUOTA_ENABLED
+      ? consumeAfterSuccess(clientId, quota.source)
+      : buildUsagePayload(getUsageState(clientId));
 
     return res.json({
       result: parsed,
