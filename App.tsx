@@ -12,9 +12,11 @@ function App() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [rawScrapedData, setRawScrapedData] = useState<AnalyzeResponse['rawScrapedData'] | null>(null);
   const [isPlanLoading, setIsPlanLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleAnalyze = async (inputHandle: string, planDays: 7 | 30, objective: number) => {
     setHandle(inputHandle);
+    setErrorMessage('');
     setScreen('LOADING');
 
     try {
@@ -29,6 +31,8 @@ function App() {
       setScreen('DIAGNOSIS');
     } catch (e) {
       console.error('[LuzzIA] Error:', e);
+      const fallback = 'Falha ao processar diagnóstico. Verifique se o servidor backend está ativo em http://localhost:8787.';
+      setErrorMessage(e instanceof Error ? e.message : fallback);
       setScreen('INPUT');
     }
   };
@@ -46,6 +50,7 @@ function App() {
     setHandle('');
     setResult(null);
     setRawScrapedData(null);
+    setErrorMessage('');
     setScreen('INPUT');
     setIsPlanLoading(false);
   };
@@ -56,6 +61,7 @@ function App() {
         <InputScreen
           onAnalyze={handleAnalyze}
           isLoading={screen === 'LOADING'}
+          errorMessage={errorMessage}
         />
       )}
       {screen === 'DIAGNOSIS' && (

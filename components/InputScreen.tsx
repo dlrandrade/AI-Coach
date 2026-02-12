@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 interface InputScreenProps {
   onAnalyze: (handle: string, planDays: 7 | 30, objective: number) => void;
   isLoading: boolean;
+  errorMessage?: string;
 }
 
 const OBJECTIVES = [
@@ -47,7 +48,7 @@ const ONBOARDING_STEPS = [
   { title: "EXECUTE O PLANO", desc: "Receba ações diárias com prompts executáveis em qualquer IA." },
 ];
 
-export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }) => {
+export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading, errorMessage }) => {
   const [handle, setHandle] = useState('');
   const [planDays, setPlanDays] = useState<7 | 30>(7);
   const [selectedObjective, setSelectedObjective] = useState<number | null>(null);
@@ -316,6 +317,11 @@ export const InputScreen: React.FC<InputScreenProps> = ({ onAnalyze, isLoading }
             </button>
             {!selectedObjective && (
               <p className="text-xs text-red-600 mt-2 text-center">Selecione um objetivo primário</p>
+            )}
+            {!!errorMessage && (
+              <div className="mt-3 p-3 border-2 border-red-600 bg-red-50 text-red-700 text-xs leading-relaxed">
+                {errorMessage}
+              </div>
             )}
           </div>
         </form>

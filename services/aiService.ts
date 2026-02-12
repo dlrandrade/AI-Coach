@@ -1,5 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-const API_KEY = import.meta.env.VITE_API_KEY || '';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:8787' : '');
 
 const OBJECTIVE_LABELS: Record<number, string> = {
   1: "AUTORIDADE",
@@ -216,23 +215,27 @@ export const analyzeProfile = async (
   planDays: 7 | 30 = 7,
   objective: number = 1
 ): Promise<AnalyzeResponse> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/analyze`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(API_KEY ? { 'X-API-KEY': API_KEY } : {})
-      },
-      body: JSON.stringify({ handle, planDays, objective })
-    });
+  const response = await fetch(`${API_BASE_URL}/api/analyze`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ handle, planDays, objective })
+  });
 
-    if (!response.ok) throw new Error('API Error');
-    const data = await response.json();
-    return data as AnalyzeResponse;
-  } catch (error) {
-    console.error('AI Error:', error);
-    return { result: simulateAnalysis(handle, planDays, objective), rawScrapedData: null };
+  if (!response.ok) {
+    let serverMessage = '';
+    try {
+      const payload = await response.json();
+      serverMessage = payload?.error || '';
+    } catch {
+      // ignore parse issues
+    }
+
+    const msg = serverMessage || `Erro ${response.status} ao acessar /api/analyze`;
+    throw new Error(msg);
   }
+
+  const data = await response.json();
+  return data as AnalyzeResponse;
 };
 
 const simulateAnalysis = (handle: string, planDays: 7 | 30, objective: number): AnalysisResult => {
