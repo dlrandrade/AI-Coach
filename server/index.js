@@ -21,10 +21,19 @@ const CORS_ORIGINS = (process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || '')
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+const matchesCorsRule = (origin, rule) => {
+  if (rule === '*') return true;
+  if (rule.startsWith('*.')) {
+    const suffix = rule.slice(1); // ".example.com"
+    return origin.endsWith(suffix);
+  }
+  return origin === rule;
+};
+
 const isAllowedOrigin = (origin) => {
   if (!origin) return true;
-  if (CORS_ORIGINS.length === 0) return false;
-  return CORS_ORIGINS.includes(origin);
+  if (CORS_ORIGINS.length === 0) return true;
+  return CORS_ORIGINS.some((rule) => matchesCorsRule(origin, rule));
 };
 
 app.use((req, res, next) => {
