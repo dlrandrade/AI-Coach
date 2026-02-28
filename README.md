@@ -43,6 +43,7 @@ When configured, usage/rate-limit state is persisted across instances.
 
 - `OUTPUT_TONE=professional|aggressive` (default: `professional`)
 - `SCRAPE_CACHE_TTL_MS` (default: `300000`, 5 minutes)
+- `REQUEST_TIMEOUT_MS` (default: `25000`)
 
 The backend now caches Instagram scrape results briefly to reduce latency/cost on repeated analyses of the same handle.
 

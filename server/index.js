@@ -4,7 +4,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-app.use(express.json({ limit: '2mb' }));
+app.use((req, res, next) => {
+  // Route-level body limits
+  if (req.path === '/api/analyze') return express.json({ limit: '256kb' })(req, res, next);
+  if (req.path === '/api/grant-credits') return express.json({ limit: '64kb' })(req, res, next);
+  return express.json({ limit: '128kb' })(req, res, next);
+});
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
@@ -49,6 +54,35 @@ const isAllowedOrigin = (origin, req) => {
 };
 
 app.use((req, res, next) => {
+  req.setTimeout(REQUEST_TIMEOUT_MS);
+  res.setTimeout(REQUEST_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => {
+    if (!res.headersSent) {
+      return res.status(504).json({ error: 'REQUEST_TIMEOUT', message: 'Tempo limite excedido' });
+    }
+  }, REQUEST_TIMEOUT_MS + 10);
+
+  res.on('finish', () => clearTimeout(timeoutId));
+  res.on('close', () => clearTimeout(timeoutId));
+  next();
+});
+
+const redact = (value) => {
+  const s = String(value ?? '');
+  if (!s) return s;
+  return s
+    .replace(/Bearer\s+[A-Za-z0-9._-]+/gi, 'Bearer [REDACTED]')
+    .replace(/(x-api-key["':\s]*)([A-Za-z0-9._-]+)/gi, '$1[REDACTED]')
+    .replace(/(openrouter_api_key["':\s]*)([A-Za-z0-9._-]+)/gi, '$1[REDACTED]')
+    .replace(/(rapidapi_key["':\s]*)([A-Za-z0-9._-]+)/gi, '$1[REDACTED]');
+};
+
+const safeLog = (tag, payload = {}) => {
+  const clean = JSON.parse(JSON.stringify(payload, (_k, v) => (typeof v === 'string' ? redact(v) : v)));
+  console.log(tag, clean);
+};
+
+app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (origin && !isAllowedOrigin(origin, req)) {
     return res.status(403).json({ error: 'CORS blocked' });
@@ -85,6 +119,7 @@ const OUTPUT_TONE = process.env.OUTPUT_TONE || 'professional'; // professional |
 const SCRAPE_CACHE_TTL_MS = Number(process.env.SCRAPE_CACHE_TTL_MS || 300000);
 
 const PORT = process.env.PORT || 8787;
+const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 25000);
 
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 12;
@@ -245,7 +280,7 @@ const rateLimit = async (req, res, next) => {
     }
     return next();
   } catch (error) {
-    console.error('[rate-limit:error]', error instanceof Error ? error.message : error);
+    safeLog('[rate-limit:error]', { details: error instanceof Error ? error.message : String(error) });
     return next();
   }
 };
@@ -855,7 +890,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
       : buildUsagePayload(await getUsageState(clientId));
 
     metrics.analyzeSuccess += 1;
-    console.log('[analyze:ok]', {
+    safeLog('[analyze:ok]', {
       requestId,
       clientId,
       handle,
@@ -874,7 +909,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   } catch (error) {
     metrics.analyzeFail += 1;
     const details = error instanceof Error ? error.message : 'Erro desconhecido';
-    console.error('[analyze:error]', { requestId, details });
+    safeLog('[analyze:error]', { requestId, details });
     return res.status(500).json({
       error: 'ANALYZE_FAILED',
       message: 'Não foi possível concluir o diagnóstico agora. Tente novamente.',
