@@ -814,6 +814,44 @@ const sanitizeAnalysisResult = (obj) => {
   return safe;
 };
 
+
+const buildDissecacaoSummary = (d = {}) => {
+  const keys = ['bio', 'feed', 'stories', 'provas', 'ofertas', 'linguagem'];
+  return keys.map((k) => `${k}:${d?.[k]?.status || 'neutro'}`).join(' | ');
+};
+
+const enrichPlanPromptsWithContext = (result, meta) => {
+  if (!result || !Array.isArray(result.plan)) return result;
+  const d = result.diagnosis || {};
+  const summary = buildDissecacaoSummary(d.dissecacao || {});
+  const totalDays = result.plan.length || meta.planDays || 7;
+
+  result.plan = result.plan.map((day, idx) => {
+    const header = [
+      'CONTEXTO FIXO DO DIAGNÓSTICO (NÃO IGNORAR):',
+      `- Perfil: @${meta.handle}`,
+      `- Objetivo ativo: ${d.objetivo_ativo || meta.objectiveLabel}`,
+      `- Posicionamento atual: ${d.posicionamento || 'aspirante'}`,
+      `- Pecado capital: ${d.pecado_capital || 'não informado'}`,
+      `- Conflito oculto: ${d.conflito_oculto || 'não informado'}`,
+      `- Ação de maior alavancagem: ${d.acao_alavancagem || 'não informado'}`,
+      `- Dissecacao resumida: ${summary}`,
+      `- Dia do plano: ${idx + 1}/${totalDays}`,
+      `- Objetivo psicológico do dia: ${day.objetivo_psicologico || 'não informado'}`,
+      '',
+      'TAREFA:',
+      String(day.prompt || '')
+    ].join('\n');
+
+    return {
+      ...day,
+      prompt: header
+    };
+  });
+
+  return result;
+};
+
 const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) => {
   if (!OPENROUTER_API_KEY) {
     throw new Error('OPENROUTER_API_KEY não configurada');
@@ -948,6 +986,11 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
     const rawScrapedData = await scrapeInstagramProfile(handle);
     const formattedProfile = formatProfileForAI(rawScrapedData);
     const { parsed, modelUsed } = await analyzeProfile(handle, planDays, objective, formattedProfile);
+    const enriched = enrichPlanPromptsWithContext(parsed, {
+      handle,
+      planDays,
+      objectiveLabel: OBJECTIVE_LABELS[objective]
+    });
     const usage = QUOTA_ENABLED
       ? await consumeAfterSuccess(clientId, quota.source)
       : buildUsagePayload(await getUsageState(clientId));
@@ -963,7 +1006,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
     });
 
     return res.json({
-      result: parsed,
+      result: enriched,
       rawScrapedData: DEBUG ? rawScrapedData : null,
       clientId,
       usage,
