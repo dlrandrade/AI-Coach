@@ -180,6 +180,16 @@ function App() {
         onSubmit={handleLeadSubmit}
         onClose={() => setLeadGateOpen(false)}
       />
+
+      <a
+        href="https://instagram.com/danielluzz"
+        target="_blank"
+        rel="noreferrer"
+        className="fixed bottom-2 right-2 text-[10px] text-gray-300 hover:text-gray-500 transition-colors no-print"
+        aria-label="Desenvolvido por @DanielLuzz"
+      >
+        por @DanielLuzz
+      </a>
     </div>
   );
 }
