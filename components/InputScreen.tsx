@@ -75,6 +75,7 @@ export const InputScreen: React.FC<InputScreenProps> = ({
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [isCompactMobile, setIsCompactMobile] = useState(false);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isLuzziaMessage, setIsLuzziaMessage] = useState(false);
   const glitchCountRef = useRef(0);
@@ -86,6 +87,14 @@ export const InputScreen: React.FC<InputScreenProps> = ({
     if (!hasVisited) {
       setShowOnboarding(true);
     }
+  }, []);
+
+  // Compact mobile mode to reduce vertical scrolling
+  useEffect(() => {
+    const update = () => setIsCompactMobile(window.innerWidth <= 430);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
   }, []);
 
   // Shuffle and generate unique messages
@@ -233,8 +242,8 @@ export const InputScreen: React.FC<InputScreenProps> = ({
 
   // MAIN FORM
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-16 bg-white">
-      <div className="w-full max-w-xl text-center space-y-12 reveal">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 md:px-6 py-8 md:py-16 bg-white">
+      <div className="w-full max-w-xl text-center space-y-8 md:space-y-12 reveal">
 
         {/* Header */}
         <header className="space-y-6">
@@ -273,36 +282,50 @@ export const InputScreen: React.FC<InputScreenProps> = ({
           {/* Objective Selection */}
           <div className="space-y-3">
             <label className="micro-label block">OBJETIVO PRIMÁRIO <span className="text-red-600">*</span></label>
-            <div className="grid gap-3">
-              {OBJECTIVES.map((obj) => (
-                <button
-                  key={obj.id}
-                  type="button"
-                  onClick={() => setSelectedObjective(obj.id)}
-                  className={`p-4 min-h-[56px] border-2 transition-all text-left flex justify-between items-center active:scale-[0.98] ${selectedObjective === obj.id
-                    ? 'border-black bg-black text-white'
-                    : 'border-gray-200 hover:border-black'
-                    }`}
-                >
-                  <div className="flex-1 min-w-0 pr-3">
-                    <span className={`font-bold text-sm block ${selectedObjective === obj.id ? 'text-white' : 'text-black'}`}>
-                      {obj.label}
-                    </span>
-                    <p className={`text-xs mt-1 leading-snug ${selectedObjective === obj.id ? 'text-gray-300' : 'text-gray-500'}`}>
-                      {obj.desc}
-                    </p>
-                  </div>
-                  <div className={`w-5 h-5 flex-shrink-0 border-2 flex items-center justify-center ${selectedObjective === obj.id
-                    ? 'border-white bg-white'
-                    : 'border-gray-400'
-                    }`}>
-                    {selectedObjective === obj.id && (
-                      <div className="w-2.5 h-2.5 bg-black"></div>
-                    )}
-                  </div>
-                </button>
-              ))}
-            </div>
+
+            {isCompactMobile ? (
+              <select
+                value={selectedObjective || ''}
+                onChange={(e) => setSelectedObjective(Number(e.target.value) || null)}
+                className="input-neurelic h-14 text-base"
+              >
+                <option value="">Selecione um objetivo</option>
+                {OBJECTIVES.map((obj) => (
+                  <option key={obj.id} value={obj.id}>{obj.label} — {obj.desc}</option>
+                ))}
+              </select>
+            ) : (
+              <div className="grid gap-3">
+                {OBJECTIVES.map((obj) => (
+                  <button
+                    key={obj.id}
+                    type="button"
+                    onClick={() => setSelectedObjective(obj.id)}
+                    className={`p-4 min-h-[56px] border-2 transition-all text-left flex justify-between items-center active:scale-[0.98] ${selectedObjective === obj.id
+                      ? 'border-black bg-black text-white'
+                      : 'border-gray-200 hover:border-black'
+                      }`}
+                  >
+                    <div className="flex-1 min-w-0 pr-3">
+                      <span className={`font-bold text-sm block ${selectedObjective === obj.id ? 'text-white' : 'text-black'}`}>
+                        {obj.label}
+                      </span>
+                      <p className={`text-xs mt-1 leading-snug ${selectedObjective === obj.id ? 'text-gray-300' : 'text-gray-500'}`}>
+                        {obj.desc}
+                      </p>
+                    </div>
+                    <div className={`w-5 h-5 flex-shrink-0 border-2 flex items-center justify-center ${selectedObjective === obj.id
+                      ? 'border-white bg-white'
+                      : 'border-gray-400'
+                      }`}>
+                      {selectedObjective === obj.id && (
+                        <div className="w-2.5 h-2.5 bg-black"></div>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Plan Duration */}

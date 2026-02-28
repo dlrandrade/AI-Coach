@@ -56,9 +56,9 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="h-16 md:h-24"></div>
+            <div className="h-8 md:h-24"></div>
 
-            <div className="container-neurelic space-y-12 reveal">
+            <div className="container-neurelic space-y-8 md:space-y-12 reveal">
 
                 {/* DEBUG: DADOS RAW DO INSTAGRAM (PROVISÓRIO) */}
                 {showDebug && rawScrapedData && (

@@ -210,9 +210,9 @@ export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, 
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="h-16 md:h-24"></div>
+            <div className="h-8 md:h-24"></div>
 
-            <div className="container-neurelic space-y-12 reveal">
+            <div className="container-neurelic space-y-8 md:space-y-12 reveal">
 
                 {/* Header */}
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
