@@ -39,6 +39,13 @@ By default, quota/rate-limit are in-memory. For production/serverless consistenc
 
 When configured, usage/rate-limit state is persisted across instances.
 
+### Output tone and scrape cache
+
+- `OUTPUT_TONE=professional|aggressive` (default: `professional`)
+- `SCRAPE_CACHE_TTL_MS` (default: `300000`, 5 minutes)
+
+The backend now caches Instagram scrape results briefly to reduce latency/cost on repeated analyses of the same handle.
+
 ### OpenRouter model rotation (anti-limit)
 
 Configure all 5 models in `OPENROUTER_MODELS` (comma-separated):

@@ -81,6 +81,8 @@ const OPENROUTER_APP_TITLE = process.env.OPENROUTER_APP_TITLE || 'LuzzIA Engine 
 
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || 'instagram-scraper-v21.p.rapidapi.com';
+const OUTPUT_TONE = process.env.OUTPUT_TONE || 'professional'; // professional | aggressive
+const SCRAPE_CACHE_TTL_MS = Number(process.env.SCRAPE_CACHE_TTL_MS || 300000);
 
 const PORT = process.env.PORT || 8787;
 
@@ -88,6 +90,7 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 12;
 const rateBuckets = new Map();
 const usageBuckets = new Map();
+const scrapeCache = new Map();
 const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL || '';
 const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || '';
 const USE_UPSTASH = Boolean(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
@@ -417,8 +420,24 @@ REGRAS FINAIS
 - Retorne APENAS JSON válido
 `;
 
+const getCachedScrape = (username) => {
+  const item = scrapeCache.get(username);
+  if (!item) return null;
+  if (Date.now() > item.expiresAt) {
+    scrapeCache.delete(username);
+    return null;
+  }
+  return item.data;
+};
+
+const setCachedScrape = (username, data) => {
+  scrapeCache.set(username, { data, expiresAt: Date.now() + SCRAPE_CACHE_TTL_MS });
+};
+
 const scrapeInstagramProfile = async (username) => {
   const cleanUsername = String(username || '').replace('@', '').trim().toLowerCase();
+  const cached = getCachedScrape(cleanUsername);
+  if (cached) return { ...cached, cached: true };
 
   if (!RAPIDAPI_KEY) {
     return { error: 'RAPIDAPI_KEY não configurada', username: cleanUsername };
@@ -531,7 +550,7 @@ const scrapeInstagramProfile = async (username) => {
       }
     }
 
-    return {
+    const result = {
       username: user.username || cleanUsername,
       fullName: user.full_name || null,
       biography: user.biography || user.bio || null,
@@ -545,8 +564,11 @@ const scrapeInstagramProfile = async (username) => {
       highlightNames,
       recentPosts,
       scrapedAt: new Date().toISOString(),
-      error: null
+      error: null,
+      cached: false
     };
+    setCachedScrape(cleanUsername, result);
+    return result;
   } catch (error) {
     return {
       username: cleanUsername,
@@ -672,6 +694,7 @@ const sanitizeText = (value) => {
 };
 
 const sanitizeAnalysisResult = (obj) => {
+  if (OUTPUT_TONE === 'aggressive') return obj;
   if (!obj || typeof obj !== 'object') return obj;
   const safe = JSON.parse(JSON.stringify(obj));
   if (safe?.diagnosis?.sentenca) safe.diagnosis.sentenca = sanitizeText(safe.diagnosis.sentenca);
@@ -756,7 +779,14 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
 };
 
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, models: OPENROUTER_MODELS, quotaEnabled: QUOTA_ENABLED, storage: USE_UPSTASH ? 'upstash' : 'memory' });
+  res.json({
+    ok: true,
+    models: OPENROUTER_MODELS,
+    quotaEnabled: QUOTA_ENABLED,
+    storage: USE_UPSTASH ? 'upstash' : 'memory',
+    outputTone: OUTPUT_TONE,
+    scrapeCacheTtlMs: SCRAPE_CACHE_TTL_MS
+  });
 });
 
 app.get('/api/usage', rateLimit, requireApiKey, async (req, res) => {
@@ -810,7 +840,8 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
       clientId,
       handle,
       ms: Date.now() - startedAt,
-      modelUsed
+      modelUsed,
+      scrapeCached: Boolean(rawScrapedData?.cached)
     });
 
     return res.json({
@@ -818,7 +849,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
       rawScrapedData: DEBUG ? rawScrapedData : null,
       clientId,
       usage,
-      meta: { modelUsed, requestId }
+      meta: { modelUsed, requestId, scrapeCached: Boolean(rawScrapedData?.cached) }
     });
   } catch (error) {
     const details = error instanceof Error ? error.message : 'Erro desconhecido';
