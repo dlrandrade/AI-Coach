@@ -26,7 +26,7 @@
     { "src": "^/api/slo/?$", "dest": "/api/slo.js" },
     { "src": "^/api/metrics-history/?$", "dest": "/api/metrics-history.js" },
     { "src": "^/api/leads/?$", "dest": "/api/leads.js" },
-    { "src": "^/api/leads\.csv/?$", "dest": "/api/leads.csv.js" },
+    { "src": "^/api/leads\.csv/?$", "dest": "/api/leads-csv.js" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
