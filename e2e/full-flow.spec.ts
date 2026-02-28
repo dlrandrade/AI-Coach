@@ -68,6 +68,16 @@ test('full journey: analyze -> lead unlock -> plan (mocked api)', async ({ page 
 
   await page.goto('/');
 
+  const startBtn = page.getByRole('button', { name: /FAZER DIAGNÓSTICO AGORA/i });
+  if (await startBtn.isVisible().catch(() => false)) {
+    await startBtn.click();
+  }
+
+  const skipIntro = page.getByText(/Pular introdução/i);
+  if (await skipIntro.isVisible().catch(() => false)) {
+    await skipIntro.click();
+  }
+
   await page.getByPlaceholder('@usuario').fill('danielluzz');
   await page.getByRole('button', { name: /DOMINAR TERRITÓRIO/i }).click();
   await page.getByRole('button', { name: /INICIAR DIAGNÓSTICO/i }).click();

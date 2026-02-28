@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { LandingPage } from './components/LandingPage';
 import { InputScreen } from './components/InputScreen';
 import { DiagnosisScreen } from './components/DiagnosisScreen';
 import { SevenDayPlanScreen } from './components/SevenDayPlanScreen';
@@ -7,10 +8,10 @@ import { AdminMetricsPanel } from './components/AdminMetricsPanel';
 import { LeadUnlockModal } from './components/LeadUnlockModal';
 import { analyzeProfile, AnalysisResult, AnalyzeResponse, ApiError, UsageInfo, getUsage, getHealth, saveLead } from './services/aiService';
 
-type Screen = 'INPUT' | 'LOADING' | 'DIAGNOSIS' | 'PLAN';
+type Screen = 'LANDING' | 'INPUT' | 'LOADING' | 'DIAGNOSIS' | 'PLAN';
 
 function App() {
-  const [screen, setScreen] = useState<Screen>('INPUT');
+  const [screen, setScreen] = useState<Screen>('LANDING');
   const [handle, setHandle] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [rawScrapedData, setRawScrapedData] = useState<AnalyzeResponse['rawScrapedData'] | null>(null);
@@ -108,7 +109,7 @@ function App() {
     setGenericScore(0);
     setLeadUnlocked(false);
     setLeadGateOpen(false);
-    setScreen('INPUT');
+    setScreen('LANDING');
     setIsPlanLoading(false);
   };
 
@@ -127,6 +128,10 @@ function App() {
 
   return (
     <div className="min-h-screen">
+      {screen === 'LANDING' && (
+        <LandingPage onStart={() => setScreen('INPUT')} />
+      )}
+
       {(screen === 'INPUT' || screen === 'LOADING') && (
         <InputScreen
           onAnalyze={handleAnalyze}
