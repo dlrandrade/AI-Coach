@@ -84,42 +84,32 @@ const safeLog = (tag, payload = {}) => {
 
 
 const sendLeadNotificationEmail = async (lead) => {
-  if (!RESEND_API_KEY || !LEAD_NOTIFY_EMAIL) return { skipped: true };
-  const subject = `Novo lead LuzzIA: ${lead.name} (${lead.planDays} dias)`;
-  const html = `
-    <h2>Novo lead cadastrado</h2>
-    <p><b>Nome:</b> ${lead.name}</p>
-    <p><b>Email:</b> ${lead.email}</p>
-    <p><b>WhatsApp:</b> ${lead.whatsapp}</p>
-    <p><b>Handle:</b> ${lead.handle || '-'}</p>
-    <p><b>Objetivo:</b> ${lead.objective || '-'}</p>
-    <p><b>Plano:</b> ${lead.planDays} dias</p>
-    <p><b>ClientId:</b> ${lead.clientId || '-'}</p>
-    <p><b>LeadToken:</b> ${lead.token}</p>
-    <p><b>Consentimento:</b> ${lead.consent ? 'sim' : 'não'}</p>
-    <p><b>Criado em:</b> ${lead.createdAt}</p>
-  `;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !LEAD_NOTIFY_EMAIL) return { skipped: true };
 
-  const response = await fetch('https://api.resend.com/emails', {
+  const url = `${SUPABASE_URL.replace(/\/$/, '')}/functions/v1/${SUPABASE_LEAD_FUNCTION}`;
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
+      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      apikey: SUPABASE_SERVICE_ROLE_KEY,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      from: LEAD_FROM_EMAIL,
-      to: [LEAD_NOTIFY_EMAIL],
-      subject,
-      html
+      notifyEmail: LEAD_NOTIFY_EMAIL,
+      lead
     })
   });
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(`lead_email_failed:${response.status}:${text.slice(0,200)}`);
+    throw new Error(`supabase_lead_notify_failed:${response.status}:${text.slice(0,200)}`);
   }
 
-  return await response.json();
+  try {
+    return await response.json();
+  } catch {
+    return { ok: true };
+  }
 };
 
 app.use((req, res, next) => {
@@ -155,9 +145,10 @@ const OPENROUTER_APP_TITLE = process.env.OPENROUTER_APP_TITLE || 'LuzzIA Engine 
 
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || 'instagram-scraper-v21.p.rapidapi.com';
-const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const SUPABASE_LEAD_FUNCTION = process.env.SUPABASE_LEAD_FUNCTION || 'lead-notify';
 const LEAD_NOTIFY_EMAIL = process.env.LEAD_NOTIFY_EMAIL || 'eusou@danielluzz.com.br';
-const LEAD_FROM_EMAIL = process.env.LEAD_FROM_EMAIL || 'LuzzIA <onboarding@resend.dev>';
 const OUTPUT_TONE = process.env.OUTPUT_TONE || 'professional'; // professional | aggressive
 const SCRAPE_CACHE_TTL_MS = Number(process.env.SCRAPE_CACHE_TTL_MS || 300000);
 const CACHE_CLEANUP_INTERVAL_MS = Number(process.env.CACHE_CLEANUP_INTERVAL_MS || 60000);

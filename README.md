@@ -173,13 +173,14 @@ Admin can export leads as CSV:
 curl -L -H "X-API-KEY: $ADMIN_API_KEY" "http://localhost:8787/api/leads.csv?limit=200" -o leads.csv
 ```
 
-### Lead email notification
+### Lead email notification (via Supabase)
 
-When a lead is created, the backend can send an email notification via Resend.
+When a lead is created, the backend can invoke a Supabase Edge Function to send the email notification.
 Configure:
 
-- `RESEND_API_KEY`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_LEAD_FUNCTION` (default: `lead-notify`)
 - `LEAD_NOTIFY_EMAIL` (default: `eusou@danielluzz.com.br`)
-- `LEAD_FROM_EMAIL` (default: `LuzzIA <onboarding@resend.dev>`)
 
-If Resend is not configured, lead capture still works and no email is sent.
+If Supabase notification is not configured, lead capture still works and no email is sent.
