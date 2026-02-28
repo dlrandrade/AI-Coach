@@ -1311,7 +1311,10 @@ export {
   parseModelJson,
   isValidResultShape,
   sanitizeAnalysisResult,
-  validateAnalyzeInput
+  validateAnalyzeInput,
+  normalizeAnalysisResult,
+  enrichPlanPromptsWithContext,
+  buildDissecacaoSummary
 };
 
 export default app;
