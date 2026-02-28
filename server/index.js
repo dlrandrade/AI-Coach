@@ -271,6 +271,30 @@ const fetchWithTimeout = async (url, options, timeoutMs = 15000) => {
   }
 };
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const fetchJsonWithRetry = async (url, options, attempts = 3, timeoutMs = 12000) => {
+  let lastError = null;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const response = await fetchWithTimeout(url, options, timeoutMs);
+      if (response.ok) {
+        return await response.json();
+      }
+      if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+        return await response.json();
+      }
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (err) {
+      lastError = err;
+    }
+    if (i < attempts - 1) {
+      await sleep(350 * (i + 1));
+    }
+  }
+  throw lastError || new Error('request_failed');
+};
+
 const normalizeHandle = (value) => String(value || '').replace('@', '').trim().toLowerCase();
 
 const validateAnalyzeInput = (body) => {
@@ -401,7 +425,7 @@ const scrapeInstagramProfile = async (username) => {
   }
 
   try {
-    const userInfoResponse = await fetchWithTimeout(
+    const userInfoData = await fetchJsonWithRetry(
       `https://${RAPIDAPI_HOST}/api/user-information`,
       {
         method: 'POST',
@@ -412,10 +436,9 @@ const scrapeInstagramProfile = async (username) => {
         },
         body: JSON.stringify({ username: cleanUsername })
       },
+      3,
       12000
     );
-
-    const userInfoData = await userInfoResponse.json();
 
     if (userInfoData.status === 'fail' || userInfoData.message) {
       return {
@@ -482,7 +505,7 @@ const scrapeInstagramProfile = async (username) => {
     const userId = user.id || user.pk || user.user_id;
     if (userId) {
       try {
-        const highlightsResponse = await fetchWithTimeout(
+        const highlightsData = await fetchJsonWithRetry(
           `https://${RAPIDAPI_HOST}/api/get-user-highlights`,
           {
             method: 'POST',
@@ -493,18 +516,16 @@ const scrapeInstagramProfile = async (username) => {
             },
             body: JSON.stringify({ user_id: String(userId) })
           },
+          2,
           12000
         );
 
-        if (highlightsResponse.ok) {
-          const highlightsData = await highlightsResponse.json();
-          const highlights =
-            highlightsData?.data?.items ||
-            highlightsData?.items ||
-            highlightsData?.data?.tray?.edges?.map((e) => e.node) ||
-            [];
-          highlightNames = highlights.slice(0, 10).map((h) => h.title || h.name || 'Destaque');
-        }
+        const highlights =
+          highlightsData?.data?.items ||
+          highlightsData?.items ||
+          highlightsData?.data?.tray?.edges?.map((e) => e.node) ||
+          [];
+        highlightNames = highlights.slice(0, 10).map((h) => h.title || h.name || 'Destaque');
       } catch {
         // ignore
       }
@@ -641,6 +662,30 @@ const parseModelJson = (content) => {
   }
 };
 
+const sanitizeText = (value) => {
+  const s = String(value || '');
+  return s
+    .replace(/\b(bloquear publicamente|listar.*nomes|sob pena de banimento)\b/gi, 'aplicar critério claro')
+    .replace(/\bzero piedade\b/gi, 'rigor estratégico')
+    .replace(/\bsem piedade\b/gi, 'com objetividade')
+    .replace(/\bproiba\b/gi, 'evite');
+};
+
+const sanitizeAnalysisResult = (obj) => {
+  if (!obj || typeof obj !== 'object') return obj;
+  const safe = JSON.parse(JSON.stringify(obj));
+  if (safe?.diagnosis?.sentenca) safe.diagnosis.sentenca = sanitizeText(safe.diagnosis.sentenca);
+  if (Array.isArray(safe?.plan)) {
+    safe.plan = safe.plan.map((d) => ({
+      ...d,
+      acao: sanitizeText(d.acao),
+      prompt: sanitizeText(d.prompt),
+      objetivo_psicologico: sanitizeText(d.objetivo_psicologico)
+    }));
+  }
+  return safe;
+};
+
 const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) => {
   if (!OPENROUTER_API_KEY) {
     throw new Error('OPENROUTER_API_KEY não configurada');
@@ -699,8 +744,9 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
         continue;
       }
 
+      const sanitized = sanitizeAnalysisResult(parsed);
       modelCursor = (OPENROUTER_MODELS.indexOf(model) + 1) % OPENROUTER_MODELS.length;
-      return { parsed, modelUsed: model };
+      return { parsed: sanitized, modelUsed: model };
     } catch (error) {
       errors.push(`${model}: ${error instanceof Error ? error.message : 'erro'}`);
     }
@@ -786,10 +832,17 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   }
 });
 
-if (!process.env.VERCEL) {
+if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`[server] listening on :${PORT}`);
   });
 }
+
+export {
+  parseModelJson,
+  isValidResultShape,
+  sanitizeAnalysisResult,
+  validateAnalyzeInput
+};
 
 export default app;
