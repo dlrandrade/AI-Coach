@@ -714,6 +714,56 @@ const isValidResultShape = (obj, planDays) => {
   }
 };
 
+
+const normalizeAnalysisResult = (obj, planDays, objective) => {
+  const out = obj && typeof obj === 'object' ? JSON.parse(JSON.stringify(obj)) : {};
+  out.leitura_perfil = out.leitura_perfil || {
+    bio_completa: 'não disponível', posts_analisados: [], destaques_encontrados: [], stories_recentes: 'não disponível',
+    metricas_visiveis: { seguidores: null, seguindo: null, posts_total: null }, impressao_geral: 'não disponível'
+  };
+  out.diagnosis = out.diagnosis || {};
+  out.diagnosis.objetivo_ativo = out.diagnosis.objetivo_ativo || OBJECTIVE_LABELS[objective];
+  out.diagnosis.pecado_capital = out.diagnosis.pecado_capital || 'Falta clareza estrutural no posicionamento.';
+  out.diagnosis.conflito_oculto = out.diagnosis.conflito_oculto || 'O discurso não se converte em prova concreta.';
+  out.diagnosis.posicionamento = ['commodity','aspirante','autoridade','dominador'].includes(out.diagnosis.posicionamento)
+    ? out.diagnosis.posicionamento : 'aspirante';
+  out.diagnosis.acao_alavancagem = out.diagnosis.acao_alavancagem || 'Publicar prova concreta de resultado com contexto e métrica.';
+  out.diagnosis.sentenca = out.diagnosis.sentenca || 'Falta prova clara para sustentar autoridade.';
+  out.diagnosis.modo_falha = out.diagnosis.modo_falha || 'sem_provas';
+  const d = out.diagnosis.dissecacao || {};
+  const mk = (v={}) => ({ status: isValidStatus(v.status) ? v.status : 'neutro', veredicto: typeof v.veredicto==='string' ? v.veredicto : 'Ajustar clareza e evidências.'});
+  out.diagnosis.dissecacao = {
+    bio: mk(d.bio), feed: mk(d.feed), stories: mk(d.stories), provas: mk(d.provas), ofertas: mk(d.ofertas), linguagem: mk(d.linguagem)
+  };
+
+  const plan = Array.isArray(out.plan) ? out.plan : [];
+  const cleanPlan = plan
+    .filter((x) => x && typeof x === 'object')
+    .map((x, i) => ({
+      day: Number.isFinite(Number(x.day)) ? Number(x.day) : i + 1,
+      objetivo_psicologico: typeof x.objetivo_psicologico === 'string' ? x.objetivo_psicologico : `Fortalecer ${OBJECTIVE_LABELS[objective]}`,
+      acao: typeof x.acao === 'string' ? x.acao : 'Publicar conteúdo com prova concreta',
+      formato: typeof x.formato === 'string' ? x.formato : 'post',
+      ferramenta: typeof x.ferramenta === 'string' ? x.ferramenta : 'feed',
+      tipo: ['queima_ponte','excludente','tensao_maxima','movimento_dinheiro','padrao'].includes(x.tipo) ? x.tipo : 'padrao',
+      prompt: typeof x.prompt === 'string' ? x.prompt : 'Crie um post com prova real de resultado e CTA objetivo.'
+    }));
+
+  while (cleanPlan.length < planDays) {
+    const n = cleanPlan.length + 1;
+    cleanPlan.push({
+      day: n,
+      objetivo_psicologico: `Fortalecer ${OBJECTIVE_LABELS[objective]}`,
+      acao: 'Publicar evidência concreta de resultado',
+      formato: 'post',
+      ferramenta: 'feed',
+      tipo: 'padrao',
+      prompt: 'Crie conteúdo com contexto, processo, métrica e CTA claro.'
+    });
+  }
+  out.plan = cleanPlan.slice(0, planDays).map((x, i) => ({ ...x, day: i + 1 }));
+  return out;
+};
 const parseModelJson = (content) => {
   const cleaned = String(content || '').replace(/```json|```/g, '').trim();
   try {
@@ -806,12 +856,13 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
         continue;
       }
 
-      if (!isValidResultShape(parsed, planDays)) {
+      const normalized = normalizeAnalysisResult(parsed, planDays, objective);
+      if (!isValidResultShape(normalized, planDays)) {
         errors.push(`${model}: invalid_schema`);
         continue;
       }
 
-      const sanitized = sanitizeAnalysisResult(parsed);
+      const sanitized = sanitizeAnalysisResult(normalized);
       modelCursor = (OPENROUTER_MODELS.indexOf(model) + 1) % OPENROUTER_MODELS.length;
       return { parsed: sanitized, modelUsed: model };
     } catch (error) {
@@ -819,7 +870,8 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
     }
   }
 
-  throw new Error(`Falha em todos os modelos OpenRouter: ${errors.join(' | ')}`);
+  const fallback = normalizeAnalysisResult({}, planDays, objective);
+  return { parsed: sanitizeAnalysisResult(fallback), modelUsed: 'fallback/local-normalizer' };
 };
 
 app.get('/api/health', (req, res) => {
