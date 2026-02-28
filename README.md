@@ -142,6 +142,13 @@ SMOKE_BASE_URL=https://SEU-DOMINIO.vercel.app npm run smoke
 SMOKE_BASE_URL=https://SEU-DOMINIO.vercel.app ADMIN_API_KEY=... npm run smoke
 ```
 
+5. Run browser E2E checks:
+
+```bash
+npm run e2e:install
+npm run e2e
+```
+
 ### Runtime trust signals (UI)
 
 The app now shows a discreet runtime badge with:

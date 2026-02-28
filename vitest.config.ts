@@ -10,6 +10,8 @@ export default defineConfig({
         setupFiles: './src/setupTests.ts',
         css: true,
         reporters: ['verbose'],
+        include: ['**/*.{test,spec}.{ts,tsx}'],
+        exclude: ['e2e/**', 'playwright.config.ts', 'node_modules/**', 'dist/**'],
         coverage: {
             reporter: ['text', 'json', 'html'],
             include: ['src/**/*'],
