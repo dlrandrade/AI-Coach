@@ -150,4 +150,5 @@ The app now shows a discreet runtime badge with:
 - model/fallback source
 - short request trace id
 
+There is also a discreet `OPS` button (top-left) for internal metrics checks using `ADMIN_API_KEY`.
 The backend also returns `X-Request-Id` on `/api/analyze` responses.
