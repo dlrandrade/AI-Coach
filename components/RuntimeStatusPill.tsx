@@ -21,7 +21,7 @@ export const RuntimeStatusPill: React.FC<Props> = ({
   const label = !online ? 'offline' : loading ? 'processando' : isFallback ? 'contingência' : 'ok';
 
   return (
-    <div className="fixed right-3 top-3 z-[120] bg-black/85 text-white text-[10px] px-2 py-1 rounded-md font-mono tracking-wide">
+    <div className="fixed right-4 top-4 z-[120] bg-black/80 backdrop-blur-sm text-white text-[10px] px-2.5 py-1.5 rounded-md font-mono tracking-wide max-w-[85vw]">
       <div className="flex items-center gap-2">
         <span className={`w-2 h-2 rounded-full ${dot}`} />
         <span>{label}</span>

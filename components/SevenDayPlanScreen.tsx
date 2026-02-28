@@ -33,7 +33,7 @@ const getTipoColor = (tipo: string) => {
 export const SevenDayPlanScreen: React.FC<SevenDayPlanScreenProps> = ({ handle, result, onReset, isLoadingPlan }) => {
     const plan = result?.plan || [];
     const [copiedDay, setCopiedDay] = useState<number | null>(null);
-    const [expandedDay, setExpandedDay] = useState<number | null>(1);
+    const [expandedDay, setExpandedDay] = useState<number | null>(null);
 
     const copyPrompt = async (prompt: string, day: number) => {
         await navigator.clipboard.writeText(prompt);

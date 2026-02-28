@@ -6,8 +6,8 @@ type Props = {
 
 export const LandingPage: React.FC<Props> = ({ onStart }) => {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-6 py-16">
-      <div className="w-full max-w-4xl grid md:grid-cols-2 gap-10 items-center">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4 md:px-6 py-8 md:py-16 reveal">
+      <div className="w-full max-w-4xl grid md:grid-cols-2 gap-6 md:gap-10 items-center">
         <div className="space-y-6">
           <span className="tech-label">LUZZIA • DIAGNÓSTICO DE DOMÍNIO</span>
           <h1 className="hero-title leading-tight">
@@ -28,7 +28,7 @@ export const LandingPage: React.FC<Props> = ({ onStart }) => {
           </div>
         </div>
 
-        <div className="border-2 border-black p-6 space-y-4 bg-gray-50">
+        <div className="border-2 border-black p-4 md:p-6 space-y-4 bg-gray-50 card-tech">
           <h2 className="section-title text-2xl">O que você recebe</h2>
           <ul className="space-y-2 text-sm text-gray-700 list-disc pl-5">
             <li>Sentença estratégica do perfil</li>

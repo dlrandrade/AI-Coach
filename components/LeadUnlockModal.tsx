@@ -34,7 +34,7 @@ export const LeadUnlockModal: React.FC<Props> = ({ open, handle, objective, plan
 
   return (
     <div className="fixed inset-0 bg-black/60 z-[120] flex items-center justify-center p-4">
-      <form onSubmit={submit} className="w-full max-w-lg bg-white border-2 border-black p-6 space-y-4">
+      <form onSubmit={submit} className="w-full max-w-lg bg-white border-2 border-black p-5 md:p-6 space-y-4 rounded-sm reveal">
         <div className="flex justify-between items-start gap-3">
           <h3 className="text-xl font-extrabold">Desbloquear plano completo</h3>
           <button type="button" onClick={onClose}>✕</button>
