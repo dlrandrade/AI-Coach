@@ -40,4 +40,9 @@ describe('api integration smoke', () => {
     expect(j.usage).toBeTruthy();
     expect(Array.isArray(j.usage.packages)).toBe(true);
   });
+
+  it('GET /api/metrics denies access without admin key', async () => {
+    const r = await fetch(`${base}/api/metrics`);
+    expect([401, 403]).toContain(r.status);
+  });
 });

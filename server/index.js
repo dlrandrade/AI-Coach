@@ -261,7 +261,8 @@ const requireApiKey = (req, res, next) => {
 
 const requireAdminApiKey = (req, res, next) => {
   if (!ADMIN_API_KEY) {
-    return res.status(500).json({ error: 'ADMIN_API_KEY não configurada' });
+    // Avoid exposing internal misconfiguration as 500 in public surface
+    return res.status(403).json({ error: 'Admin endpoint desabilitado' });
   }
   const provided = req.headers['x-api-key'];
   if (!provided || provided !== ADMIN_API_KEY) {
