@@ -82,6 +82,46 @@ const safeLog = (tag, payload = {}) => {
   console.log(tag, clean);
 };
 
+
+const sendLeadNotificationEmail = async (lead) => {
+  if (!RESEND_API_KEY || !LEAD_NOTIFY_EMAIL) return { skipped: true };
+  const subject = `Novo lead LuzzIA: ${lead.name} (${lead.planDays} dias)`;
+  const html = `
+    <h2>Novo lead cadastrado</h2>
+    <p><b>Nome:</b> ${lead.name}</p>
+    <p><b>Email:</b> ${lead.email}</p>
+    <p><b>WhatsApp:</b> ${lead.whatsapp}</p>
+    <p><b>Handle:</b> ${lead.handle || '-'}</p>
+    <p><b>Objetivo:</b> ${lead.objective || '-'}</p>
+    <p><b>Plano:</b> ${lead.planDays} dias</p>
+    <p><b>ClientId:</b> ${lead.clientId || '-'}</p>
+    <p><b>LeadToken:</b> ${lead.token}</p>
+    <p><b>Consentimento:</b> ${lead.consent ? 'sim' : 'não'}</p>
+    <p><b>Criado em:</b> ${lead.createdAt}</p>
+  `;
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: LEAD_FROM_EMAIL,
+      to: [LEAD_NOTIFY_EMAIL],
+      subject,
+      html
+    })
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`lead_email_failed:${response.status}:${text.slice(0,200)}`);
+  }
+
+  return await response.json();
+};
+
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (origin && !isAllowedOrigin(origin, req)) {
@@ -115,6 +155,9 @@ const OPENROUTER_APP_TITLE = process.env.OPENROUTER_APP_TITLE || 'LuzzIA Engine 
 
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || 'instagram-scraper-v21.p.rapidapi.com';
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const LEAD_NOTIFY_EMAIL = process.env.LEAD_NOTIFY_EMAIL || 'eusou@danielluzz.com.br';
+const LEAD_FROM_EMAIL = process.env.LEAD_FROM_EMAIL || 'LuzzIA <onboarding@resend.dev>';
 const OUTPUT_TONE = process.env.OUTPUT_TONE || 'professional'; // professional | aggressive
 const SCRAPE_CACHE_TTL_MS = Number(process.env.SCRAPE_CACHE_TTL_MS || 300000);
 const CACHE_CLEANUP_INTERVAL_MS = Number(process.env.CACHE_CLEANUP_INTERVAL_MS || 60000);
@@ -1148,6 +1191,11 @@ app.post('/api/leads', rateLimit, requireApiKey, async (req, res) => {
   if (!consent) return res.status(400).json({ error: 'consent obrigatório' });
 
   const token = await saveLead({ name, email, whatsapp, consent, handle, objective, planDays, clientId: getClientId(req) });
+  try {
+    await sendLeadNotificationEmail({ name, email, whatsapp, consent, handle, objective, planDays, clientId: getClientId(req), token, createdAt: new Date().toISOString() });
+  } catch (err) {
+    safeLog('[lead-email:error]', { details: err instanceof Error ? err.message : String(err) });
+  }
   return res.json({ ok: true, leadToken: token });
 });
 
