@@ -117,6 +117,9 @@ const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const RAPIDAPI_HOST = process.env.RAPIDAPI_HOST || 'instagram-scraper-v21.p.rapidapi.com';
 const OUTPUT_TONE = process.env.OUTPUT_TONE || 'professional'; // professional | aggressive
 const SCRAPE_CACHE_TTL_MS = Number(process.env.SCRAPE_CACHE_TTL_MS || 300000);
+const CACHE_CLEANUP_INTERVAL_MS = Number(process.env.CACHE_CLEANUP_INTERVAL_MS || 60000);
+const SLO_MAX_ERROR_RATE = Number(process.env.SLO_MAX_ERROR_RATE || 0.08);
+const SLO_MAX_AVG_LATENCY_MS = Number(process.env.SLO_MAX_AVG_LATENCY_MS || 12000);
 
 const PORT = process.env.PORT || 8787;
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 25000);
@@ -138,7 +141,9 @@ const metrics = {
   analyzeFail: 0,
   quotaBlocked: 0,
   scrapeCacheHits: 0,
-  modelOutcome: {}
+  modelOutcome: {},
+  latencyTotalMs: 0,
+  latencyAvgMs: 0
 };
 
 const incModelOutcome = (model, key) => {
@@ -484,6 +489,13 @@ const getCachedScrape = (username) => {
 
 const setCachedScrape = (username, data) => {
   scrapeCache.set(username, { data, expiresAt: Date.now() + SCRAPE_CACHE_TTL_MS });
+};
+
+const cleanupExpiredScrapeCache = () => {
+  const now = Date.now();
+  for (const [k, v] of scrapeCache.entries()) {
+    if (!v || now > v.expiresAt) scrapeCache.delete(k);
+  }
 };
 
 const scrapeInstagramProfile = async (username) => {
@@ -963,6 +975,26 @@ app.get('/api/metrics', requireAdminApiKey, async (req, res) => {
   });
 });
 
+
+app.get('/api/slo', requireAdminApiKey, async (req, res) => {
+  const total = metrics.analyzeSuccess + metrics.analyzeFail;
+  const errorRate = total ? metrics.analyzeFail / total : 0;
+  const avgLatency = metrics.latencyAvgMs || 0;
+  const ok = errorRate <= SLO_MAX_ERROR_RATE && avgLatency <= SLO_MAX_AVG_LATENCY_MS;
+  return res.json({
+    ok,
+    thresholds: {
+      maxErrorRate: SLO_MAX_ERROR_RATE,
+      maxAvgLatencyMs: SLO_MAX_AVG_LATENCY_MS
+    },
+    current: {
+      errorRate,
+      avgLatencyMs: avgLatency,
+      samples: total
+    }
+  });
+});
+
 app.post('/api/grant-credits', requireAdminApiKey, async (req, res) => {
   const clientId = String(req.body?.clientId || '').trim();
   const amount = Number(req.body?.amount);
@@ -1011,12 +1043,15 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
       ? await consumeAfterSuccess(clientId, quota.source)
       : buildUsagePayload(await getUsageState(clientId));
 
+    const elapsedMs = Date.now() - startedAt;
     metrics.analyzeSuccess += 1;
+    metrics.latencyTotalMs += elapsedMs;
+    metrics.latencyAvgMs = Math.round(metrics.latencyTotalMs / Math.max(1, metrics.analyzeSuccess + metrics.analyzeFail));
     safeLog('[analyze:ok]', {
       requestId,
       clientId,
       handle,
-      ms: Date.now() - startedAt,
+      ms: elapsedMs,
       modelUsed,
       scrapeCached: Boolean(rawScrapedData?.cached)
     });
@@ -1029,7 +1064,10 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
       meta: { modelUsed, requestId, scrapeCached: Boolean(rawScrapedData?.cached) }
     });
   } catch (error) {
+    const elapsedMs = Date.now() - startedAt;
     metrics.analyzeFail += 1;
+    metrics.latencyTotalMs += elapsedMs;
+    metrics.latencyAvgMs = Math.round(metrics.latencyTotalMs / Math.max(1, metrics.analyzeSuccess + metrics.analyzeFail));
     const details = error instanceof Error ? error.message : 'Erro desconhecido';
     safeLog('[analyze:error]', { requestId, details });
     return res.status(500).json({
@@ -1040,6 +1078,10 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
     });
   }
 });
+
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(cleanupExpiredScrapeCache, CACHE_CLEANUP_INTERVAL_MS).unref?.();
+}
 
 if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {

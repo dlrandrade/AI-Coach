@@ -45,4 +45,9 @@ describe('api integration smoke', () => {
     const r = await fetch(`${base}/api/metrics`);
     expect([401, 403]).toContain(r.status);
   });
+
+  it('GET /api/slo denies access without admin key', async () => {
+    const r = await fetch(`${base}/api/slo`);
+    expect([401, 403]).toContain(r.status);
+  });
 });

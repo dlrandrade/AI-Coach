@@ -43,7 +43,10 @@ When configured, usage/rate-limit state is persisted across instances.
 
 - `OUTPUT_TONE=professional|aggressive` (default: `professional`)
 - `SCRAPE_CACHE_TTL_MS` (default: `300000`, 5 minutes)
+- `CACHE_CLEANUP_INTERVAL_MS` (default: `60000`)
 - `REQUEST_TIMEOUT_MS` (default: `25000`)
+- `SLO_MAX_ERROR_RATE` (default: `0.08`)
+- `SLO_MAX_AVG_LATENCY_MS` (default: `12000`)
 
 The backend now caches Instagram scrape results briefly to reduce latency/cost on repeated analyses of the same handle.
 
@@ -81,6 +84,12 @@ Metrics endpoint (admin key required):
 
 ```bash
 curl -H "X-API-KEY: $ADMIN_API_KEY" http://localhost:8787/api/metrics
+```
+
+SLO endpoint (admin key required):
+
+```bash
+curl -H "X-API-KEY: $ADMIN_API_KEY" http://localhost:8787/api/slo
 ```
 
 The user can click `JÁ PAGUEI, ATUALIZAR ACESSO` to refresh credits.
