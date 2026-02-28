@@ -20,6 +20,13 @@
   "routes": [
     { "src": "^/api/health/?$", "dest": "/api/health.js" },
     { "src": "^/api/analyze/?$", "dest": "/api/analyze.js" },
+    { "src": "^/api/usage/?$", "dest": "/api/usage.js" },
+    { "src": "^/api/grant-credits/?$", "dest": "/api/grant-credits.js" },
+    { "src": "^/api/metrics/?$", "dest": "/api/metrics.js" },
+    { "src": "^/api/slo/?$", "dest": "/api/slo.js" },
+    { "src": "^/api/metrics-history/?$", "dest": "/api/metrics-history.js" },
+    { "src": "^/api/leads/?$", "dest": "/api/leads.js" },
+    { "src": "^/api/leads\.csv/?$", "dest": "/api/leads.csv.js" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
