@@ -185,6 +185,33 @@ const readDailyMetrics = async () => {
   }
 };
 
+
+const dayKeyOffset = (offset = 0) => {
+  const d = new Date(Date.now() - offset * 24 * 60 * 60 * 1000);
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
+const readMetricsHistory = async (days = 7) => {
+  const out = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const day = dayKeyOffset(i);
+    if (!USE_UPSTASH) {
+      out.push({ day, metrics: i === 0 ? metrics : null });
+      continue;
+    }
+    try {
+      const raw = await redisExec(['GET', `metrics:${day}`]);
+      out.push({ day, metrics: raw ? JSON.parse(raw) : null });
+    } catch {
+      out.push({ day, metrics: null });
+    }
+  }
+  return out;
+};
+
 const redisExec = async (command) => {
   if (!USE_UPSTASH) return null;
   const response = await fetch(UPSTASH_REDIS_REST_URL.replace(/\/$/, '') + '/pipeline', {
@@ -1026,6 +1053,18 @@ app.get('/api/metrics', requireAdminApiKey, async (req, res) => {
   });
 });
 
+
+
+app.get('/api/metrics-history', requireAdminApiKey, async (req, res) => {
+  const daysRaw = Number(req.query?.days || 7);
+  const days = Number.isFinite(daysRaw) ? Math.max(1, Math.min(30, Math.trunc(daysRaw))) : 7;
+  const history = await readMetricsHistory(days);
+  return res.json({
+    days,
+    source: USE_UPSTASH ? 'upstash-daily' : 'memory',
+    history
+  });
+});
 
 app.get('/api/slo', requireAdminApiKey, async (req, res) => {
   const currentMetrics = await readDailyMetrics();

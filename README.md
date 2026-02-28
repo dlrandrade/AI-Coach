@@ -92,6 +92,12 @@ SLO endpoint (admin key required):
 curl -H "X-API-KEY: $ADMIN_API_KEY" http://localhost:8787/api/slo
 ```
 
+Metrics history endpoint (admin key required):
+
+```bash
+curl -H "X-API-KEY: $ADMIN_API_KEY" "http://localhost:8787/api/metrics-history?days=7"
+```
+
 The user can click `JÁ PAGUEI, ATUALIZAR ACESSO` to refresh credits.
 
 ## Vercel (frontend + API)
