@@ -31,18 +31,29 @@ const matchesCorsRule = (origin, rule) => {
   return origin === rule;
 };
 
-const isAllowedOrigin = (origin) => {
+const isSameHostOrigin = (origin, req) => {
+  try {
+    const u = new URL(origin);
+    const host = req.headers.host;
+    return !!host && u.host === host;
+  } catch {
+    return false;
+  }
+};
+
+const isAllowedOrigin = (origin, req) => {
   if (!origin) return true;
-  if (CORS_ORIGINS.length === 0) return true;
+  if (isSameHostOrigin(origin, req)) return true;
+  if (CORS_ORIGINS.length === 0) return false;
   return CORS_ORIGINS.some((rule) => matchesCorsRule(origin, rule));
 };
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin && !isAllowedOrigin(origin)) {
+  if (origin && !isAllowedOrigin(origin, req)) {
     return res.status(403).json({ error: 'CORS blocked' });
   }
-  if (origin && isAllowedOrigin(origin)) {
+  if (origin && isAllowedOrigin(origin, req)) {
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Vary', 'Origin');
   }
@@ -521,6 +532,38 @@ const formatProfileForAI = (profile) => {
   return parts.join('\n');
 };
 
+const isValidStatus = (value) => ['alavanca', 'neutro', 'sabotador'].includes(value);
+
+const isValidResultShape = (obj, planDays) => {
+  try {
+    if (!obj || typeof obj !== 'object') return false;
+    if (!obj.leitura_perfil || !obj.diagnosis || !Array.isArray(obj.plan)) return false;
+    if (obj.plan.length !== planDays) return false;
+
+    const d = obj.diagnosis;
+    if (!['commodity', 'aspirante', 'autoridade', 'dominador'].includes(d.posicionamento)) return false;
+    if (!d.dissecacao) return false;
+
+    const required = ['bio', 'feed', 'stories', 'provas', 'ofertas', 'linguagem'];
+    for (const key of required) {
+      const item = d.dissecacao[key];
+      if (!item || !isValidStatus(item.status) || typeof item.veredicto !== 'string') return false;
+    }
+
+    for (const day of obj.plan) {
+      if (typeof day.day !== 'number' || typeof day.acao !== 'string' || typeof day.prompt !== 'string') return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const parseModelJson = (content) => {
+  const cleaned = String(content || '').replace(/```json|```/g, '').trim();
+  return JSON.parse(cleaned);
+};
+
 const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) => {
   if (!OPENROUTER_API_KEY) {
     throw new Error('OPENROUTER_API_KEY não configurada');
@@ -566,8 +609,19 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
 
       const data = await response.json();
       const content = data.choices?.[0]?.message?.content || '';
-      const jsonString = content.replace(/```json|```/g, '').trim();
-      const parsed = JSON.parse(jsonString);
+      let parsed;
+      try {
+        parsed = parseModelJson(content);
+      } catch {
+        errors.push(`${model}: invalid_json`);
+        continue;
+      }
+
+      if (!isValidResultShape(parsed, planDays)) {
+        errors.push(`${model}: invalid_schema`);
+        continue;
+      }
+
       modelCursor = (OPENROUTER_MODELS.indexOf(model) + 1) % OPENROUTER_MODELS.length;
       return { parsed, modelUsed: model };
     } catch (error) {
@@ -602,6 +656,7 @@ app.post('/api/grant-credits', requireAdminApiKey, (req, res) => {
 });
 
 app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
+  const requestId = `req_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
   const validation = validateAnalyzeInput(req.body);
   if (!validation.ok) {
     return res.status(400).json({ error: validation.error });
@@ -634,8 +689,13 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
       meta: { modelUsed }
     });
   } catch (error) {
+    const details = error instanceof Error ? error.message : 'Erro desconhecido';
+    console.error('[analyze:error]', { requestId, details });
     return res.status(500).json({
-      error: error instanceof Error ? error.message : 'Erro desconhecido'
+      error: 'ANALYZE_FAILED',
+      message: 'Não foi possível concluir o diagnóstico agora. Tente novamente.',
+      requestId,
+      ...(DEBUG ? { details } : {})
     });
   }
 });
