@@ -749,16 +749,27 @@ const normalizeAnalysisResult = (obj, planDays, objective) => {
       prompt: typeof x.prompt === 'string' ? x.prompt : 'Crie um post com prova real de resultado e CTA objetivo.'
     }));
 
+  const fallbackTemplates = [
+    { acao: 'Publicar case antes/depois com métrica', formato: 'carrossel', ferramenta: 'feed', tipo: 'tensao_maxima', prompt: 'Crie um carrossel com: contexto inicial, ação aplicada, resultado mensurável e CTA para diagnóstico.' },
+    { acao: 'Story com objeção e resposta objetiva', formato: 'story', ferramenta: 'stories', tipo: 'excludente', prompt: 'Escreva 5 stories: objeção comum, quebra de objeção, prova curta, filtro de público e CTA por palavra-chave.' },
+    { acao: 'Reel de bastidor de execução', formato: 'reel', ferramenta: 'reels', tipo: 'padrao', prompt: 'Crie roteiro de reel (30-45s) mostrando processo real, diferencial técnico e chamada para ação específica.' },
+    { acao: 'Ajustar bio para promessa + prova', formato: 'bio', ferramenta: 'bio', tipo: 'queima_ponte', prompt: 'Reescreva bio em 3 linhas: promessa objetiva, para quem é/não é e prova concreta.' },
+    { acao: 'Post de oferta com critério de entrada', formato: 'post', ferramenta: 'feed', tipo: 'movimento_dinheiro', prompt: 'Crie post de oferta com público-alvo explícito, benefício principal, critérios e CTA com prazo real.' },
+    { acao: 'Publicar prova social estruturada', formato: 'story', ferramenta: 'stories', tipo: 'padrao', prompt: 'Monte sequência com depoimento: situação inicial, intervenção, resultado e convite para próximo passo.' },
+    { acao: 'Checklist de ação semanal', formato: 'carrossel', ferramenta: 'feed', tipo: 'padrao', prompt: 'Crie checklist em 7 passos para executar o objetivo, cada passo com verbo de ação e mini-resultado esperado.' }
+  ];
+
   while (cleanPlan.length < planDays) {
     const n = cleanPlan.length + 1;
+    const t = fallbackTemplates[(n - 1) % fallbackTemplates.length];
     cleanPlan.push({
       day: n,
-      objetivo_psicologico: `Fortalecer ${OBJECTIVE_LABELS[objective]}`,
-      acao: 'Publicar evidência concreta de resultado',
-      formato: 'post',
-      ferramenta: 'feed',
-      tipo: 'padrao',
-      prompt: 'Crie conteúdo com contexto, processo, métrica e CTA claro.'
+      objetivo_psicologico: `Fortalecer ${OBJECTIVE_LABELS[objective]} com ação prática e evidência.`,
+      acao: t.acao,
+      formato: t.formato,
+      ferramenta: t.ferramenta,
+      tipo: t.tipo,
+      prompt: t.prompt
     });
   }
   out.plan = cleanPlan.slice(0, planDays).map((x, i) => ({ ...x, day: i + 1 }));

@@ -214,6 +214,8 @@ export interface AnalyzeResponse {
   usage?: UsageInfo;
   meta?: {
     modelUsed?: string;
+    requestId?: string;
+    scrapeCached?: boolean;
   };
 }
 
@@ -317,6 +319,12 @@ export const analyzeProfile = async (
       }
     };
   }
+};
+
+export const getHealth = async (): Promise<{ ok: boolean }> => {
+  const response = await fetch(`${API_BASE_URL}/api/health`);
+  if (!response.ok) throw new ApiError(`Erro ${response.status} ao consultar health`, response.status);
+  return response.json();
 };
 
 export const getUsage = async (): Promise<UsageResponse> => {

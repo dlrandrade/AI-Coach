@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { InputScreen } from './components/InputScreen';
 import { DiagnosisScreen } from './components/DiagnosisScreen';
 import { SevenDayPlanScreen } from './components/SevenDayPlanScreen';
-import { analyzeProfile, AnalysisResult, AnalyzeResponse, ApiError, UsageInfo, getUsage } from './services/aiService';
+import { RuntimeStatusPill } from './components/RuntimeStatusPill';
+import { analyzeProfile, AnalysisResult, AnalyzeResponse, ApiError, UsageInfo, getUsage, getHealth } from './services/aiService';
 
 type Screen = 'INPUT' | 'LOADING' | 'DIAGNOSIS' | 'PLAN';
 
@@ -16,6 +17,20 @@ function App() {
   const [showPaywall, setShowPaywall] = useState(false);
   const [usageInfo, setUsageInfo] = useState<UsageInfo | null>(null);
   const [clientId, setClientId] = useState('');
+  const [apiOnline, setApiOnline] = useState(true);
+  const [analysisMeta, setAnalysisMeta] = useState<AnalyzeResponse['meta'] | null>(null);
+  const [genericScore, setGenericScore] = useState<number>(0);
+
+  const computeGenericScore = (r: AnalysisResult) => {
+    const prompts = (r?.plan || []).map((p) => (p.prompt || '').trim().toLowerCase()).filter(Boolean);
+    if (!prompts.length) return 0;
+    const uniq = new Set(prompts).size;
+    return Math.round((uniq / prompts.length) * 100);
+  };
+
+  useEffect(() => {
+    getHealth().then(() => setApiOnline(true)).catch(() => setApiOnline(false));
+  }, []);
 
   const handleAnalyze = async (inputHandle: string, planDays: 7 | 30, objective: number) => {
     setHandle(inputHandle);
@@ -29,9 +44,13 @@ function App() {
       setRawScrapedData(response.rawScrapedData || null);
       setUsageInfo(response.usage || null);
       setClientId(response.clientId || '');
+      setAnalysisMeta(response.meta || null);
+      setGenericScore(computeGenericScore(response.result));
+      setApiOnline(true);
       setScreen('DIAGNOSIS');
     } catch (e) {
       console.error('[LuzzIA] Error:', e);
+      setApiOnline(false);
       if (e instanceof ApiError && e.code === 'QUOTA_EXCEEDED') {
         setUsageInfo(e.usage || null);
         setClientId(e.clientId || '');
@@ -59,6 +78,8 @@ function App() {
     setRawScrapedData(null);
     setErrorMessage('');
     setShowPaywall(false);
+    setAnalysisMeta(null);
+    setGenericScore(0);
     setScreen('INPUT');
     setIsPlanLoading(false);
   };
@@ -107,6 +128,15 @@ function App() {
           isLoadingPlan={isPlanLoading}
         />
       )}
+
+      <RuntimeStatusPill
+        online={apiOnline}
+        loading={screen === 'LOADING' || isPlanLoading}
+        modelUsed={analysisMeta?.modelUsed}
+        requestId={analysisMeta?.requestId}
+        genericScore={genericScore}
+        isFallback={String(analysisMeta?.modelUsed || '').includes('fallback')}
+      />
     </div>
   );
 }
