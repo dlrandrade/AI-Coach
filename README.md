@@ -166,3 +166,9 @@ Admin can list leads:
 ```bash
 curl -H "X-API-KEY: $ADMIN_API_KEY" "http://localhost:8787/api/leads?limit=50"
 ```
+
+Admin can export leads as CSV:
+
+```bash
+curl -L -H "X-API-KEY: $ADMIN_API_KEY" "http://localhost:8787/api/leads.csv?limit=200" -o leads.csv
+```

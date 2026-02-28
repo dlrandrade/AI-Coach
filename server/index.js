@@ -1157,6 +1157,33 @@ app.get('/api/leads', requireAdminApiKey, async (req, res) => {
   return res.json({ count: items.length, items });
 });
 
+
+app.get('/api/leads.csv', requireAdminApiKey, async (req, res) => {
+  const limit = Number(req.query?.limit || 200);
+  const items = await listLeads(limit);
+
+  const headers = ['createdAt', 'name', 'email', 'whatsapp', 'handle', 'objective', 'planDays', 'clientId', 'token'];
+  const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = [headers.join(',')];
+  for (const item of items) {
+    lines.push([
+      esc(item.createdAt),
+      esc(item.name),
+      esc(item.email),
+      esc(item.whatsapp),
+      esc(item.handle),
+      esc(item.objective),
+      esc(item.planDays),
+      esc(item.clientId),
+      esc(item.token)
+    ].join(','));
+  }
+
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="leads-${new Date().toISOString().slice(0,10)}.csv"`);
+  return res.status(200).send(lines.join('\n'));
+});
+
 app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   metrics.analyzeRequests += 1;
   const requestId = `req_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
