@@ -24,10 +24,20 @@ This app has a Vite frontend and a small Node server that proxies the AI + Insta
 
 The frontend expects `VITE_API_BASE_URL` (default is `http://localhost:8787`) to reach the server.
 If you run the frontend on a different origin, set `CORS_ORIGINS` in `.env`.
+(Quick-win security update: when `CORS_ORIGINS` is empty, only same-host origin is allowed.)
 If `API_KEY` is set, frontend `VITE_API_KEY` must match it.
 For debug data on the UI, set `VITE_DEBUG=true` (server-side raw data still requires `DEBUG=true`).
 For production behavior, keep `VITE_ALLOW_SIMULATION_FALLBACK=false`.
 To temporarily unlock diagnosis limits during testing, set `QUOTA_ENABLED=false`.
+
+### Optional: persistent quota/rate-limit storage (recommended)
+
+By default, quota/rate-limit are in-memory. For production/serverless consistency, configure Upstash Redis:
+
+- `UPSTASH_REDIS_REST_URL`
+- `UPSTASH_REDIS_REST_TOKEN`
+
+When configured, usage/rate-limit state is persisted across instances.
 
 ### OpenRouter model rotation (anti-limit)
 

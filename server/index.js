@@ -88,9 +88,27 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 12;
 const rateBuckets = new Map();
 const usageBuckets = new Map();
+const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL || '';
+const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || '';
+const USE_UPSTASH = Boolean(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
 let modelCursor = 0;
 
 const PACKAGE_OPTIONS = [3, 10, 30];
+
+const redisExec = async (command) => {
+  if (!USE_UPSTASH) return null;
+  const response = await fetch(UPSTASH_REDIS_REST_URL.replace(/\/$/, '') + '/pipeline', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${UPSTASH_REDIS_REST_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify([command])
+  });
+  if (!response.ok) throw new Error(`Upstash error ${response.status}`);
+  const payload = await response.json();
+  return payload?.[0]?.result ?? null;
+};
 
 const getClientKey = (req) => {
   const forwarded = req.headers['x-forwarded-for'];
@@ -108,13 +126,7 @@ const getClientId = (req) => {
   return `ip:${getClientKey(req)}`;
 };
 
-const getUsageState = (clientId) => {
-  const existing = usageBuckets.get(clientId);
-  if (existing) return existing;
-  const state = { freeUsed: false, credits: 0, totalUsed: 0 };
-  usageBuckets.set(clientId, state);
-  return state;
-};
+const defaultUsageState = () => ({ freeUsed: false, credits: 0, totalUsed: 0 });
 
 const buildUsagePayload = (state) => ({
   freeUsed: state.freeUsed,
@@ -123,8 +135,39 @@ const buildUsagePayload = (state) => ({
   packages: PACKAGE_OPTIONS
 });
 
-const checkDiagnosisQuota = (clientId) => {
-  const state = getUsageState(clientId);
+const getUsageState = async (clientId) => {
+  if (!USE_UPSTASH) {
+    const existing = usageBuckets.get(clientId);
+    if (existing) return existing;
+    const state = defaultUsageState();
+    usageBuckets.set(clientId, state);
+    return state;
+  }
+
+  const raw = await redisExec(['GET', `usage:${clientId}`]);
+  if (!raw) return defaultUsageState();
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      freeUsed: Boolean(parsed.freeUsed),
+      credits: Number(parsed.credits || 0),
+      totalUsed: Number(parsed.totalUsed || 0)
+    };
+  } catch {
+    return defaultUsageState();
+  }
+};
+
+const setUsageState = async (clientId, state) => {
+  if (!USE_UPSTASH) {
+    usageBuckets.set(clientId, state);
+    return;
+  }
+  await redisExec(['SET', `usage:${clientId}`, JSON.stringify(state)]);
+};
+
+const checkDiagnosisQuota = async (clientId) => {
+  const state = await getUsageState(clientId);
   if (!state.freeUsed) {
     return { ok: true, usage: buildUsagePayload(state), source: 'free' };
   }
@@ -134,42 +177,67 @@ const checkDiagnosisQuota = (clientId) => {
   return { ok: false, usage: buildUsagePayload(state), source: 'blocked' };
 };
 
-const grantCredits = (clientId, amount) => {
-  const state = getUsageState(clientId);
+const grantCredits = async (clientId, amount) => {
+  const state = await getUsageState(clientId);
   state.credits += amount;
+  await setUsageState(clientId, state);
   return buildUsagePayload(state);
 };
 
-const consumeAfterSuccess = (clientId, source) => {
-  const state = getUsageState(clientId);
+const consumeAfterSuccess = async (clientId, source) => {
+  const state = await getUsageState(clientId);
   if (source === 'free' && !state.freeUsed) {
     state.freeUsed = true;
   } else if (source === 'credit' && state.credits > 0) {
     state.credits -= 1;
   }
   state.totalUsed += 1;
+  await setUsageState(clientId, state);
   return buildUsagePayload(state);
 };
 
-const rateLimit = (req, res, next) => {
-  const key = getClientKey(req);
-  const now = Date.now();
-  const entry = rateBuckets.get(key) || { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
-  if (now > entry.resetAt) {
-    entry.count = 0;
-    entry.resetAt = now + RATE_LIMIT_WINDOW_MS;
-  }
-  entry.count += 1;
-  rateBuckets.set(key, entry);
+const rateLimit = async (req, res, next) => {
+  try {
+    const key = getClientKey(req);
+    const now = Date.now();
+    let entry;
 
-  res.setHeader('X-RateLimit-Limit', String(RATE_LIMIT_MAX));
-  res.setHeader('X-RateLimit-Remaining', String(Math.max(0, RATE_LIMIT_MAX - entry.count)));
-  res.setHeader('X-RateLimit-Reset', String(entry.resetAt));
+    if (USE_UPSTASH) {
+      const raw = await redisExec(['GET', `rate:${key}`]);
+      if (raw) {
+        try {
+          entry = JSON.parse(raw);
+        } catch {
+          entry = null;
+        }
+      }
+      if (!entry || now > entry.resetAt) {
+        entry = { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
+      }
+      entry.count += 1;
+      await redisExec(['SET', `rate:${key}`, JSON.stringify(entry), 'PX', String(Math.max(1000, entry.resetAt - now))]);
+    } else {
+      entry = rateBuckets.get(key) || { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
+      if (now > entry.resetAt) {
+        entry.count = 0;
+        entry.resetAt = now + RATE_LIMIT_WINDOW_MS;
+      }
+      entry.count += 1;
+      rateBuckets.set(key, entry);
+    }
 
-  if (entry.count > RATE_LIMIT_MAX) {
-    return res.status(429).json({ error: 'Rate limit exceeded' });
+    res.setHeader('X-RateLimit-Limit', String(RATE_LIMIT_MAX));
+    res.setHeader('X-RateLimit-Remaining', String(Math.max(0, RATE_LIMIT_MAX - entry.count)));
+    res.setHeader('X-RateLimit-Reset', String(entry.resetAt));
+
+    if (entry.count > RATE_LIMIT_MAX) {
+      return res.status(429).json({ error: 'Rate limit exceeded' });
+    }
+    return next();
+  } catch (error) {
+    console.error('[rate-limit:error]', error instanceof Error ? error.message : error);
+    return next();
   }
-  return next();
 };
 
 const requireApiKey = (req, res, next) => {
@@ -561,7 +629,16 @@ const isValidResultShape = (obj, planDays) => {
 
 const parseModelJson = (content) => {
   const cleaned = String(content || '').replace(/```json|```/g, '').trim();
-  return JSON.parse(cleaned);
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const start = cleaned.indexOf('{');
+    const end = cleaned.lastIndexOf('}');
+    if (start >= 0 && end > start) {
+      return JSON.parse(cleaned.slice(start, end + 1));
+    }
+    throw new Error('invalid_json');
+  }
 };
 
 const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) => {
@@ -597,8 +674,8 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
               content: `EXECUTAR ANÁLISE COMPLETA.\n\nALVO: @${handle}\nOBJETIVO PRIMÁRIO: ${OBJECTIVE_LABELS[objective]}\nPLANO: ${planDays} dias\n${profileContext}\nINSTRUÇÕES:\n1. Use os DADOS DO PERFIL acima para preencher leitura_perfil\n2. Diagnostique com base no objetivo ${OBJECTIVE_LABELS[objective]}\n3. Gere plano de ${planDays} dias com prompts viscerais\n\nZERO piedade. ZERO suavização.`
             }
           ],
-          temperature: 0.85,
-          max_tokens: 10000
+          temperature: 0.6,
+          max_tokens: 7000
         })
       }, 20000);
 
@@ -633,16 +710,16 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
 };
 
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, models: OPENROUTER_MODELS, quotaEnabled: QUOTA_ENABLED });
+  res.json({ ok: true, models: OPENROUTER_MODELS, quotaEnabled: QUOTA_ENABLED, storage: USE_UPSTASH ? 'upstash' : 'memory' });
 });
 
-app.get('/api/usage', rateLimit, requireApiKey, (req, res) => {
+app.get('/api/usage', rateLimit, requireApiKey, async (req, res) => {
   const clientId = getClientId(req);
-  const usage = buildUsagePayload(getUsageState(clientId));
+  const usage = buildUsagePayload(await getUsageState(clientId));
   return res.json({ clientId, usage });
 });
 
-app.post('/api/grant-credits', requireAdminApiKey, (req, res) => {
+app.post('/api/grant-credits', requireAdminApiKey, async (req, res) => {
   const clientId = String(req.body?.clientId || '').trim();
   const amount = Number(req.body?.amount);
   if (!clientId) {
@@ -651,7 +728,7 @@ app.post('/api/grant-credits', requireAdminApiKey, (req, res) => {
   if (!Number.isInteger(amount) || !PACKAGE_OPTIONS.includes(amount)) {
     return res.status(400).json({ error: 'amount inválido. Use 3, 10 ou 30' });
   }
-  const usage = grantCredits(clientId, amount);
+  const usage = await grantCredits(clientId, amount);
   return res.json({ clientId, usage });
 });
 
@@ -663,7 +740,8 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   }
   const { handle, planDays, objective } = validation;
   const clientId = getClientId(req);
-  const quota = checkDiagnosisQuota(clientId);
+  const startedAt = Date.now();
+  const quota = await checkDiagnosisQuota(clientId);
   if (QUOTA_ENABLED && !quota.ok) {
     return res.status(402).json({
       error: 'QUOTA_EXCEEDED',
@@ -678,15 +756,23 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
     const formattedProfile = formatProfileForAI(rawScrapedData);
     const { parsed, modelUsed } = await analyzeProfile(handle, planDays, objective, formattedProfile);
     const usage = QUOTA_ENABLED
-      ? consumeAfterSuccess(clientId, quota.source)
-      : buildUsagePayload(getUsageState(clientId));
+      ? await consumeAfterSuccess(clientId, quota.source)
+      : buildUsagePayload(await getUsageState(clientId));
+
+    console.log('[analyze:ok]', {
+      requestId,
+      clientId,
+      handle,
+      ms: Date.now() - startedAt,
+      modelUsed
+    });
 
     return res.json({
       result: parsed,
       rawScrapedData: DEBUG ? rawScrapedData : null,
       clientId,
       usage,
-      meta: { modelUsed }
+      meta: { modelUsed, requestId }
     });
   } catch (error) {
     const details = error instanceof Error ? error.message : 'Erro desconhecido';
