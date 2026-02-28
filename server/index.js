@@ -476,7 +476,19 @@ REGRAS FINAIS
 - Retorne APENAS JSON válido
 `;
 
-const getCachedScrape = (username) => {
+const getCachedScrape = async (username) => {
+  if (USE_UPSTASH) {
+    try {
+      const raw = await redisExec(['GET', `scrape:${username}`]);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      metrics.scrapeCacheHits += 1;
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
   const item = scrapeCache.get(username);
   if (!item) return null;
   if (Date.now() > item.expiresAt) {
@@ -487,11 +499,16 @@ const getCachedScrape = (username) => {
   return item.data;
 };
 
-const setCachedScrape = (username, data) => {
+const setCachedScrape = async (username, data) => {
+  if (USE_UPSTASH) {
+    await redisExec(['SET', `scrape:${username}`, JSON.stringify(data), 'PX', String(SCRAPE_CACHE_TTL_MS)]);
+    return;
+  }
   scrapeCache.set(username, { data, expiresAt: Date.now() + SCRAPE_CACHE_TTL_MS });
 };
 
 const cleanupExpiredScrapeCache = () => {
+  if (USE_UPSTASH) return;
   const now = Date.now();
   for (const [k, v] of scrapeCache.entries()) {
     if (!v || now > v.expiresAt) scrapeCache.delete(k);
@@ -500,7 +517,7 @@ const cleanupExpiredScrapeCache = () => {
 
 const scrapeInstagramProfile = async (username) => {
   const cleanUsername = String(username || '').replace('@', '').trim().toLowerCase();
-  const cached = getCachedScrape(cleanUsername);
+  const cached = await getCachedScrape(cleanUsername);
   if (cached) return { ...cached, cached: true };
 
   if (!RAPIDAPI_KEY) {
@@ -631,7 +648,7 @@ const scrapeInstagramProfile = async (username) => {
       error: null,
       cached: false
     };
-    setCachedScrape(cleanUsername, result);
+    await setCachedScrape(cleanUsername, result);
     return result;
   } catch (error) {
     return {
@@ -956,6 +973,7 @@ app.get('/api/health', (req, res) => {
     storage: USE_UPSTASH ? 'upstash' : 'memory',
     outputTone: OUTPUT_TONE,
     scrapeCacheTtlMs: SCRAPE_CACHE_TTL_MS,
+    scrapeCacheStorage: USE_UPSTASH ? 'upstash' : 'memory',
     release: process.env.VERCEL_GIT_COMMIT_SHA || process.env.RELEASE_SHA || 'local'
   });
 });
