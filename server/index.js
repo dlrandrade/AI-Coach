@@ -153,6 +153,38 @@ const incModelOutcome = (model, key) => {
   metrics.modelOutcome[model][key] += 1;
 };
 
+
+const metricsDayKey = () => {
+  const d = new Date();
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
+const persistDailyMetrics = async () => {
+  if (!USE_UPSTASH) return;
+  const key = `metrics:${metricsDayKey()}`;
+  try {
+    await redisExec(['SET', key, JSON.stringify(metrics), 'EX', String(60 * 60 * 24 * 14)]);
+  } catch {
+    // best effort
+  }
+};
+
+const readDailyMetrics = async () => {
+  if (!USE_UPSTASH) return metrics;
+  const key = `metrics:${metricsDayKey()}`;
+  try {
+    const raw = await redisExec(['GET', key]);
+    if (!raw) return metrics;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : metrics;
+  } catch {
+    return metrics;
+  }
+};
+
 const redisExec = async (command) => {
   if (!USE_UPSTASH) return null;
   const response = await fetch(UPSTASH_REDIS_REST_URL.replace(/\/$/, '') + '/pipeline', {
@@ -985,8 +1017,9 @@ app.get('/api/usage', rateLimit, requireApiKey, async (req, res) => {
 });
 
 app.get('/api/metrics', requireAdminApiKey, async (req, res) => {
+  const currentMetrics = await readDailyMetrics();
   return res.json({
-    metrics,
+    metrics: currentMetrics,
     storage: USE_UPSTASH ? 'upstash' : 'memory',
     uptimeSec: Math.round(process.uptime()),
     release: process.env.VERCEL_GIT_COMMIT_SHA || process.env.RELEASE_SHA || 'local'
@@ -995,9 +1028,10 @@ app.get('/api/metrics', requireAdminApiKey, async (req, res) => {
 
 
 app.get('/api/slo', requireAdminApiKey, async (req, res) => {
-  const total = metrics.analyzeSuccess + metrics.analyzeFail;
-  const errorRate = total ? metrics.analyzeFail / total : 0;
-  const avgLatency = metrics.latencyAvgMs || 0;
+  const currentMetrics = await readDailyMetrics();
+  const total = Number(currentMetrics.analyzeSuccess || 0) + Number(currentMetrics.analyzeFail || 0);
+  const errorRate = total ? Number(currentMetrics.analyzeFail || 0) / total : 0;
+  const avgLatency = Number(currentMetrics.latencyAvgMs || 0);
   const ok = errorRate <= SLO_MAX_ERROR_RATE && avgLatency <= SLO_MAX_AVG_LATENCY_MS;
   return res.json({
     ok,
@@ -1009,7 +1043,8 @@ app.get('/api/slo', requireAdminApiKey, async (req, res) => {
       errorRate,
       avgLatencyMs: avgLatency,
       samples: total
-    }
+    },
+    source: USE_UPSTASH ? 'upstash-daily' : 'memory' 
   });
 });
 
@@ -1040,6 +1075,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   const quota = await checkDiagnosisQuota(clientId);
   if (QUOTA_ENABLED && !quota.ok) {
     metrics.quotaBlocked += 1;
+    await persistDailyMetrics();
     return res.status(402).json({
       error: 'QUOTA_EXCEEDED',
       message: 'Créditos esgotados. Escolha um pacote para continuar.',
@@ -1063,6 +1099,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
 
     const elapsedMs = Date.now() - startedAt;
     metrics.analyzeSuccess += 1;
+    await persistDailyMetrics();
     metrics.latencyTotalMs += elapsedMs;
     metrics.latencyAvgMs = Math.round(metrics.latencyTotalMs / Math.max(1, metrics.analyzeSuccess + metrics.analyzeFail));
     safeLog('[analyze:ok]', {
@@ -1084,6 +1121,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   } catch (error) {
     const elapsedMs = Date.now() - startedAt;
     metrics.analyzeFail += 1;
+    await persistDailyMetrics();
     metrics.latencyTotalMs += elapsedMs;
     metrics.latencyAvgMs = Math.round(metrics.latencyTotalMs / Math.max(1, metrics.analyzeSuccess + metrics.analyzeFail));
     const details = error instanceof Error ? error.message : 'Erro desconhecido';
