@@ -137,7 +137,15 @@ const metrics = {
   analyzeSuccess: 0,
   analyzeFail: 0,
   quotaBlocked: 0,
-  scrapeCacheHits: 0
+  scrapeCacheHits: 0,
+  modelOutcome: {}
+};
+
+const incModelOutcome = (model, key) => {
+  if (!metrics.modelOutcome[model]) {
+    metrics.modelOutcome[model] = { success: 0, fail: 0 };
+  }
+  metrics.modelOutcome[model][key] += 1;
 };
 
 const redisExec = async (command) => {
@@ -892,6 +900,7 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
 
       if (!response.ok) {
         errors.push(`${model}: HTTP ${response.status}`);
+        incModelOutcome(model, 'fail');
         continue;
       }
 
@@ -902,20 +911,24 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
         parsed = parseModelJson(content);
       } catch {
         errors.push(`${model}: invalid_json`);
+        incModelOutcome(model, 'fail');
         continue;
       }
 
       const normalized = normalizeAnalysisResult(parsed, planDays, objective);
       if (!isValidResultShape(normalized, planDays)) {
         errors.push(`${model}: invalid_schema`);
+        incModelOutcome(model, 'fail');
         continue;
       }
 
       const sanitized = sanitizeAnalysisResult(normalized);
+      incModelOutcome(model, 'success');
       modelCursor = (OPENROUTER_MODELS.indexOf(model) + 1) % OPENROUTER_MODELS.length;
       return { parsed: sanitized, modelUsed: model };
     } catch (error) {
       errors.push(`${model}: ${error instanceof Error ? error.message : 'erro'}`);
+      incModelOutcome(model, 'fail');
     }
   }
 
@@ -930,7 +943,8 @@ app.get('/api/health', (req, res) => {
     quotaEnabled: QUOTA_ENABLED,
     storage: USE_UPSTASH ? 'upstash' : 'memory',
     outputTone: OUTPUT_TONE,
-    scrapeCacheTtlMs: SCRAPE_CACHE_TTL_MS
+    scrapeCacheTtlMs: SCRAPE_CACHE_TTL_MS,
+    release: process.env.VERCEL_GIT_COMMIT_SHA || process.env.RELEASE_SHA || 'local'
   });
 });
 
@@ -944,7 +958,8 @@ app.get('/api/metrics', requireAdminApiKey, async (req, res) => {
   return res.json({
     metrics,
     storage: USE_UPSTASH ? 'upstash' : 'memory',
-    uptimeSec: Math.round(process.uptime())
+    uptimeSec: Math.round(process.uptime()),
+    release: process.env.VERCEL_GIT_COMMIT_SHA || process.env.RELEASE_SHA || 'local'
   });
 });
 
@@ -964,6 +979,7 @@ app.post('/api/grant-credits', requireAdminApiKey, async (req, res) => {
 app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   metrics.analyzeRequests += 1;
   const requestId = `req_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+  res.setHeader('X-Request-Id', requestId);
   const validation = validateAnalyzeInput(req.body);
   if (!validation.ok) {
     return res.status(400).json({ error: validation.error });

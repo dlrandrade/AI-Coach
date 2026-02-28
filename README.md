@@ -126,3 +126,13 @@ SMOKE_BASE_URL=https://SEU-DOMINIO.vercel.app npm run smoke
 ```bash
 SMOKE_BASE_URL=https://SEU-DOMINIO.vercel.app ADMIN_API_KEY=... npm run smoke
 ```
+
+### Runtime trust signals (UI)
+
+The app now shows a discreet runtime badge with:
+- API status (`offline/processando/ok/contingência`)
+- prompt uniqueness score (`uniq:%`)
+- model/fallback source
+- short request trace id
+
+The backend also returns `X-Request-Id` on `/api/analyze` responses.
