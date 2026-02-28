@@ -55,4 +55,18 @@ describe('api integration smoke', () => {
     const r = await fetch(`${base}/api/metrics-history`);
     expect([401, 403]).toContain(r.status);
   });
+
+  it('POST /api/leads validates consent', async () => {
+    const r = await fetch(`${base}/api/leads`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Teste', email: 'a@a.com', whatsapp: '+5511999999999', consent: false, handle: 'abc', objective: 'AUTORIDADE', planDays: 7 })
+    });
+    expect(r.status).toBe(400);
+  });
+
+  it('GET /api/leads denies access without admin key', async () => {
+    const r = await fetch(`${base}/api/leads`);
+    expect([401, 403]).toContain(r.status);
+  });
 });

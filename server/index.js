@@ -129,6 +129,7 @@ const RATE_LIMIT_MAX = 12;
 const rateBuckets = new Map();
 const usageBuckets = new Map();
 const scrapeCache = new Map();
+const leadBuckets = new Map();
 const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL || '';
 const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || '';
 const USE_UPSTASH = Boolean(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
@@ -241,6 +242,37 @@ const getClientId = (req) => {
     return provided;
   }
   return `ip:${getClientKey(req)}`;
+};
+
+
+const makeLeadToken = () => `lead_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+
+const saveLead = async (lead) => {
+  const token = makeLeadToken();
+  const data = { ...lead, token, createdAt: new Date().toISOString() };
+
+  if (USE_UPSTASH) {
+    await redisExec(['SET', `lead:${token}`, JSON.stringify(data), 'EX', String(60 * 60 * 24 * 180)]);
+    await redisExec(['LPUSH', 'leads:recent', JSON.stringify(data)]);
+    await redisExec(['LTRIM', 'leads:recent', '0', '499']);
+    return token;
+  }
+
+  leadBuckets.set(token, data);
+  return token;
+};
+
+const listLeads = async (limit = 50) => {
+  const safeLimit = Math.max(1, Math.min(200, Number(limit) || 50));
+  if (USE_UPSTASH) {
+    const raw = await redisExec(['LRANGE', 'leads:recent', '0', String(safeLimit - 1)]);
+    if (!Array.isArray(raw)) return [];
+    return raw.map((x) => {
+      try { return JSON.parse(x); } catch { return null; }
+    }).filter(Boolean);
+  }
+
+  return Array.from(leadBuckets.values()).slice(-safeLimit).reverse();
 };
 
 const defaultUsageState = () => ({ freeUsed: false, credits: 0, totalUsed: 0 });
@@ -1098,6 +1130,31 @@ app.post('/api/grant-credits', requireAdminApiKey, async (req, res) => {
   }
   const usage = await grantCredits(clientId, amount);
   return res.json({ clientId, usage });
+});
+
+
+app.post('/api/leads', rateLimit, requireApiKey, async (req, res) => {
+  const name = String(req.body?.name || '').trim();
+  const email = String(req.body?.email || '').trim().toLowerCase();
+  const whatsapp = String(req.body?.whatsapp || '').trim();
+  const consent = Boolean(req.body?.consent);
+  const handle = String(req.body?.handle || '').trim().toLowerCase();
+  const objective = String(req.body?.objective || '').trim();
+  const planDays = Number(req.body?.planDays) === 30 ? 30 : 7;
+
+  if (!name || name.length < 2) return res.status(400).json({ error: 'name inválido' });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'email inválido' });
+  if (!/^\+?[0-9()\-\s]{8,20}$/.test(whatsapp)) return res.status(400).json({ error: 'whatsapp inválido' });
+  if (!consent) return res.status(400).json({ error: 'consent obrigatório' });
+
+  const token = await saveLead({ name, email, whatsapp, consent, handle, objective, planDays, clientId: getClientId(req) });
+  return res.json({ ok: true, leadToken: token });
+});
+
+app.get('/api/leads', requireAdminApiKey, async (req, res) => {
+  const limit = Number(req.query?.limit || 50);
+  const items = await listLeads(limit);
+  return res.json({ count: items.length, items });
 });
 
 app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {

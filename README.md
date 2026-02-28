@@ -151,4 +151,18 @@ The app now shows a discreet runtime badge with:
 - short request trace id
 
 There is also a discreet `OPS` button (top-left) for internal metrics checks using `ADMIN_API_KEY`.
+Set `VITE_ENABLE_OPS_PANEL=false` in production public environments.
 The backend also returns `X-Request-Id` on `/api/analyze` responses.
+
+### Lead unlock flow
+
+The 7/30-day plan can be unlocked only after lead capture.
+Lead data is stored in:
+- Upstash Redis (when configured): `lead:<token>` + `leads:recent`
+- Memory fallback (when Upstash is not configured)
+
+Admin can list leads:
+
+```bash
+curl -H "X-API-KEY: $ADMIN_API_KEY" "http://localhost:8787/api/leads?limit=50"
+```

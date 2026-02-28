@@ -327,6 +327,32 @@ export const getHealth = async (): Promise<{ ok: boolean }> => {
   return response.json();
 };
 
+export const saveLead = async (payload: {
+  name: string;
+  email: string;
+  whatsapp: string;
+  consent: boolean;
+  handle: string;
+  objective: string;
+  planDays: 7 | 30;
+}) => {
+  const clientId = getClientId();
+  const response = await fetch(`${API_BASE_URL}/api/leads`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CLIENT-ID': clientId,
+      ...(API_KEY ? { 'X-API-KEY': API_KEY } : {})
+    },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const t = await response.text();
+    throw new ApiError(`Erro ${response.status} ao salvar lead: ${t}`, response.status);
+  }
+  return response.json();
+};
+
 export const getUsage = async (): Promise<UsageResponse> => {
   const clientId = getClientId();
   const response = await fetch(`${API_BASE_URL}/api/usage`, {

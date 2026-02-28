@@ -4,7 +4,8 @@ import { DiagnosisScreen } from './components/DiagnosisScreen';
 import { SevenDayPlanScreen } from './components/SevenDayPlanScreen';
 import { RuntimeStatusPill } from './components/RuntimeStatusPill';
 import { AdminMetricsPanel } from './components/AdminMetricsPanel';
-import { analyzeProfile, AnalysisResult, AnalyzeResponse, ApiError, UsageInfo, getUsage, getHealth } from './services/aiService';
+import { LeadUnlockModal } from './components/LeadUnlockModal';
+import { analyzeProfile, AnalysisResult, AnalyzeResponse, ApiError, UsageInfo, getUsage, getHealth, saveLead } from './services/aiService';
 
 type Screen = 'INPUT' | 'LOADING' | 'DIAGNOSIS' | 'PLAN';
 
@@ -21,6 +22,10 @@ function App() {
   const [apiOnline, setApiOnline] = useState(true);
   const [analysisMeta, setAnalysisMeta] = useState<AnalyzeResponse['meta'] | null>(null);
   const [genericScore, setGenericScore] = useState<number>(0);
+  const [selectedPlanDays, setSelectedPlanDays] = useState<7 | 30>(7);
+  const [selectedObjective, setSelectedObjective] = useState<number>(1);
+  const [leadGateOpen, setLeadGateOpen] = useState(false);
+  const [leadUnlocked, setLeadUnlocked] = useState(false);
 
   const computeGenericScore = (r: AnalysisResult) => {
     const prompts = (r?.plan || []).map((p) => (p.prompt || '').trim().toLowerCase()).filter(Boolean);
@@ -35,6 +40,8 @@ function App() {
 
   const handleAnalyze = async (inputHandle: string, planDays: 7 | 30, objective: number) => {
     setHandle(inputHandle);
+    setSelectedPlanDays(planDays);
+    setSelectedObjective(objective);
     setErrorMessage('');
     setScreen('LOADING');
 
@@ -65,12 +72,30 @@ function App() {
   };
 
   const handleStartPlan = async () => {
+    if (!leadUnlocked) {
+      setLeadGateOpen(true);
+      return;
+    }
     setScreen('PLAN');
     setIsPlanLoading(true);
 
     setTimeout(() => {
       setIsPlanLoading(false);
-    }, 3000);
+    }, 1200);
+  };
+
+  const handleLeadSubmit = async (lead: { name: string; email: string; whatsapp: string; consent: boolean }) => {
+    await saveLead({
+      ...lead,
+      handle,
+      objective: result?.diagnosis?.objetivo_ativo || String(selectedObjective),
+      planDays: selectedPlanDays
+    });
+    setLeadUnlocked(true);
+    setLeadGateOpen(false);
+    setScreen('PLAN');
+    setIsPlanLoading(true);
+    setTimeout(() => setIsPlanLoading(false), 900);
   };
 
   const handleReset = () => {
@@ -81,6 +106,8 @@ function App() {
     setShowPaywall(false);
     setAnalysisMeta(null);
     setGenericScore(0);
+    setLeadUnlocked(false);
+    setLeadGateOpen(false);
     setScreen('INPUT');
     setIsPlanLoading(false);
   };
@@ -138,7 +165,16 @@ function App() {
         genericScore={genericScore}
         isFallback={String(analysisMeta?.modelUsed || '').includes('fallback')}
       />
-      <AdminMetricsPanel />
+      {import.meta.env.VITE_ENABLE_OPS_PANEL === 'true' && <AdminMetricsPanel />}
+
+      <LeadUnlockModal
+        open={leadGateOpen}
+        handle={handle}
+        objective={result?.diagnosis?.objetivo_ativo || String(selectedObjective)}
+        planDays={selectedPlanDays}
+        onSubmit={handleLeadSubmit}
+        onClose={() => setLeadGateOpen(false)}
+      />
     </div>
   );
 }
