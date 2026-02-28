@@ -23,11 +23,7 @@ function App() {
     setScreen('LOADING');
 
     try {
-      const minDelay = new Promise(resolve => setTimeout(resolve, 8000));
-      const [response] = await Promise.all([
-        analyzeProfile(inputHandle, planDays, objective),
-        minDelay
-      ]);
+      const response = await analyzeProfile(inputHandle, planDays, objective);
 
       setResult(response.result);
       setRawScrapedData(response.rawScrapedData || null);
