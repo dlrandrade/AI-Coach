@@ -101,3 +101,27 @@ Set these environment variables in Vercel:
 - `ADMIN_API_KEY` (required for credit grants)
 
 In production, keep `VITE_API_BASE_URL` empty so frontend calls `/api/analyze` on the same domain.
+
+## Production merge/deploy checklist
+
+1. Configure required envs on Vercel:
+   - `OPENROUTER_API_KEY`
+   - `RAPIDAPI_KEY`
+   - `ADMIN_API_KEY`
+2. Configure security/ops envs:
+   - `CORS_ORIGINS` (explicit domain list)
+   - `OUTPUT_TONE=professional`
+   - `SCRAPE_CACHE_TTL_MS=300000`
+   - `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (recommended)
+3. Deploy.
+4. Run smoke checks:
+
+```bash
+SMOKE_BASE_URL=https://SEU-DOMINIO.vercel.app npm run smoke
+```
+
+(Optional with admin checks):
+
+```bash
+SMOKE_BASE_URL=https://SEU-DOMINIO.vercel.app ADMIN_API_KEY=... npm run smoke
+```
