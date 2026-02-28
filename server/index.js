@@ -97,6 +97,13 @@ const USE_UPSTASH = Boolean(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
 let modelCursor = 0;
 
 const PACKAGE_OPTIONS = [3, 10, 30];
+const metrics = {
+  analyzeRequests: 0,
+  analyzeSuccess: 0,
+  analyzeFail: 0,
+  quotaBlocked: 0,
+  scrapeCacheHits: 0
+};
 
 const redisExec = async (command) => {
   if (!USE_UPSTASH) return null;
@@ -427,6 +434,7 @@ const getCachedScrape = (username) => {
     scrapeCache.delete(username);
     return null;
   }
+  metrics.scrapeCacheHits += 1;
   return item.data;
 };
 
@@ -795,6 +803,14 @@ app.get('/api/usage', rateLimit, requireApiKey, async (req, res) => {
   return res.json({ clientId, usage });
 });
 
+app.get('/api/metrics', requireAdminApiKey, async (req, res) => {
+  return res.json({
+    metrics,
+    storage: USE_UPSTASH ? 'upstash' : 'memory',
+    uptimeSec: Math.round(process.uptime())
+  });
+});
+
 app.post('/api/grant-credits', requireAdminApiKey, async (req, res) => {
   const clientId = String(req.body?.clientId || '').trim();
   const amount = Number(req.body?.amount);
@@ -809,6 +825,7 @@ app.post('/api/grant-credits', requireAdminApiKey, async (req, res) => {
 });
 
 app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
+  metrics.analyzeRequests += 1;
   const requestId = `req_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
   const validation = validateAnalyzeInput(req.body);
   if (!validation.ok) {
@@ -819,6 +836,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   const startedAt = Date.now();
   const quota = await checkDiagnosisQuota(clientId);
   if (QUOTA_ENABLED && !quota.ok) {
+    metrics.quotaBlocked += 1;
     return res.status(402).json({
       error: 'QUOTA_EXCEEDED',
       message: 'Créditos esgotados. Escolha um pacote para continuar.',
@@ -835,6 +853,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
       ? await consumeAfterSuccess(clientId, quota.source)
       : buildUsagePayload(await getUsageState(clientId));
 
+    metrics.analyzeSuccess += 1;
     console.log('[analyze:ok]', {
       requestId,
       clientId,
@@ -852,6 +871,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
       meta: { modelUsed, requestId, scrapeCached: Boolean(rawScrapedData?.cached) }
     });
   } catch (error) {
+    metrics.analyzeFail += 1;
     const details = error instanceof Error ? error.message : 'Erro desconhecido';
     console.error('[analyze:error]', { requestId, details });
     return res.status(500).json({

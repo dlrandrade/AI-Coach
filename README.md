@@ -76,6 +76,12 @@ curl -X POST http://localhost:8787/api/grant-credits \
   -d '{"clientId":"cli_xxx","amount":10}'
 ```
 
+Metrics endpoint (admin key required):
+
+```bash
+curl -H "X-API-KEY: $ADMIN_API_KEY" http://localhost:8787/api/metrics
+```
+
 The user can click `JÁ PAGUEI, ATUALIZAR ACESSO` to refresh credits.
 
 ## Vercel (frontend + API)
