@@ -52,6 +52,9 @@ export const DiagnosisScreen: React.FC<DiagnosisScreenProps> = ({ handle, result
         { key: 'provas', label: 'PROVAS', ...diagnosis.dissecacao.provas },
         { key: 'ofertas', label: 'OFERTAS', ...diagnosis.dissecacao.ofertas },
         { key: 'linguagem', label: 'LINGUAGEM', ...diagnosis.dissecacao.linguagem },
+        { key: 'cta', label: 'CTA', ...diagnosis.dissecacao.cta },
+        { key: 'link_bio', label: 'LINK BIO', ...diagnosis.dissecacao.link_bio },
+        { key: 'destaques', label: 'DESTAQUES', ...diagnosis.dissecacao.destaques },
     ];
 
     return (

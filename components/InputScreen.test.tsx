@@ -24,7 +24,7 @@ describe('InputScreen', () => {
         const mockAnalyze = vi.fn();
         render(<InputScreen onAnalyze={mockAnalyze} isLoading={false} />);
         const input = screen.getByPlaceholderText('@usuario');
-        const objectiveButton = screen.getByText('DOMINAR TERRITÓRIO');
+        const objectiveButton = screen.getByText('DOMINAR UM TERRITÓRIO MENTAL');
         const submitButton = screen.getByRole('button', { name: 'INICIAR DIAGNÓSTICO' });
 
         fireEvent.change(input, { target: { value: 'test_user' } });

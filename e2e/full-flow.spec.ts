@@ -79,7 +79,7 @@ test('full journey: analyze -> lead unlock -> plan (mocked api)', async ({ page 
   }
 
   await page.getByPlaceholder('@usuario').fill('danielluzz');
-  await page.getByRole('button', { name: /DOMINAR TERRITÓRIO/i }).click();
+  await page.getByRole('button', { name: /DOMINAR UM TERRITÓRIO MENTAL/i }).click();
   await page.getByRole('button', { name: /INICIAR DIAGNÓSTICO/i }).click();
 
   await expect(page.getByRole('heading', { name: /DIAGNÓSTICO/i })).toBeVisible();

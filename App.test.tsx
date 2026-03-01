@@ -62,7 +62,10 @@ describe('App lead-gate flow', () => {
             stories: { status: 'neutro', veredicto: '' },
             provas: { status: 'neutro', veredicto: '' },
             ofertas: { status: 'neutro', veredicto: '' },
-            linguagem: { status: 'neutro', veredicto: '' }
+            linguagem: { status: 'neutro', veredicto: '' },
+            cta: { status: 'neutro', veredicto: '' },
+            link_bio: { status: 'neutro', veredicto: '' },
+            destaques: { status: 'neutro', veredicto: '' }
           }
         },
         plan: [

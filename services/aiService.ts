@@ -156,6 +156,9 @@ export interface Dissecacao {
   provas: { status: 'alavanca' | 'neutro' | 'sabotador'; veredicto: string };
   ofertas: { status: 'alavanca' | 'neutro' | 'sabotador'; veredicto: string };
   linguagem: { status: 'alavanca' | 'neutro' | 'sabotador'; veredicto: string };
+  cta: { status: 'alavanca' | 'neutro' | 'sabotador'; veredicto: string };
+  link_bio: { status: 'alavanca' | 'neutro' | 'sabotador'; veredicto: string };
+  destaques: { status: 'alavanca' | 'neutro' | 'sabotador'; veredicto: string };
 }
 
 export interface Diagnosis {
@@ -165,8 +168,9 @@ export interface Diagnosis {
   posicionamento: 'commodity' | 'aspirante' | 'autoridade' | 'dominador';
   acao_alavancagem: string;
   sentenca: string;
+  consequencia_estrategica?: string;
   dissecacao: Dissecacao;
-  modo_falha: 'pequeno' | 'sem_provas' | 'sem_oferta' | 'nicho_saturado' | null;
+  modo_falha: 'pequeno' | 'sem_provas' | 'sem_oferta' | 'nicho_saturado' | 'conflito_objetivo' | null;
 }
 
 export interface PlanDay {
@@ -418,6 +422,18 @@ const simulateAnalysis = (handle: string, planDays: 7 | 30, objective: number): 
       linguagem: {
         status: "neutro",
         veredicto: `Linguagem correta mas sem força. Parece artigo de blog, não voz de autoridade.`
+      },
+      cta: {
+        status: "sabotador",
+        veredicto: `CTA sem direção. Não filtra nem conduz para ação estratégica.`
+      },
+      link_bio: {
+        status: "sabotador",
+        veredicto: `Link sem função de qualificação. Falta ponte com a oferta correta.`
+      },
+      destaques: {
+        status: "neutro",
+        veredicto: `Destaques sem narrativa de prova e sem progressão de convencimento.`
       }
     },
     modo_falha: "sem_oferta"

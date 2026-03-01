@@ -13,13 +13,13 @@ interface InputScreenProps {
 }
 
 const OBJECTIVES = [
-  { id: 1, label: "DOMINAR TERRITÓRIO", short: "AUTORIDADE", desc: "Ser referência ideológica do nicho" },
-  { id: 2, label: "CLAREZA ABSOLUTA", short: "POSICIONAMENTO", desc: "Impossível de confundir ou comparar" },
-  { id: 3, label: "PÚBLICO CERTO", short: "QUALIFICAÇÃO", desc: "Menos curiosos, mais decisores" },
-  { id: 4, label: "CONSTRUIR PROVA", short: "CREDIBILIDADE", desc: "Confiança sem promessa falsa" },
-  { id: 5, label: "PREPARAR VENDA", short: "PRÉ-VENDA", desc: "Educar desejo antes da oferta" },
-  { id: 6, label: "ELEVAR STATUS", short: "STATUS", desc: "Mais respeito, menos acesso" },
-  { id: 7, label: "QUEBRAR PADRÃO", short: "RESET", desc: "Mudança visível e irreversível" },
+  { id: 1, label: 'DOMINAR UM TERRITÓRIO MENTAL', short: 'AUTORIDADE', desc: 'Aumentar domínio ideológico e referência mental' },
+  { id: 2, label: 'CLAREZA ABSOLUTA DE POSICIONAMENTO', short: 'POSICIONAMENTO', desc: 'Tornar o perfil impossível de confundir' },
+  { id: 3, label: 'ATRAIR O PÚBLICO CERTO', short: 'QUALIFICAÇÃO', desc: 'Afastar curiosos e aproximar decisores' },
+  { id: 4, label: 'CONSTRUIR PROVA E CREDIBILIDADE', short: 'PROVA', desc: 'Aumentar confiança sem inflar promessa' },
+  { id: 5, label: 'PREPARAR MONETIZAÇÃO', short: 'PRÉ-VENDA', desc: 'Educar desejo e preparar transação futura' },
+  { id: 6, label: 'AUMENTAR PERCEPÇÃO DE VALOR', short: 'STATUS', desc: 'Elevar respeito percebido e filtrar acesso irrelevante' },
+  { id: 7, label: 'QUEBRAR ESTAGNAÇÃO', short: 'RESET', desc: 'Quebrar padrão atual de forma visível' },
 ];
 
 const SYSTEM_MESSAGES = [
