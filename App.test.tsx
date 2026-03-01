@@ -85,7 +85,7 @@ describe('App lead-gate flow', () => {
   it('requires lead before showing plan and submits lead payload', async () => {
     render(<App />);
 
-    fireEvent.click(screen.getByText(/FAZER DIAGNÓSTICO AGORA/i));
+    fireEvent.click(screen.getByText(/TESTAR GRÁTIS/i));
     fireEvent.click(screen.getByText('analisar'));
     await screen.findByText('diagnosis-ready');
 

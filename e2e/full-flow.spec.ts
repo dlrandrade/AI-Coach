@@ -68,7 +68,7 @@ test('full journey: analyze -> lead unlock -> plan (mocked api)', async ({ page 
 
   await page.goto('/');
 
-  const startBtn = page.getByRole('button', { name: /FAZER DIAGNÓSTICO AGORA/i });
+  const startBtn = page.getByRole('button', { name: /TESTAR GRÁTIS/i });
   if (await startBtn.isVisible().catch(() => false)) {
     await startBtn.click();
   }
