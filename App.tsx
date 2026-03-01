@@ -168,7 +168,7 @@ function App() {
         modelUsed={analysisMeta?.modelUsed}
         requestId={analysisMeta?.requestId}
         genericScore={genericScore}
-        isFallback={String(analysisMeta?.modelUsed || '').includes('fallback')}
+        generationMode={analysisMeta?.generationMode}
       />
       {import.meta.env.VITE_ENABLE_OPS_PANEL === 'true' && <AdminMetricsPanel />}
 

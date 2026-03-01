@@ -218,6 +218,7 @@ export interface AnalyzeResponse {
   usage?: UsageInfo;
   meta?: {
     modelUsed?: string;
+    generationMode?: 'ai_strict' | 'ai_recovered' | 'fallback_emergency';
     requestId?: string;
     scrapeCached?: boolean;
   };

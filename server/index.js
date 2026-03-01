@@ -151,6 +151,7 @@ const SUPABASE_LEAD_FUNCTION = process.env.SUPABASE_LEAD_FUNCTION || 'lead-notif
 const LEAD_NOTIFY_EMAIL = process.env.LEAD_NOTIFY_EMAIL || 'eusou@danielluzz.com.br';
 const OUTPUT_TONE = process.env.OUTPUT_TONE || 'professional'; // professional | aggressive
 const SCRAPE_CACHE_TTL_MS = Number(process.env.SCRAPE_CACHE_TTL_MS || 300000);
+const AI_STRICT_FIRST = String(process.env.AI_STRICT_FIRST || 'true').toLowerCase() !== 'false';
 const CACHE_CLEANUP_INTERVAL_MS = Number(process.env.CACHE_CLEANUP_INTERVAL_MS || 60000);
 const SLO_MAX_ERROR_RATE = Number(process.env.SLO_MAX_ERROR_RATE || 0.08);
 const SLO_MAX_AVG_LATENCY_MS = Number(process.env.SLO_MAX_AVG_LATENCY_MS || 12000);
@@ -1127,15 +1128,19 @@ const analyzeProfile = async (handle, planDays = 7, objective = 1, profileData) 
       const sanitized = sanitizeAnalysisResult(normalized);
       incModelOutcome(model, 'success');
       modelCursor = (OPENROUTER_MODELS.indexOf(model) + 1) % OPENROUTER_MODELS.length;
-      return { parsed: sanitized, modelUsed: model };
+      const generationMode = errors.length ? 'ai_recovered' : 'ai_strict';
+      return { parsed: sanitized, modelUsed: model, generationMode };
     } catch (error) {
       errors.push(`${model}: ${error instanceof Error ? error.message : 'erro'}`);
       incModelOutcome(model, 'fail');
     }
   }
 
+  if (AI_STRICT_FIRST) {
+    throw new Error(`AI_STRICT_FIRST_FAILED: ${errors.join(' | ')}`);
+  }
   const fallback = normalizeAnalysisResult({}, planDays, objective);
-  return { parsed: sanitizeAnalysisResult(fallback), modelUsed: 'fallback/local-normalizer' };
+  return { parsed: sanitizeAnalysisResult(fallback), modelUsed: 'fallback/local-normalizer', generationMode: 'fallback_emergency' };
 };
 
 app.get('/api/health', (req, res) => {
@@ -1147,6 +1152,7 @@ app.get('/api/health', (req, res) => {
     outputTone: OUTPUT_TONE,
     scrapeCacheTtlMs: SCRAPE_CACHE_TTL_MS,
     scrapeCacheStorage: USE_UPSTASH ? 'upstash' : 'memory',
+    aiStrictFirst: AI_STRICT_FIRST,
     release: process.env.VERCEL_GIT_COMMIT_SHA || process.env.RELEASE_SHA || 'local'
   });
 });
@@ -1297,7 +1303,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
   try {
     const rawScrapedData = await scrapeInstagramProfile(handle);
     const formattedProfile = formatProfileForAI(rawScrapedData);
-    const { parsed, modelUsed } = await analyzeProfile(handle, planDays, objective, formattedProfile);
+    const { parsed, modelUsed, generationMode } = await analyzeProfile(handle, planDays, objective, formattedProfile);
     const enriched = enrichPlanPromptsWithContext(parsed, {
       handle,
       planDays,
@@ -1326,7 +1332,7 @@ app.post('/api/analyze', rateLimit, requireApiKey, async (req, res) => {
       rawScrapedData: DEBUG ? rawScrapedData : null,
       clientId,
       usage,
-      meta: { modelUsed, requestId, scrapeCached: Boolean(rawScrapedData?.cached) }
+      meta: { modelUsed, generationMode, requestId, scrapeCached: Boolean(rawScrapedData?.cached) }
     });
   } catch (error) {
     const elapsedMs = Date.now() - startedAt;
