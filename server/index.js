@@ -151,7 +151,7 @@ const SUPABASE_LEAD_FUNCTION = process.env.SUPABASE_LEAD_FUNCTION || 'lead-notif
 const LEAD_NOTIFY_EMAIL = process.env.LEAD_NOTIFY_EMAIL || 'eusou@danielluzz.com.br';
 const OUTPUT_TONE = process.env.OUTPUT_TONE || 'professional'; // professional | aggressive
 const SCRAPE_CACHE_TTL_MS = Number(process.env.SCRAPE_CACHE_TTL_MS || 300000);
-const AI_STRICT_FIRST = String(process.env.AI_STRICT_FIRST || 'true').toLowerCase() !== 'false';
+const AI_STRICT_FIRST = String(process.env.AI_STRICT_FIRST || 'false').toLowerCase() !== 'false';
 const CACHE_CLEANUP_INTERVAL_MS = Number(process.env.CACHE_CLEANUP_INTERVAL_MS || 60000);
 const SLO_MAX_ERROR_RATE = Number(process.env.SLO_MAX_ERROR_RATE || 0.08);
 const SLO_MAX_AVG_LATENCY_MS = Number(process.env.SLO_MAX_AVG_LATENCY_MS || 12000);
