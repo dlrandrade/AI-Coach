@@ -895,9 +895,31 @@ const normalizeAnalysisResult = (obj, planDays, objective) => {
   out.diagnosis.consequencia_estrategica = out.diagnosis.consequencia_estrategica || 'Perda de percepção de valor e baixa tração de decisores.';
   out.diagnosis.modo_falha = out.diagnosis.modo_falha || 'sem_provas';
   const d = out.diagnosis.dissecacao || {};
-  const mk = (v={}) => ({ status: isValidStatus(v.status) ? v.status : 'neutro', veredicto: typeof v.veredicto==='string' ? v.veredicto : 'Ajustar clareza e evidências.'});
+  const vereditoDefault = {
+    bio: 'Bio sem tese central explícita para o objetivo ativo.',
+    feed: 'Feed sem progressão estratégica de convencimento.',
+    stories: 'Stories sem direção para decisão do público certo.',
+    provas: 'Falta demonstração concreta de resultado e método.',
+    ofertas: 'Oferta pouco explícita para o nível de consciência atual.',
+    linguagem: 'Linguagem genérica, sem corte estratégico.',
+    cta: 'CTA sem filtro de público e sem comando específico.',
+    link_bio: 'Link na bio sem ponte clara para a próxima ação.',
+    destaques: 'Destaques sem narrativa de prova e decisão.'
+  };
+  const mk = (k, v={}) => ({
+    status: isValidStatus(v.status) ? v.status : 'neutro',
+    veredicto: (typeof v.veredicto==='string' && v.veredicto.trim()) ? v.veredicto : vereditoDefault[k]
+  });
   out.diagnosis.dissecacao = {
-    bio: mk(d.bio), feed: mk(d.feed), stories: mk(d.stories), provas: mk(d.provas), ofertas: mk(d.ofertas), linguagem: mk(d.linguagem), cta: mk(d.cta), link_bio: mk(d.link_bio), destaques: mk(d.destaques)
+    bio: mk('bio', d.bio),
+    feed: mk('feed', d.feed),
+    stories: mk('stories', d.stories),
+    provas: mk('provas', d.provas),
+    ofertas: mk('ofertas', d.ofertas),
+    linguagem: mk('linguagem', d.linguagem),
+    cta: mk('cta', d.cta),
+    link_bio: mk('link_bio', d.link_bio),
+    destaques: mk('destaques', d.destaques)
   };
 
   const plan = Array.isArray(out.plan) ? out.plan : [];
@@ -905,7 +927,7 @@ const normalizeAnalysisResult = (obj, planDays, objective) => {
     .filter((x) => x && typeof x === 'object')
     .map((x, i) => ({
       day: Number.isFinite(Number(x.day)) ? Number(x.day) : i + 1,
-      objetivo_psicologico: typeof x.objetivo_psicologico === 'string' ? x.objetivo_psicologico : `Fortalecer ${OBJECTIVE_LABELS[objective]}`,
+      objetivo_psicologico: (typeof x.objetivo_psicologico === 'string' && x.objetivo_psicologico.trim()) ? x.objetivo_psicologico : `Gerar avanço observável em ${OBJECTIVE_LABELS[objective]} no dia ${i + 1}.`,
       acao: typeof x.acao === 'string' ? x.acao : 'Publicar conteúdo com prova concreta',
       formato: typeof x.formato === 'string' ? x.formato : 'post',
       ferramenta: typeof x.ferramenta === 'string' ? x.ferramenta : 'feed',
@@ -937,6 +959,30 @@ const normalizeAnalysisResult = (obj, planDays, objective) => {
     });
   }
   out.plan = cleanPlan.slice(0, planDays).map((x, i) => ({ ...x, day: i + 1 }));
+
+  // Anti-repetição mínima para evitar blocos genéricos duplicados
+  const seenVeredictos = new Set();
+  for (const key of Object.keys(out.diagnosis.dissecacao || {})) {
+    const item = out.diagnosis.dissecacao[key];
+    const v = String(item?.veredicto || '').trim();
+    if (!v) continue;
+    if (seenVeredictos.has(v.toLowerCase())) {
+      item.veredicto = `${v} [${key}]`;
+    }
+    seenVeredictos.add(v.toLowerCase());
+  }
+
+  const seenObj = new Set();
+  out.plan = out.plan.map((d, idx) => {
+    const o = String(d.objetivo_psicologico || '').trim();
+    if (!o) return d;
+    if (seenObj.has(o.toLowerCase())) {
+      return { ...d, objetivo_psicologico: `${o} (foco específico do dia ${idx + 1})` };
+    }
+    seenObj.add(o.toLowerCase());
+    return d;
+  });
+
   return out;
 };
 const parseModelJson = (content) => {
